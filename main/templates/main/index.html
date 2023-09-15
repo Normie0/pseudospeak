@@ -1,0 +1,215 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
+  <style>
+    a {
+      color: white;
+      text-decoration: none;
+    }
+    #profile_img_navbar:hover{
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <!-- <img src="/img/logo2.png" alt=""> -->
+    <a class="navbar-brand ms-5 nav-logo" href="#">PseudoSpeak</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      </ul>
+      {% if user.is_authenticated %}
+        <img id="profile_img_navbar" src="{{ user.profile.profile_img.url}}" alt="" style="width: 50px;height: 50px;border-radius: 50%;">
+      {% else %}
+        <button class="btn signbtn me-4" type="submit">Sign in</button>
+      {% endif %}
+
+    </div>
+  </div>
+</nav>
+
+<!--content-->
+<div class="container-fluid">
+  <div class="row content-1">
+    <div class="col-3 content-1a">
+      <ul>
+        <li class="active"><i class="fa-solid fa-house"></i>Feed</li>
+        <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' %}">Groups</a></li>
+        <li><i class="fa-solid fa-comments"></i>Topics</li>
+        <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
+        <li><i class="fa-solid fa-gear"></i>Settings</li>
+      </ul>
+    </div>
+
+    <!--Msgbox-->
+    <div class="col-6 content-1b content-scroll">
+      <div class="msgbox">
+        <form>
+          <div class="msgbox-input">
+            <div class="msgbox-img ">
+              <img src="{{user.profile.profile_img.url}}" alt="">
+            </div>
+            <input id="data1" type="text" placeholder="Write fearlessly...">
+          </div>
+          <div class="msg-con row">
+            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"></i></button>
+            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
+            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
+            <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
+          </div>
+          <!-- sd -->
+          {% for m in messages %}
+          <div id="message-output" class="msg-output-main row">
+            <div class="msgbox-trendings">
+              <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
+            </div>
+            <div class="msg-output">
+              <div class="msg-output-img">
+                <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
+              </div>
+              <div class="msg-output-details">
+                <h5>{{m.user.username}}</h5>
+                <p>{{m.content}}</p>
+              </div>
+            </div>
+            <div class="msg-output-icons">
+              <i class="far fa-comment"></i>
+              <i class="fa-solid fa-reply"></i>
+              <i class="far fa-thumbs-up"></i>
+              <i class="fa-regular fa-eye"></i>
+            </div>
+          </div>
+          {% endfor %}
+
+          <!-- endd -->
+
+        </form>
+      </div>
+      <!-- search box -->
+    </div>
+    <div class="col-3 content-1a">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search here...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+
+      <div class="trending">
+        <h4 class="trending-heading">Trending on PseudoSpeak</h4>
+        <div class="trending-topics">
+          <div class="t1">
+            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+            <a class="trends" href="#">Salary Comparison</a>
+          </div>
+          <div class="t1">
+            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+            <a class="trends" href="#">Tinder</a>
+          </div>
+          <div class="t1">
+            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+            <a class="trends" href="#">Dark Meme</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
+
+
+{{ request.user.username|json_script:"json-username"}}
+<script>
+  const socket = new WebSocket('ws://' + window.location.host + '/ws/');
+
+  socket.onopen = function () {
+    console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
+
+    console.log("WebSocket connection established.");
+
+    const username = JSON.parse(document.getElementById("json-username").textContent);
+    const post = document.querySelector('#post-msg');
+    post.onclick = function (e) {
+      e.preventDefault();
+      const inputdata = document.querySelector('#data1').value;
+      socket.send(JSON.stringify({
+        'content': inputdata,
+        'username': username
+      }));
+      inputdata.value = "";
+    }
+
+    // Now that the WebSocket is open, you can send data
+
+  };
+
+  socket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    console.log(data['content']);
+    console.log(data['username']);
+    console.log(data['profile_img']);
+
+    // Create an HTML template string for the new message
+    const template = `
+        <div class="msg-output-main row">
+            <div class="msgbox-trendings">
+                <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
+            </div>
+            <div class="msg-output">
+                <div class="msg-output-img">
+                    <img src="${data.profile_img}" alt="Profile Picture">
+                </div>
+                <div class="msg-output-details">
+                    <h5>${data.username}</h5>
+                    <p>${data.content}</p>
+                </div>
+            </div>
+            <div class="msg-output-icons">
+                <i class="far fa-comment"></i>
+                <i class="fa-solid fa-reply"></i>
+                <i class="far fa-thumbs-up"></i>
+                <i class="fa-regular fa-eye"></i>
+            </div>
+        </div><br>
+    `;
+
+    // Get the message container and insert the new message at the beginning
+    const msgOutputMain = document.querySelector('.msg-output-main');
+    msgOutputMain.insertAdjacentHTML('afterbegin', template);
+  };
+
+  socket.onclose = function (e) {
+    console.log("WebSocket connection closed.");
+  };
+
+  function scrollToTop() {
+    let objDiv = document.querySelector(".msgbox");
+    objDiv.scrollTop = objDiv.scrollBottom;
+  }
+
+
+  document.querySelector('#profile_img_navbar').onclick=function(){
+    var redirecturl='{% url "dashboard" %}';
+    window.location.href=redirecturl;
+  }
+
+</script>
+</body>
+
+</html>

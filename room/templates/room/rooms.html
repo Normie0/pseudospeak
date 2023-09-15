@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+    body {
+      background-image: linear-gradient(
+        120deg,
+        hsl(0deg 0% 0%) 0%,
+        hsl(279deg 45% 8%) 5%,
+        hsl(271deg 50% 14%) 68%,
+        hsl(271deg 57% 20%) 92%,
+        hsl(270deg 63% 26%) 99%,
+        hsl(270deg 68% 31%) 100%
+      );
+      color: white;
+    }
+  </style>
+  </head>
+  <body>
+    <h1>Groups</h1>
+    {% for room in rooms %}
+    <h2><a href="{% url 'room' room.slug %}">{{room.name}}</a></h2>
+    {% endfor %}
+  </body>
+</html>
