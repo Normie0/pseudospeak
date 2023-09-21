@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,authenticate,logout
+from django.urls import reverse
 from faker import Faker
 from .forms import *
 import random
-from .models import Profile,TrendingMessage
+from .models import Profile,TrendingMessage,Hashtag
 
 
 def generate_unique_username():
@@ -26,9 +27,16 @@ def index(request):
         user=request.user
         user.username=name
         user.save()
-        return redirect('index')
-    messages=TrendingMessage.objects.all()
-    return render(request,"main/index.html",{'messages':messages})
+        return redirect('index')   
+    else:
+        query = request.GET.get('search-input')
+        if query:
+            print(query)
+            hashtags=Hashtag.objects.filter(tag__icontains=query)
+        else:     
+            hashtags=Hashtag.objects.all()[:3]
+        messages=TrendingMessage.objects.filter(parent_message=None)
+        return render(request,"main/index.html",{'messages':messages,'hashtags':hashtags})
 
 def login_or_signup_view(request):
     if request.method == 'POST':
@@ -41,10 +49,14 @@ def login_or_signup_view(request):
             password = request.POST.get('password1')
             # confirm_password = request.POST.get('confirm_password')
             confirm_password=password
-            existing_email=get_object_or_404(User,email=email)
             username = generate_unique_username()  # Replace with your username generation logic
+            try:
+                existing_user=User.objects.get(email=email) 
+            except User.DoesNotExist:
+                existing_user=None
+            print(existing_user)
             print("completed fetching data from form")
-            if confirm_password == password and existing_email is None:
+            if confirm_password == password and existing_user is None:
                 # Create the user first
                 create_user = User.objects.create_user(username=username, email=email, password=password)
                 random_image_path = get_random_image()
@@ -82,6 +94,22 @@ def logoutuser(request):
 
 def dashboard(request):
     user=request.user
-    trendingmessages=TrendingMessage.objects.filter(user=user)
+    trendingmessages=TrendingMessage.objects.filter(user=user,parent_message=None).order_by("date_added")
     trendingmessagescount=len(trendingmessages)
     return render(request,'main/dashboard.html',{'trendingmessagescount':trendingmessagescount,'trendingmessages':trendingmessages})
+
+def view_message(request,message_id):
+    if request.method=='POST':
+        content=request.POST.get('replied_content')
+        print(content)
+        parent_message=get_object_or_404(TrendingMessage,id=message_id)
+        user=request.user
+        if user:
+            replied_message=TrendingMessage(user=user,content=content,parent_message=parent_message)
+            replied_message.save()
+            return redirect(reverse('view_message', args=[message_id]))
+
+    message=get_object_or_404(TrendingMessage,id=message_id)
+    replies = message.replies.all().order_by('date_added')
+
+    return render(request, 'main/view_message.html', {'message': message, 'replies': replies})

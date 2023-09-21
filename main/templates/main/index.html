@@ -18,6 +18,9 @@
     #profile_img_navbar:hover{
       cursor: pointer;
     }
+    #comment:hover{
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -51,7 +54,7 @@
         <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' %}">Groups</a></li>
         <li><i class="fa-solid fa-comments"></i>Topics</li>
         <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
-        <li><i class="fa-solid fa-gear"></i>Settings</li>
+        <li><i class="fa-solid fa-gear"></i><a href="{% url 'logout' %}">Settings</a></li>
       </ul>
     </div>
 
@@ -84,10 +87,11 @@
               <div class="msg-output-details">
                 <h5>{{m.user.username}}</h5>
                 <p>{{m.content}}</p>
+            </a>
               </div>
             </div>
             <div class="msg-output-icons">
-              <i class="far fa-comment"></i>
+              <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
               <i class="fa-solid fa-reply"></i>
               <i class="far fa-thumbs-up"></i>
               <i class="fa-regular fa-eye"></i>
@@ -103,25 +107,21 @@
     </div>
     <div class="col-3 content-1a">
       <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search here...">
-        <i class="fas fa-search search-icon"></i>
+        <form id="search-form" method="get" action="{% url 'index' %}">
+          <input type="text" name="search-input" class="search-input" id="search-input" placeholder="Search here...">
+          <i class="fas fa-search search-icon" id="search-icon"></i>
+      </form>
       </div>
 
       <div class="trending">
         <h4 class="trending-heading">Trending on PseudoSpeak</h4>
         <div class="trending-topics">
+          {% for tag in hashtags %}
           <div class="t1">
             <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a class="trends" href="#">Salary Comparison</a>
+            <a class="trends" href="#">{{tag.tag}}</a>
           </div>
-          <div class="t1">
-            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a class="trends" href="#">Tinder</a>
-          </div>
-          <div class="t1">
-            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a class="trends" href="#">Dark Meme</a>
-          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -132,6 +132,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 <script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 {{ request.user.username|json_script:"json-username"}}
@@ -146,14 +147,21 @@
     const username = JSON.parse(document.getElementById("json-username").textContent);
     const post = document.querySelector('#post-msg');
     post.onclick = function (e) {
-      e.preventDefault();
-      const inputdata = document.querySelector('#data1').value;
-      socket.send(JSON.stringify({
-        'content': inputdata,
-        'username': username
-      }));
-      inputdata.value = "";
+    e.preventDefault();
+    const data = document.querySelector('#data1');
+    const inputdata = data.value;
+
+    if (inputdata.trim() !== "") {
+        socket.send(JSON.stringify({
+            'content': inputdata,
+            'username': username
+        }));
+        
+        // Clear the input field
+        data.value = "";
     }
+};
+
 
     // Now that the WebSocket is open, you can send data
 
@@ -164,6 +172,7 @@
     console.log(data['content']);
     console.log(data['username']);
     console.log(data['profile_img']);
+    console.log(data['hashtag']);
 
     // Create an HTML template string for the new message
     const template = `
@@ -181,7 +190,7 @@
                 </div>
             </div>
             <div class="msg-output-icons">
-                <i class="far fa-comment"></i>
+                <i class="far fa-comment" id="comment" data-message-id="${data.content.pk}"></i>
                 <i class="fa-solid fa-reply"></i>
                 <i class="far fa-thumbs-up"></i>
                 <i class="fa-regular fa-eye"></i>
@@ -203,11 +212,31 @@
     objDiv.scrollTop = objDiv.scrollBottom;
   }
 
-
   document.querySelector('#profile_img_navbar').onclick=function(){
     var redirecturl='{% url "dashboard" %}';
     window.location.href=redirecturl;
   }
+
+  document.querySelectorAll('#comment').forEach(function(commentIcon) {
+    commentIcon.addEventListener('click', function() {
+      const messageID = this.getAttribute('data-message-id');
+      console.log(messageID)
+      const redirectURL = `/view_message/${messageID}/`;
+      window.location.href = redirectURL;
+    });
+  });
+
+  // search bar
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.querySelector('.search-input');
+
+    searchInput.addEventListener('keyup', function (event) {
+        if (event.key === 'Enter') {
+            searchForm.submit(); // Trigger form submission on "Enter" keypress
+        }
+    });
+});
 
 </script>
 </body>

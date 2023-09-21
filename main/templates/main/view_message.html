@@ -1,0 +1,36 @@
+<div id="display_message" style="display: block;">
+    <h1>{{ message.user }} wrote:</h1>
+    <p>{{ message.content }}</p>
+    <h2>Replies:</h2>
+    <ul>
+        {% for reply in replies %}
+        <li>
+            <p id="comment" data-message-id="{{reply.pk}}">{{ reply.user }} replied:</p>
+            <p>{{ reply.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<button id="rep">Reply</button>
+<div style="display: none;" id="reply_form">
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="text" name="replied_content" id="replied"><br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('rep').onclick = function () {
+        document.getElementById('display_message').style = "display:none";
+        document.getElementById('reply_form').style = "display:block";
+    }
+
+    document.querySelectorAll('#comment').forEach(function(commentIcon) {
+    commentIcon.addEventListener('click', function() {
+      const messageID = this.getAttribute('data-message-id');
+      const redirectURL = `/view_message/${messageID}/`;
+      window.location.href = redirectURL;
+    });
+  });
+</script>

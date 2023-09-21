@@ -12,10 +12,23 @@ class Profile(models.Model):
 class TrendingMessage(models.Model):
     user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
     content=models.TextField()
+    hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)
+    parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     class Meta:
         ordering = ('-date_added',)
 
     def __str__(self) :
         return f'{self.user}->{self.content}'
+    
+class Hashtag(models.Model):
+    tag=models.CharField(max_length=255)
+    count=models.IntegerField(default=1,null=True)
+
+    class Meta:
+        ordering = ('-count',)
+
+
+    def __str__(self):
+        return self.tag
