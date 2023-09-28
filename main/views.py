@@ -46,8 +46,8 @@ def login_or_signup_view(request):
         if action == 'signup':
             print("This method is working")
             email = request.POST.get('email')
-            password = request.POST.get('password1')
-            # confirm_password = request.POST.get('confirm_password')
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
             confirm_password=password
             username = generate_unique_username()  # Replace with your username generation logic
             try:
