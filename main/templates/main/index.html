@@ -116,10 +116,8 @@
     </div>
     <div class="col-3 content-1a">
       <div class="search-container">
-        <form id="search-form" method="get" action="{% url 'index' %}">
           <input type="text" name="search-input" class="search-input" id="search-input" placeholder="Search here...">
           <i class="fas fa-search search-icon" id="search-icon"></i>
-      </form>
       </div>
 
       <div class="trending">
@@ -181,8 +179,11 @@
     console.log(data['content']);
     console.log(data['username']);
     console.log(data['profile_img']);
-    console.log(data['hashtag']);
-
+    if (data['hashtags']){
+    data['hashtags'].forEach(function(item){
+      console.log(item);
+    })
+  }
     // Create an HTML template string for the new message
     const template = `
         <div class="msg-output-main row">
@@ -237,12 +238,13 @@
 
   // search bar
   document.addEventListener('DOMContentLoaded', function () {
-    const searchForm = document.getElementById('search-form');
     const searchInput = document.querySelector('.search-input');
 
     searchInput.addEventListener('keyup', function (event) {
         if (event.key === 'Enter') {
-            searchForm.submit(); // Trigger form submission on "Enter" keypress
+            const hashtag=searchInput.value;
+            console.log(searchInput.value)
+            socket.send(JSON.stringify({'hashtag':hashtag}));
         }
     });
 });

@@ -16,17 +16,31 @@ class IndexConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        content = data['content']
-        username = data['username']
-        profile_img_url = await self.get_profile_img(username)
-        print(data)
 
-        hashtag = await self.hashtag_identifier(content)
+        if 'hashtag' in data:
+            print(data['hashtag'])
+            hashtag=data['hashtag']
+            hashtag_list = await self.get_hashtags(hashtag)
+            await self.send(text_data=json.dumps({
+                'hashtags':hashtag_list
+            }))
+        else:
+            content = data['content']
+            username = data['username']
+            profile_img_url = await self.get_profile_img(username)
+            print(data)
 
-        await self.save_message(username, content,hashtag)
+            hashtag = await self.hashtag_identifier(content)
 
-        # Broadcast the received message to all connected clients
-        await self.send_group_message(username,content,profile_img_url,hashtag)
+            await self.save_message(username, content,hashtag)
+
+            # Broadcast the received message to all connected clients
+            await self.send_group_message(username,content,profile_img_url,hashtag)
+        
+    @sync_to_async
+    def get_hashtags(self,hashtag_name):
+        return list(Hashtag.objects.filter(tag__icontains=hashtag_name).values_list('tag', flat=True))
+
 
     @sync_to_async
     def get_profile_img(self, username):
