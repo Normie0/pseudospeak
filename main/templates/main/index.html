@@ -38,7 +38,7 @@
       {% if user.is_authenticated %}
         <img id="profile_img_navbar" src="{{ user.profile.profile_img.url}}" alt="" style="width: 50px;height: 50px;border-radius: 50%;">
       {% else %}
-        <button class="btn signbtn me-4" type="submit">Sign in</button>
+        <button class="btn signbtn me-4" type="submit"><a href="{% url 'login_or_signup_view' %}">Sign in</a></button>
       {% endif %}
 
     </div>
@@ -94,13 +94,12 @@
               <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
               <i class="fa-solid fa-reply"></i>
               <i class="far fa-thumbs-up"></i>
-              <i class="fa-regular fa-eye"></i>
+              <i class="fa-regular fa-eye">{{m.view_count}}</i>
             </div>
           </div>
           {% endfor %}
 
           <!-- endd -->
-
         </form>
       </div>
       <!-- search box -->
@@ -154,7 +153,7 @@
     if (inputdata.trim() !== "") {
         socket.send(JSON.stringify({
             'content': inputdata,
-            'username': username
+            'username': username,
         }));
         
         // Clear the input field
@@ -173,7 +172,6 @@
     console.log(data['username']);
     console.log(data['profile_img']);
     console.log(data['hashtag']);
-
     // Create an HTML template string for the new message
     const template = `
         <div class="msg-output-main row">

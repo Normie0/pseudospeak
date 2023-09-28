@@ -20,7 +20,6 @@ class IndexConsumer(AsyncWebsocketConsumer):
         username = data['username']
         profile_img_url = await self.get_profile_img(username)
         print(data)
-
         hashtag = await self.hashtag_identifier(content)
 
         await self.save_message(username, content,hashtag)
