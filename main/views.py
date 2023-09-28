@@ -111,5 +111,4 @@ def view_message(request,message_id):
 
     message=get_object_or_404(TrendingMessage,id=message_id)
     replies = message.replies.all().order_by('date_added')
-
     return render(request, 'main/view_message.html', {'message': message, 'replies': replies})

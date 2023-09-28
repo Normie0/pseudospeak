@@ -1,0 +1,83 @@
+/* Style the main container */
+#display_message {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Style the headings */
+#display_message h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #fffdfd;
+}
+
+#display_message h2 {
+    font-size: 20px;
+    margin-top: 20px;
+    color: #444;
+}
+
+/* Style the reply list */
+#display_message ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#display_message li {
+    margin-bottom: 15px;
+}
+
+/* Style the reply comment */
+#display_message p#comment {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Style the reply content */
+#display_message p {
+    font-size: 16px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Style the reply button */
+#rep {
+    background-color: #e90ccb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* Style the reply form container */
+#reply_form {
+    display: none;
+    margin-top: 20px;
+}
+
+/* Style the reply input field and submit button */
+#reply_form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#reply_form button[type="submit"] {
+    background-color: #e90ccb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}

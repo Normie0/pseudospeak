@@ -27,7 +27,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <!-- <img src="/img/logo2.png" alt=""> -->
-    <a class="navbar-brand ms-5 nav-logo" href="#">PseudoSpeak</a>
+    <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}">PseudoSpeak</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -36,9 +36,13 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       </ul>
       {% if user.is_authenticated %}
-        <img id="profile_img_navbar" src="{{ user.profile.profile_img.url}}" alt="" style="width: 50px;height: 50px;border-radius: 50%;">
+      <img id="profile_img_navbar" src="{{ user.profile.profile_img.url }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+<a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
+
       {% else %}
-        <button class="btn signbtn me-4" type="submit">Sign in</button>
+        {% comment %} <button class="btn signbtn me-4" type="submit">Sign in</button> {% endcomment %}
+        
+        <a href="{% url 'login_or_signup_view' %}" class="btn signbtn me-4">Sign in</a>
       {% endif %}
 
     </div>
@@ -50,7 +54,7 @@
   <div class="row content-1">
     <div class="col-3 content-1a">
       <ul>
-        <li class="active"><i class="fa-solid fa-house"></i>Feed</li>
+        <li class="active"><i class="fa-solid fa-house"></i><a href="{% url 'index' %}">Feed</a></li>
         <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' %}">Groups</a></li>
         <li><i class="fa-solid fa-comments"></i>Topics</li>
         <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
@@ -69,11 +73,16 @@
             <input id="data1" type="text" placeholder="Write fearlessly...">
           </div>
           <div class="msg-con row">
-            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"></i></button>
+            
+            <button id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"></i></button>
             <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
             <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
             <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
           </div>
+          <div id="imageContainer"></div>
+
+<!-- Create a hidden file input for image upload -->
+<input type="file" id="imageInput" style="display: none;">
           <!-- sd -->
           {% for m in messages %}
           <div id="message-output" class="msg-output-main row">
@@ -237,6 +246,44 @@
         }
     });
 });
+
+const imageInput = document.getElementById('imageInput');
+  const uploadButton = document.getElementById('uploadButton');
+  const imageContainer = document.getElementById('imageContainer');
+  const postForm = document.getElementById('postForm');
+
+  uploadButton.addEventListener('click', () => {
+    imageInput.click(); // Trigger the hidden file input
+  });
+
+  imageInput.addEventListener('change', (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      // Create an image element and set its attributes
+      const imgElement = document.createElement('img');
+      imgElement.src = URL.createObjectURL(selectedFile);
+      imgElement.alt = 'Uploaded Image';
+
+      // Append the image to the image container
+      imageContainer.innerHTML = ''; // Clear any previous images
+      imageContainer.appendChild(imgElement);
+
+      // Show the post form
+      postForm.style.display = 'block';
+    }
+  });
+
+  postForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // Handle the form submission here (e.g., send data to the server)
+    const postContent = document.getElementById('postContent').value;
+    // You can send the image and post content to the server using AJAX or a form submission
+    // After successful submission, you can provide feedback to the user
+    alert('Post submitted successfully');
+    // Clear the form and image container
+    postForm.style.display = 'none';
+    imageContainer.innerHTML = '';
+  });
 
 </script>
 </body>

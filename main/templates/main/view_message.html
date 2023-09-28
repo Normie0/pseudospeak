@@ -1,36 +1,141 @@
-<div id="display_message" style="display: block;">
-    <h1>{{ message.user }} wrote:</h1>
-    <p>{{ message.content }}</p>
-    <h2>Replies:</h2>
-    <ul>
-        {% for reply in replies %}
-        <li>
-            <p id="comment" data-message-id="{{reply.pk}}">{{ reply.user }} replied:</p>
-            <p>{{ reply.content }}</p>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-<button id="rep">Reply</button>
-<div style="display: none;" id="reply_form">
-    <form action="" method="post">
-        {% csrf_token %}
-        <input type="text" name="replied_content" id="replied"><br>
-        <button type="submit">Submit</button>
-    </form>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Board</title>
+    <style>
+        body {
+            background: #000; /* Black background */
+            color: #fff; /* White text color */
+            font-family: Arial, sans-serif; /* Use a standard font */
+            margin: 0;
+            padding: 0;
+        }
 
-<script>
-    document.getElementById('rep').onclick = function () {
-        document.getElementById('display_message').style = "display:none";
-        document.getElementById('reply_form').style = "display:block";
-    }
+        .message-container {
+            background: #111; /* Dark gray message container background */
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        }
 
-    document.querySelectorAll('#comment').forEach(function(commentIcon) {
-    commentIcon.addEventListener('click', function() {
-      const messageID = this.getAttribute('data-message-id');
-      const redirectURL = `/view_message/${messageID}/`;
-      window.location.href = redirectURL;
-    });
-  });
-</script>
+        .message-container h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #fff; /* White text color */
+        }
+
+        .message-container h2 {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #fff; /* White text color */
+        }
+
+        .message-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .message-container li {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444; /* Dark gray line between messages */
+            padding-bottom: 15px; /* Space between the line and the reply form */
+        }
+
+        .comment {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e90ccb; /* Pink color for comments */
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .message-container p {
+            font-size: 16px;
+            color: #fff; /* White text color */
+            margin-top: 5px;
+        }
+
+        #rep {
+            background-color: #e90ccb; /* Pink color for reply button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        /* Style the reply form container */
+        #reply_form {
+            background: #111; /* Dark gray background for the reply form */
+            border-radius: 5px;
+            margin: 20px;
+            padding: 20px;
+            display: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        }
+
+        /* Style the reply input field and submit button */
+        #reply_form input[type="text"],
+        #reply_form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444; /* Dark gray border */
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #reply_form button[type="submit"] {
+            background-color: #e90ccb; /* Pink color for submit button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="message-container">
+        <h1>{{ message.user }} wrote:</h1>
+        <p>{{ message.content }}</p>
+        <h2>Replies:</h2>
+        <ul>
+            {% for reply in replies %}
+            <li>
+                <p class="comment" data-message-id="{{reply.pk}}">{{ reply.user }} replied:</p>
+                <p>{{ reply.content }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <button id="rep">Reply</button>
+    <div id="reply_form">
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="text" name="replied_content" id="replied" placeholder="Your Reply">
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('rep').onclick = function () {
+            document.querySelector('.message-container').style.display = "none";
+            document.getElementById('reply_form').style.display = "block";
+        }
+
+        document.querySelectorAll('.comment').forEach(function(commentIcon) {
+            commentIcon.addEventListener('click', function() {
+                const messageID = this.getAttribute('data-message-id');
+                const redirectURL = `/view_message/${messageID}/`;
+                window.location.href = redirectURL;
+            });
+        });
+    </script>
+</body>
+</html>
