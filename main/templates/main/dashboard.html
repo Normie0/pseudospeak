@@ -69,7 +69,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <!-- <img src="/img/logo2.png" alt=""> -->
-    <a class="navbar-brand ms-5 nav-logo" href="#">PseudoSpeak</a>
+    <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}">PseudoSpeak</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -92,7 +92,7 @@
   <div class="row content-1">
     <div class="col-3 content-1a">
       <ul>
-        <li class="active"><i class="fa-solid fa-house"></i>Feed</li>
+        <li class="active"><i class="fa-solid fa-house"></i><a href="{% url 'index' %}">Feed</a></li>
         <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' %}">Groups</a></li>
         <li><i class="fa-solid fa-comments"></i>Topics</li>
         <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>

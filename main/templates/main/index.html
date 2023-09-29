@@ -179,10 +179,17 @@
     console.log(data['content']);
     console.log(data['username']);
     console.log(data['profile_img']);
-    if (data['hashtags']){
-    data['hashtags'].forEach(function(item){
-      console.log(item);
-    })
+    if (Array.isArray(data['hashtags'])) {
+    const trending = document.querySelector('.trending-topics');
+    trending.innerHTML = "";
+    
+    data['hashtags'].forEach(function (item) {
+        console.log(item);
+        trending.innerHTML += `
+            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+            <a href="#">${item}</a><br>`; //checking hashtags
+    });
+
   }
     // Create an HTML template string for the new message
     const template = `
@@ -260,10 +267,14 @@ const imageInput = document.getElementById('imageInput');
 
   imageInput.addEventListener('change', (e) => {
     const selectedFile = e.target.files[0];
+    console.log("Event running")
+    const fileUrl = URL.createObjectURL(selectedFile);
+    console.log(fileUrl)
     if (selectedFile) {
       // Create an image element and set its attributes
       const imgElement = document.createElement('img');
-      imgElement.src = URL.createObjectURL(selectedFile);
+      imgElementurl = URL.createObjectURL(selectedFile);
+      
       imgElement.alt = 'Uploaded Image';
 
       // Append the image to the image container
