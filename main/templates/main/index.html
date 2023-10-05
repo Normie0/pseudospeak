@@ -105,7 +105,7 @@
             </div>
             <div class="msg-output-icons">
               <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
-              <i class="fa-solid fa-reply"></i>
+              <i class="fa-solid fa-reply" id="likes" data-like-id="{{m.pk}}"></i>
               <i class="far fa-thumbs-up"></i>
               <i class="fa-regular fa-eye"></i>
             </div>
@@ -307,17 +307,17 @@ socket.onopen = function () {
     }
   })
 
-  postForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    // Handle the form submission here (e.g., send data to the server)
-    const postContent = document.getElementById('postContent').value;
-    // You can send the image and post content to the server using AJAX or a form submission
-    // After successful submission, you can provide feedback to the user
-    alert('Post submitted successfully');
-    // Clear the form and image container
-    postForm.style.display = 'none';
-    imageContainer.innerHTML = '';
-  });
+  // message likes
+
+  document.querySelectorAll('#likes').forEach(function(likeIcon) {
+    likeIcon.addEventListener('click', function(event) {
+        event.stopPropagation();
+        const messageID = this.getAttribute('data-like-id');
+        console.log(1)
+    });
+});
+
+
 
 </script>
 </body>
