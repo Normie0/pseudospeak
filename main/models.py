@@ -12,6 +12,7 @@ class Profile(models.Model):
 class TrendingMessage(models.Model):
     user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
     content=models.TextField()
+    view_count=models.IntegerField(null=True,default=0)
     hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)
     parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')

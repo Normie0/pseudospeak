@@ -108,7 +108,7 @@ def view_message(request,message_id):
             replied_message=TrendingMessage(user=user,content=content,parent_message=parent_message)
             replied_message.save()
             return redirect(reverse('view_message', args=[message_id]))
-
+        
     message=get_object_or_404(TrendingMessage,id=message_id)
     replies = message.replies.all().order_by('date_added')
     return render(request, 'main/view_message.html', {'message': message, 'replies': replies})
