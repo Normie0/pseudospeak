@@ -80,9 +80,8 @@
             <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
           </div>
           <div id="imageContainer"></div>
-
-<!-- Create a hidden file input for image upload -->
-<input type="file" id="imageInput" style="display: none;">
+          <!-- Create a hidden file input for image upload -->
+          <input type="file" id="imageInput" style="display: none;">
           <!-- sd -->
           {% for m in messages %}
           <div id="message-output" class="msg-output-main row">
@@ -244,47 +243,48 @@
   });
 
   // search bar
-  document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.querySelector('.search-input');
+  document.getElementById("search-input").addEventListener("keydown",function(e){
+    if (event.key=="Enter"){
+      e.preventDefault();
+      const searchTxt=document.getElementById("search-input").value;
+      console.log(searchTxt);
+      socket.send(JSON.stringify({
+        'hashtag':searchTxt,
+      }
+      ));
+    }
+  })
 
-    searchInput.addEventListener('keyup', function (event) {
-        if (event.key === 'Enter') {
-            const hashtag=searchInput.value;
-            console.log(searchInput.value)
-            socket.send(JSON.stringify({'hashtag':hashtag}));
-        }
+  document.addEventListener('DOMContentLoaded', function() {
+  const uploadButton = document.getElementById("uploadButton");
+  const imageInput = document.querySelector("#imageInput");
+  const imageContainer = document.getElementById("imageContainer");
+
+  if (uploadButton && imageInput && imageContainer) {
+    uploadButton.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent the default form submission behavior
+
+      const image = imageInput.files[0];
+      if (image) {
+        // Handle the image upload logic here
+        const imgElement = document.createElement("img");
+        imgElement.src = URL.createObjectURL(image);
+        imgElement.style.maxWidth = "100%";
+        imgElement.style.height = "auto";
+        imageContainer.innerHTML = ""; // Clear previous content
+        imageContainer.appendChild(imgElement);
+      } else {
+        console.log("No image selected.");
+      }
     });
+  } else {
+    console.log("Elements not found. Check your HTML structure and IDs.");
+  }
+
+  // Other JavaScript code
 });
 
-const imageInput = document.getElementById('imageInput');
-  const uploadButton = document.getElementById('uploadButton');
-  const imageContainer = document.getElementById('imageContainer');
-  const postForm = document.getElementById('postForm');
 
-  uploadButton.addEventListener('click', () => {
-    imageInput.click(); // Trigger the hidden file input
-  });
-
-  imageInput.addEventListener('change', (e) => {
-    const selectedFile = e.target.files[0];
-    console.log("Event running")
-    const fileUrl = URL.createObjectURL(selectedFile);
-    console.log(fileUrl)
-    if (selectedFile) {
-      // Create an image element and set its attributes
-      const imgElement = document.createElement('img');
-      imgElementurl = URL.createObjectURL(selectedFile);
-      
-      imgElement.alt = 'Uploaded Image';
-
-      // Append the image to the image container
-      imageContainer.innerHTML = ''; // Clear any previous images
-      imageContainer.appendChild(imgElement);
-
-      // Show the post form
-      postForm.style.display = 'block';
-    }
-  });
 
   postForm.addEventListener('submit', (e) => {
     e.preventDefault();
