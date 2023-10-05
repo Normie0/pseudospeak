@@ -21,6 +21,10 @@
     #comment:hover{
       cursor: pointer;
     }
+    #imageContainer{
+      width: 50px;
+      height: 50px;
+    }
   </style>
 </head>
 <body>
@@ -74,12 +78,11 @@
           </div>
           <div class="msg-con row">
             
-            <button id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"></i></button>
+            <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image" onclick="uploadImage()"></i></button>
             <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
             <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
             <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
           </div>
-          <div id="imageContainer"></div>
           <!-- Create a hidden file input for image upload -->
           <input type="file" id="imageInput" style="display: none;">
           <!-- sd -->
@@ -95,7 +98,9 @@
               <div class="msg-output-details">
                 <h5>{{m.user.username}}</h5>
                 <p>{{m.content}}</p>
-            </a>
+                {% if m.image %}
+                  <img src="{{m.image.url}}" alt="" style="width: 250px; height: 250px;">
+                {% endif %}
               </div>
             </div>
             <div class="msg-output-icons">
@@ -145,39 +150,85 @@
 <script>
   const socket = new WebSocket('ws://' + window.location.host + '/ws/');
 
-  socket.onopen = function () {
-    console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
+  let check = false; // Define check at the top level so it's accessible everywhere
 
+function uploadImage() {
+    document.getElementById('imageInput').click();
+}
+
+function handleFile(event) {
+    const file = event.target.files[0];
+    console.log(file.Array)
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            console.log(img.src);
+            check = true; // Set check to true when a file is loaded
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+document.getElementById('imageInput').addEventListener('change', handleFile);
+
+socket.onopen = function () {
+    console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
     console.log("WebSocket connection established.");
 
     const username = JSON.parse(document.getElementById("json-username").textContent);
     const post = document.querySelector('#post-msg');
     post.onclick = function (e) {
-    e.preventDefault();
-    const data = document.querySelector('#data1');
-    const inputdata = data.value;
+        e.preventDefault();
+        const data = document.querySelector('#data1');
+        const inputdata = data.value;
 
-    if (inputdata.trim() !== "") {
-        socket.send(JSON.stringify({
-            'content': inputdata,
-            'username': username
-        }));
-        
-        // Clear the input field
-        data.value = "";
-    }
+        if (inputdata.trim() !== "") {
+            if (check) {
+                // Get the file from the file input
+                const file = document.getElementById('imageInput').files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imgBase64 = e.target.result;
+
+                        // Send the image and the inputdata together
+                        socket.send(JSON.stringify({
+                            'content': inputdata,
+                            'username': username,
+                            'image': imgBase64
+                        }));
+
+                        // Clear the input field and image container
+                        data.value = "";
+                        document.getElementById('imageContainer').innerHTML = '';
+                        check = false; // Reset check to false after sending the image
+                    }
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                // If there is no image, send only the inputdata
+                socket.send(JSON.stringify({
+                    'content': inputdata,
+                    'username': username,
+                    'image':null
+                }));
+
+                // Clear the input field
+                data.value = "";
+            }
+        }
+    };
 };
 
-
-    // Now that the WebSocket is open, you can send data
-
-  };
 
   socket.onmessage = function (e) {
     const data = JSON.parse(e.data);
     console.log(data['content']);
     console.log(data['username']);
     console.log(data['profile_img']);
+    console.log(data['image']);
     if (Array.isArray(data['hashtags'])) {
     const trending = document.querySelector('.trending-topics');
     trending.innerHTML = "";
@@ -203,6 +254,7 @@
                 <div class="msg-output-details">
                     <h5>${data.username}</h5>
                     <p>${data.content}</p>
+                    <img src="${data.image}" style="width:250px;height:250px">
                 </div>
             </div>
             <div class="msg-output-icons">
@@ -254,37 +306,6 @@
       ));
     }
   })
-
-  document.addEventListener('DOMContentLoaded', function() {
-  const uploadButton = document.getElementById("uploadButton");
-  const imageInput = document.querySelector("#imageInput");
-  const imageContainer = document.getElementById("imageContainer");
-
-  if (uploadButton && imageInput && imageContainer) {
-    uploadButton.addEventListener('click', function(e) {
-      e.preventDefault(); // Prevent the default form submission behavior
-
-      const image = imageInput.files[0];
-      if (image) {
-        // Handle the image upload logic here
-        const imgElement = document.createElement("img");
-        imgElement.src = URL.createObjectURL(image);
-        imgElement.style.maxWidth = "100%";
-        imgElement.style.height = "auto";
-        imageContainer.innerHTML = ""; // Clear previous content
-        imageContainer.appendChild(imgElement);
-      } else {
-        console.log("No image selected.");
-      }
-    });
-  } else {
-    console.log("Elements not found. Check your HTML structure and IDs.");
-  }
-
-  // Other JavaScript code
-});
-
-
 
   postForm.addEventListener('submit', (e) => {
     e.preventDefault();
