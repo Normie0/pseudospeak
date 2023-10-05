@@ -105,8 +105,8 @@
             </div>
             <div class="msg-output-icons">
               <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
-              <i class="fa-solid fa-reply" id="likes" data-like-id="{{m.pk}}"></i>
-              <i class="far fa-thumbs-up"></i>
+              <i class="fa-solid fa-reply"></i>
+              <i class="far fa-thumbs-up" id="likes" data-message-id="{{m.pk}}"></i>
               <i class="fa-regular fa-eye"></i>
             </div>
           </div>
@@ -308,14 +308,16 @@ socket.onopen = function () {
   })
 
   // message likes
-
-  document.querySelectorAll('#likes').forEach(function(likeIcon) {
-    likeIcon.addEventListener('click', function(event) {
-        event.stopPropagation();
-        const messageID = this.getAttribute('data-like-id');
-        console.log(1)
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#likes').forEach(function(likeButton) {
+        likeButton.addEventListener('click', function() {
+            const messageID = this.getAttribute('data-message-id');
+            console.log(messageID);
+            // Perform your logic for the like button here
+        });
     });
 });
+
 
 
 
