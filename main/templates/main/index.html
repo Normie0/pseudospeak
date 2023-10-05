@@ -106,7 +106,7 @@
             <div class="msg-output-icons">
               <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
               <i class="fa-solid fa-reply"></i>
-              <i class="far fa-thumbs-up" id="likes" data-message-id="{{m.pk}}"></i>
+              <i class="far fa-thumbs-up" id="likes" data-message-id="{{m.pk}}">{{m.likes}}</i>
               <i class="fa-regular fa-eye"></i>
             </div>
           </div>
@@ -313,7 +313,10 @@ socket.onopen = function () {
         likeButton.addEventListener('click', function() {
             const messageID = this.getAttribute('data-message-id');
             console.log(messageID);
-            // Perform your logic for the like button here
+
+            socket.send(JSON.stringify({
+              'likeId':messageID
+            }))
         });
     });
 });

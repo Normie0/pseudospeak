@@ -32,6 +32,12 @@ def save_image(image_data, username):
 
         return file_path
 
+@sync_to_async
+def like_message(like_id):
+    message = TrendingMessage.objects.get(pk=like_id)
+    message.likes += 1
+    message.save()
+
 
 class IndexConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -50,6 +56,11 @@ class IndexConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'hashtags':hashtag_list
             }))
+
+        elif 'likeId' in data:
+            print(data['likeId'])
+            await like_message(data['likeId'])
+
         else:
             content = data['content']
             username = data['username']
@@ -65,18 +76,16 @@ class IndexConsumer(AsyncWebsocketConsumer):
 
             # Broadcast the received message to all connected clients
             await self.send_group_message(username,content,profile_img_url,hashtag,image)
+
+    @sync_to_async
+    def like_message(self,like_id):
+        message = TrendingMessage.objects.get(pk=like_id)
+        message.likes += 1
+        message.save()
         
     @sync_to_async
     def get_hashtags(self,hashtag_name):
         return list(Hashtag.objects.filter(tag__icontains=hashtag_name).values_list('tag', flat=True))
-
-
-    @sync_to_async
-    def get_profile_img(self, username):
-        user = User.objects.get(username=username)
-        profile = Profile.objects.get(user=user)
-        return profile.profile_img.url
-
 
     @sync_to_async
     def save_message(self, username, message, hashtag, image):
