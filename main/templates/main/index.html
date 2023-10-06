@@ -145,7 +145,6 @@
 <script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
 {{ request.user.username|json_script:"json-username"}}
 <script>
   const socket = new WebSocket('ws://' + window.location.host + '/ws/');
@@ -294,18 +293,20 @@ socket.onopen = function () {
   });
 
   // search bar
-  document.getElementById("search-input").addEventListener("keydown",function(e){
-    if (event.key=="Enter"){
-      e.preventDefault();
-      const searchTxt=document.getElementById("search-input").value;
-      if (searchTxt){
-        console.log(searchTxt);
-        socket.send(JSON.stringify({
-        'hashtag':searchTxt,
-        }));
-      }
+document.getElementById("search-input").addEventListener("keydown", function(event){
+  if (event.key === "Enter"){
+    event.preventDefault();
+    const searchTxt = document.getElementById("search-input").value;
+    if (searchTxt){
+      console.log(searchTxt);
+      socket.send(JSON.stringify({
+        'hashtag': searchTxt,
+      }));
     }
-  });
+  }
+});
+
+
   // message likes
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('#likes').forEach(function(likeButton) {
