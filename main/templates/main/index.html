@@ -15,234 +15,254 @@
       color: white;
       text-decoration: none;
     }
-    #profile_img_navbar:hover{
+
+    #profile_img_navbar:hover {
       cursor: pointer;
     }
-    #comment:hover{
+
+    #comment:hover {
       cursor: pointer;
     }
-    #imageContainer{
+
+    #imageContainer {
       width: 50px;
       height: 50px;
     }
+
+    .msg-output-details img {
+      max-width: 80%;
+      border-radius: 8px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    }
+
+
+    .msg-output-details p {
+      margin-top: 10px;
+    }
   </style>
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <!-- <img src="/img/logo2.png" alt=""> -->
-    <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}">PseudoSpeak</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      </ul>
-      {% if user.is_authenticated %}
-      <img id="profile_img_navbar" src="{{ user.profile.profile_img.url }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
-<a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <!-- <img src="/img/logo2.png" alt=""> -->
+      <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}">PseudoSpeak</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        </ul>
+        {% if user.is_authenticated %}
+        <img id="profile_img_navbar" src="{{ user.profile.profile_img.url }}" alt=""
+          style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+        <a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
 
-      {% else %}
+        {% else %}
         {% comment %} <button class="btn signbtn me-4" type="submit">Sign in</button> {% endcomment %}
-        
+
         <a href="{% url 'login_or_signup_view' %}" class="btn signbtn me-4">Sign in</a>
-      {% endif %}
+        {% endif %}
 
-    </div>
-  </div>
-</nav>
-
-<!--content-->
-<div class="container-fluid">
-  <div class="row content-1">
-    <div class="col-3 content-1a">
-      <ul>
-        <li class="active"><i class="fa-solid fa-house"></i><a href="{% url 'index' %}">Feed</a></li>
-        <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' %}">Groups</a></li>
-        <li><i class="fa-solid fa-comments"></i>Topics</li>
-        <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
-        <li><i class="fa-solid fa-gear"></i><a href="{% url 'logout' %}">Settings</a></li>
-      </ul>
-    </div>
-
-    <!--Msgbox-->
-    <div class="col-6 content-1b content-scroll">
-      <div class="msgbox">
-        <form>
-          <div class="msgbox-input">
-            <div class="msgbox-img ">
-              <img src="{{user.profile.profile_img.url}}" alt="">
-            </div>
-            <input id="data1" type="text" placeholder="Write fearlessly...">
-          </div>
-          <div class="msg-con row">
-            
-            <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image" onclick="uploadImage()"></i></button>
-            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
-            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
-            <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
-          </div>
-          <!-- Create a hidden file input for image upload -->
-          <input type="file" id="imageInput" style="display: none;">
-          <!-- sd -->
-          {% for m in messages %}
-          <div id="message-output" class="msg-output-main row">
-            <div class="msgbox-trendings">
-              <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
-            </div>
-            <div class="msg-output">
-              <div class="msg-output-img">
-                <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
-              </div>
-              <div class="msg-output-details">
-                <h5>{{m.user.username}}</h5>
-                <p>{{m.content}}</p>
-                {% if m.image %}
-                  <img src="{{m.image.url}}" alt="" style="width: 250px; height: 250px;">
-                {% endif %}
-              </div>
-            </div>
-            <div class="msg-output-icons">
-              <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
-              <i class="fa-solid fa-reply"></i>
-              <i class="far fa-thumbs-up" id="likes" data-message-id="{{m.pk}}">{{m.likes}}</i>
-              <i class="fa-regular fa-eye"></i>
-            </div>
-          </div>
-          {% endfor %}
-
-          <!-- endd -->
-
-        </form>
       </div>
-      <!-- search box -->
     </div>
-    <div class="col-3 content-1a">
-      <div class="search-container">
+  </nav>
+
+  <!--content-->
+  <div class="container-fluid">
+    <div class="row content-1">
+      <div class="col-3 content-1a">
+        <ul>
+          <li class="active"><i class="fa-solid fa-house"></i><a href="{% url 'index' %}">Feed</a></li>
+          <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' %}">Groups</a></li>
+          <li><i class="fa-solid fa-comments"></i><a href="{% url 'rooms' %}">Topics</li>
+          <li><i class="fa-solid fa-user-plus"></i><a href="{% url 'invite' %}">Invite Friends</li>
+          <li><i class="fa-solid fa-gear"></i><a href="{% url 'logout' %}">Settings</a></li>
+        </ul>
+      </div>
+
+      <!--Msgbox-->
+      <div class="col-6 content-1b content-scroll">
+        <div class="msgbox">
+          <form>
+            <div class="msgbox-input">
+              <div class="msgbox-img ">
+                <img src="{{user.profile.profile_img.url}}" alt="">
+              </div>
+              <input id="data1" type="text" placeholder="Write fearlessly...">
+            </div>
+            <div class="msg-con row">
+
+              <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i
+                  class="fa-solid fa-image" onclick="uploadImage()"></i></button>
+              <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
+              <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
+              <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
+            </div>
+            <!-- Create a hidden file input for image upload -->
+            <input type="file" id="imageInput" style="display: none;">
+            <!-- sd -->
+            {% for m in messages %}
+            <div id="message-output" class="msg-output-main row">
+              <div class="msgbox-trendings">
+                <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
+              </div>
+              <div class="msg-output">
+                <div class="msg-output-img">
+                  <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
+                </div>
+                <div class="msg-output-details">
+                  <h5>{{m.user.username}}</h5>
+                  <p>{{m.content}}</p>
+                  {% if m.image %}
+                  <img src="{{m.image.url}}" alt="">
+                  {% endif %}
+                </div>
+              </div>
+              <div class="msg-output-icons">
+                <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
+                <i class="fa-solid fa-reply"></i>
+                <i class="far fa-thumbs-up" id="likes" data-message-id="{{m.pk}}">
+                  {{m.likes}}
+                </i>
+                <i class="fa-regular fa-eye"></i>
+              </div>
+            </div>
+            {% endfor %}
+
+            <!-- endd -->
+
+          </form>
+        </div>
+        <!-- search box -->
+      </div>
+      <div class="col-3 content-1a">
+        <div class="search-container">
           <input type="text" name="search-input" class="search-input" id="search-input" placeholder="Search here...">
           <i class="fas fa-search search-icon" id="search-icon"></i>
-      </div>
+        </div>
 
-      <div class="trending">
-        <h4 class="trending-heading">Trending on PseudoSpeak</h4>
-        <div class="trending-topics">
-          {% for tag in hashtags %}
-          <div class="t1">
-            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a class="trends" href="#">{{tag.tag}}</a>
+        <div class="trending">
+          <h4 class="trending-heading">Trending on PseudoSpeak</h4>
+          <div class="trending-topics">
+            {% for tag in hashtags %}
+            <div class="t1">
+              <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+              <a class="trends" href="#">{{tag.tag}}</a>
+            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
       </div>
     </div>
+
   </div>
 
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+  {{ request.user.username|json_script:"json-username"}}
+  <script>
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/');
 
-{{ request.user.username|json_script:"json-username"}}
-<script>
-  const socket = new WebSocket('ws://' + window.location.host + '/ws/');
+    let check = false; // Define check at the top level so it's accessible everywhere
 
-  let check = false; // Define check at the top level so it's accessible everywhere
+    function uploadImage() {
+      document.getElementById('imageInput').click();
+    }
 
-function uploadImage() {
-    document.getElementById('imageInput').click();
-}
-
-function handleFile(event) {
-    const file = event.target.files[0];
-    console.log(file.Array)
-    if (file) {
+    function handleFile(event) {
+      const file = event.target.files[0];
+      console.log(file.Array)
+      if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            console.log(img.src);
-            check = true; // Set check to true when a file is loaded
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          console.log(img.src);
+          check = true; // Set check to true when a file is loaded
         }
         reader.readAsDataURL(file);
+      }
     }
-}
 
-document.getElementById('imageInput').addEventListener('change', handleFile);
+    document.getElementById('imageInput').addEventListener('change', handleFile);
 
-socket.onopen = function () {
-    console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
-    console.log("WebSocket connection established.");
+    socket.onopen = function () {
+      console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
+      console.log("WebSocket connection established.");
 
-    const username = JSON.parse(document.getElementById("json-username").textContent);
-    const post = document.querySelector('#post-msg');
-    post.onclick = function (e) {
+      const username = JSON.parse(document.getElementById("json-username").textContent);
+      const post = document.querySelector('#post-msg');
+      post.onclick = function (e) {
         e.preventDefault();
         const data = document.querySelector('#data1');
         const inputdata = data.value;
 
         if (inputdata.trim() !== "") {
-            if (check) {
-                // Get the file from the file input
-                const file = document.getElementById('imageInput').files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const imgBase64 = e.target.result;
+          if (check) {
+            // Get the file from the file input
+            const file = document.getElementById('imageInput').files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                const imgBase64 = e.target.result;
 
-                        // Send the image and the inputdata together
-                        socket.send(JSON.stringify({
-                            'content': inputdata,
-                            'username': username,
-                            'image': imgBase64
-                        }));
-
-                        // Clear the input field and image container
-                        data.value = "";
-                        document.getElementById('imageContainer').innerHTML = '';
-                        check = false; // Reset check to false after sending the image
-                    }
-                    reader.readAsDataURL(file);
-                }
-            } else {
-                // If there is no image, send only the inputdata
+                // Send the image and the inputdata together
                 socket.send(JSON.stringify({
-                    'content': inputdata,
-                    'username': username,
-                    'image':null
+                  'content': inputdata,
+                  'username': username,
+                  'image': imgBase64
                 }));
 
-                // Clear the input field
+                // Clear the input field and image container
                 data.value = "";
+                document.getElementById('imageContainer').innerHTML = '';
+                check = false; // Reset check to false after sending the image
+              }
+              reader.readAsDataURL(file);
             }
+          } else {
+            // If there is no image, send only the inputdata
+            socket.send(JSON.stringify({
+              'content': inputdata,
+              'username': username,
+              'image': null
+            }));
+
+            // Clear the input field
+            data.value = "";
+          }
         }
+      };
     };
-};
 
 
-  socket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    console.log(data['content']);
-    console.log(data['username']);
-    console.log(data['profile_img']);
-    console.log(data['image']);
-    if (Array.isArray(data['hashtags'])) {
-    const trending = document.querySelector('.trending-topics');
-    trending.innerHTML = "";
-    
-    data['hashtags'].forEach(function (item) {
-        console.log(item);
-        trending.innerHTML += `
+    socket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      console.log(data['content']);
+      console.log(data['username']);
+      console.log(data['profile_img']);
+      console.log(data['image']);
+      if (Array.isArray(data['hashtags'])) {
+        const trending = document.querySelector('.trending-topics');
+        trending.innerHTML = "";
+
+        data['hashtags'].forEach(function (item) {
+          console.log(item);
+          trending.innerHTML += `
             <span><i class="fa-solid fa-arrow-trend-up"></i></span>
             <a href="#">${item}</a><br>`; //checking hashtags
-    });
+        });
 
-  }
-    // Create an HTML template string for the new message
-    const template = `
+      }
+      // Create an HTML template string for the new message
+      const template = `
         <div class="msg-output-main row">
             <div class="msgbox-trendings">
                 <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
@@ -266,65 +286,73 @@ socket.onopen = function () {
         </div><br>
     `;
 
-    // Get the message container and insert the new message at the beginning
-    const msgOutputMain = document.querySelector('.msg-output-main');
-    msgOutputMain.insertAdjacentHTML('afterbegin', template);
-  };
+      // Get the message container and insert the new message at the beginning
+      const msgOutputMain = document.querySelector('.msg-output-main');
+      msgOutputMain.insertAdjacentHTML('afterbegin', template);
+    };
 
-  socket.onclose = function (e) {
-    console.log("WebSocket connection closed.");
-  };
+    socket.onclose = function (e) {
+      console.log("WebSocket connection closed.");
+    };
 
-  function scrollToTop() {
-    let objDiv = document.querySelector(".msgbox");
-    objDiv.scrollTop = objDiv.scrollBottom;
-  }
-
-  document.querySelector('#profile_img_navbar').onclick=function(){
-    var redirecturl='{% url "dashboard" %}';
-    window.location.href=redirecturl;
-  }
-
-  document.querySelectorAll('#comment').forEach(function(commentIcon) {
-    commentIcon.addEventListener('click', function() {
-      const messageID = this.getAttribute('data-message-id');
-      console.log(messageID)
-      const redirectURL = `/view_message/${messageID}/`;
-      window.location.href = redirectURL;
-    });
-  });
-
-  // search bar
-  document.getElementById("search-input").addEventListener("keydown",function(e){
-    if (event.key=="Enter"){
-      e.preventDefault();
-      const searchTxt=document.getElementById("search-input").value;
-      console.log(searchTxt);
-      socket.send(JSON.stringify({
-        'hashtag':searchTxt,
-      }
-      ));
+    function scrollToTop() {
+      let objDiv = document.querySelector(".msgbox");
+      objDiv.scrollTop = objDiv.scrollBottom;
     }
-  })
 
-  // message likes
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('#likes').forEach(function(likeButton) {
-        likeButton.addEventListener('click', function() {
-            const messageID = this.getAttribute('data-message-id');
-            console.log(messageID);
+    document.querySelector('#profile_img_navbar').onclick = function () {
+      var redirecturl = '{% url "dashboard" %}';
+      window.location.href = redirecturl;
+    }
 
-            socket.send(JSON.stringify({
-              'likeId':messageID
-            }))
-        });
+    document.querySelectorAll('#comment').forEach(function (commentIcon) {
+      commentIcon.addEventListener('click', function () {
+        const messageID = this.getAttribute('data-message-id');
+        console.log(messageID)
+        const redirectURL = `/view_message/${messageID}/`;
+        window.location.href = redirectURL;
+      });
     });
-});
+
+    // search bar
+    document.getElementById("search-input").addEventListener("keydown", function (e) {
+      if (event.key == "Enter") {
+        e.preventDefault();
+        const searchTxt = document.getElementById("search-input").value;
+        console.log(searchTxt);
+        socket.send(JSON.stringify({
+          'hashtag': searchTxt,
+        }
+        ));
+      }
+    })
+
+    // message likes
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('#likes').forEach(function (likeButton) {
+        likeButton.addEventListener('click', function () {
+          const messageID = this.getAttribute('data-message-id');
+          console.log(messageID);
+
+          socket.send(JSON.stringify({
+            'likeId': messageID
+          }))
+        });
+      });
+    });
+    // for like on post 
+    var likesElement = document.getElementById("likes");
 
 
+    var likesCount = parseInt("{{m.likes}}");
 
 
-</script>
+    if (likesCount === 0) {
+      likesElement.style.display = "none";
+    }
+
+
+  </script>
 </body>
 
 </html>

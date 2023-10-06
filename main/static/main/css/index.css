@@ -305,21 +305,21 @@ body {
 /*start*/
 
 /* Container for the entire message output */
-.msg-output {
+/* .msg-output {
     display: flex;
     margin-top: 1%;
     align-items: flex-start;
 }
 
 /* Style for the user or sender's profile image */
-/* .msg-output-img {
+.msg-output-img {
     width: 5%;
     min-width: 40px;
     height: auto;
     margin-right: 10px;
     border-radius: 40%;
     overflow: hidden;
-} */
+}
 .msg-output {
     display: flex;
     margin-top: 1%;
@@ -342,7 +342,7 @@ body {
 }
 
 .msg-output-img img {
-    width: 100%;
+    width: 80%;
     height: 100%;
     object-fit: cover;
 }
@@ -383,7 +383,7 @@ body {
 
 .msg-output-details a:hover {
     text-decoration: none;
-}
+} */
 
 
 
