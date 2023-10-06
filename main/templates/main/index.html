@@ -317,6 +317,8 @@ socket.onopen = function () {
             socket.send(JSON.stringify({
               'likeId':messageID
             }))
+
+            socket.onmessage()
         });
     });
 });
