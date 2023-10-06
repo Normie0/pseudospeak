@@ -103,7 +103,7 @@ class IndexConsumer(AsyncWebsocketConsumer):
             image_file_path = save_image(image, username)
             image_url = settings.MEDIA_URL + image_file_path
         else:
-            image_url = None
+            image_file_path = None
 
         if message:
             # If there's message content, create the TrendingMessage object
