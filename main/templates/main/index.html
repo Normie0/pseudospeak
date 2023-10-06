@@ -299,14 +299,14 @@ socket.onopen = function () {
     if (event.key=="Enter"){
       e.preventDefault();
       const searchTxt=document.getElementById("search-input").value;
-      console.log(searchTxt);
-      socket.send(JSON.stringify({
+      if (searchTxt){
+        console.log(searchTxt);
+        socket.send(JSON.stringify({
         'hashtag':searchTxt,
+        }));
       }
-      ));
     }
-  })
-
+  });
   // message likes
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('#likes').forEach(function(likeButton) {
@@ -317,8 +317,6 @@ socket.onopen = function () {
             socket.send(JSON.stringify({
               'likeId':messageID
             }))
-
-            socket.onmessage()
         });
     });
 });
