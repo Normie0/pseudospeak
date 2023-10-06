@@ -78,10 +78,10 @@ class IndexConsumer(AsyncWebsocketConsumer):
             await self.send_group_message(username,content,profile_img_url,hashtag,image)
 
     @sync_to_async
-    def like_message(self,like_id):
-        message = TrendingMessage.objects.get(pk=like_id)
-        message.likes += 1
-        message.save()
+    def get_profile_img(self,username):
+        user=User.objects.get(username=username)
+        profile=Profile.objects.get(user=user)
+        return profile.profile_img.url
         
     @sync_to_async
     def get_hashtags(self,hashtag_name):
