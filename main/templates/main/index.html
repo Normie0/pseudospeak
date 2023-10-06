@@ -115,7 +115,7 @@
                 <div class="msg-output-details">
                   <h5>{{m.user.username}}</h5>
                   <p>{{m.content}}</p>
-                  {% if m.image %}
+                  {% if m.image is not None %}
                   <img src="{{m.image.url}}" alt="">
                   {% endif %}
                 </div>
@@ -340,16 +340,7 @@
         });
       });
     });
-    // for like on post 
-    var likesElement = document.getElementById("likes");
 
-
-    var likesCount = parseInt("{{m.likes}}");
-
-
-    if (likesCount === 0) {
-      likesElement.style.display = "none";
-    }
 
 
   </script>
