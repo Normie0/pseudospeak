@@ -6,31 +6,32 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from django.urls import reverse
 from .models import TrendingMessage,Hashtag
 from .models import Profile
 from django.db.models import F
 import re,time
+from django.core.files.storage import default_storage
 
 def save_image(image_data, username):
-        # Remove the part of the image_data that indicates the encoding
-        format, imgstr = image_data.split(';base64,') 
-        # Find out the file format (jpeg, png)
-        ext = format.split('/')[-1] 
+    # Remove the part of the image_data that indicates the encoding
+    format, imgstr = image_data.split(';base64,') 
+    # Find out the file format (jpeg, png)
+    ext = format.split('/')[-1] 
+    print(imgstr)
 
-        # Generate a filename
-        filename = f"{username}_{time.time()}.{ext}"
+    # Generate a filename
+    filename = f"{username}_{time.time()}.{ext}"
 
-        # Convert the base64 string to a ContentFile
-        data = ContentFile(base64.b64decode(imgstr), name=filename)
+    # Convert the base64 string to a ContentFile
+    data = ContentFile(base64.b64decode(imgstr), name=filename)
 
-        # Define the file path
-        file_path = os.path.join(settings.MEDIA_ROOT, "images", filename)
+    # Save the file
+    file = default_storage.save(os.path.join("images", filename), data)
 
-        # Save the file
-        with open(file_path, 'wb') as f:
-            f.write(data.read())
+    # Return the relative file path
+    return file
 
-        return file_path
 
 @sync_to_async
 def like_message(like_id):
@@ -100,8 +101,9 @@ class IndexConsumer(AsyncWebsocketConsumer):
         if image:
             # If there's image data, save it and get the file path
             image_file_path = save_image(image, username)
+            image_url = settings.MEDIA_URL + image_file_path
         else:
-            image_file_path = None
+            image_url = None
 
         if message:
             # If there's message content, create the TrendingMessage object

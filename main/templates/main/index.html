@@ -202,7 +202,6 @@ socket.onopen = function () {
 
                         // Clear the input field and image container
                         data.value = "";
-                        document.getElementById('imageContainer').innerHTML = '';
                         check = false; // Reset check to false after sending the image
                     }
                     reader.readAsDataURL(file);
