@@ -1,5 +1,4 @@
 {% load static %}
-<!--adding a comment to test  -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,7 +83,7 @@
             <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
           </div>
           <!-- Create a hidden file input for image upload -->
-          <input type="file" id="imageInput" style="display: none;">
+          <input type="file" id="imageInput" accept="image/*" style="display: none;">
           <!-- sd -->
           {% for m in messages %}
           <div id="message-output" class="msg-output-main row">
@@ -220,7 +219,6 @@ socket.onopen = function () {
     };
 };
 
-
   socket.onmessage = function (e) {
     const data = JSON.parse(e.data);
     console.log(data['content']);
@@ -230,15 +228,14 @@ socket.onopen = function () {
     if (Array.isArray(data['hashtags'])) {
     const trending = document.querySelector('.trending-topics');
     trending.innerHTML = "";
-    
     data['hashtags'].forEach(function (item) {
         console.log(item);
         trending.innerHTML += `
             <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a href="#">${item}</a><br>`; //checking hashtags
+            <a href="#" style="font-weight: bold; text-decoration: none; color: rgb(96, 63, 216);">${item}</a><br>`; //checking hashtags
     });
-
   }
+  
     // Create an HTML template string for the new message
     const template = `
         <div class="msg-output-main row">
