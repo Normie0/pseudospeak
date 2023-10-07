@@ -61,3 +61,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room = Room.objects.get(slug=room)
         if message:
             Message.objects.create(user=user, room=room, content=message)
+
+
+class RoomConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+
+    async def disconnect(self, code):
+        pass
+
+    async def receive(self, text_data):
+        data=json.loads(text_data)
+
+        print(data)
+
+        id=data['id']
+        username=data['username']
+
+        await self.add_user_room(username,id)
+
+    @sync_to_async
+    def add_user_room(self,username,id):
+        user=User.objects.get(username=username)
+        room=Room.objects.get(pk=id)
+        room.users.add(user)
+        room.save()
+        print(room.users.all())
