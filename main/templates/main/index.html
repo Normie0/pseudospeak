@@ -1,80 +1,79 @@
 {% extends 'main/base.html' %}
 
-{% load static %}
-
 {% block content %}
 
-    <!--Msgbox-->
-    <div class="col-6 content-1b content-scroll">
-      <div class="msgbox">
-        <form>
-          <div class="msgbox-input">
-            <div class="msgbox-img ">
-              <img src="{{user.profile.profile_img.url}}" alt="">
-            </div>
-            <input id="data1" type="text" placeholder="Write fearlessly...">
-          </div>
-          <div class="msg-con row">
-            
-            <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image" onclick="uploadImage()"></i></button>
-            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
-            <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
-            <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
-          </div>
-          <!-- Create a hidden file input for image upload -->
-          <input type="file" id="imageInput" accept="image/*" style="display: none;">
-          <!-- sd -->
-          {% for m in messages %}
-          <div id="message-output" class="msg-output-main row">
-            <div class="msgbox-trendings">
-              <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
-            </div>
-            <div class="msg-output">
-              <div class="msg-output-img">
-                <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
-              </div>
-              <div class="msg-output-details">
-                <h5>{{m.user.username}}</h5>
-                <p>{{m.content}}</p>
-                {% if m.image %}
-                  <img src="{{m.image.url}}" alt="" style="width: 250px; height: 250px;">
-                {% endif %}
-              </div>
-            </div>
-            <div class="msg-output-icons">
-              <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
-              <i class="fa-solid fa-reply"></i>
-              <i class="far fa-thumbs-up" id="likes" data-message-id="{{m.pk}}">{{m.likes}}</i>
-              <i class="fa-regular fa-eye"></i>
-            </div>
-          </div>
-          {% endfor %}
-
-          <!-- endd -->
-
-        </form>
+<!--Msgbox-->
+<div class="col-6 content-1b content-scroll">
+  <div class="msgbox">
+    <form>
+      <div class="msgbox-input">
+        <div class="msgbox-img ">
+          <img src="{{user.profile.profile_img.url}}" alt="">
+        </div>
+        <input id="data1" type="text" placeholder="Write fearlessly...">
       </div>
-      <!-- search box -->
-    </div>
-    <div class="col-3 content-1a">
-      <div class="search-container">
-          <input type="text" name="search-input" class="search-input" id="search-input" placeholder="Search here...">
-          <i class="fas fa-search search-icon" id="search-icon"></i>
-      </div>
+      <div class="msg-con row">
 
-      <div class="trending">
-        <h4 class="trending-heading">Trending on PseudoSpeak</h4>
-        <div class="trending-topics">
-          {% for tag in hashtags %}
-          <div class="t1">
-            <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a class="trends" href="#">{{tag.tag}}</a>
+        <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"
+            onclick="uploadImage()"></i></button>
+        <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
+        <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
+        <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
+      </div>
+      <!-- Create a hidden file input for image upload -->
+      <input type="file" id="imageInput" accept="image/*" style="display: none;">
+      <!-- sd -->
+      {% for m in messages %}
+      <div id="message-output" class="msg-output-main row">
+        <div class="msgbox-trendings">
+          <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
+        </div>
+        <div class="msg-output">
+          <div class="msg-output-img">
+            <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
           </div>
-          {% endfor %}
+          <div class="msg-output-details">
+            <h5>{{m.user.username}}</h5>
+            <p>{{m.content}}</p>
+            {% if m.image %}
+            <img src="{{m.image.url}}" alt="" style="width: 250px; height: 250px;">
+            {% endif %}
+          </div>
+        </div>
+        <div class="msg-output-icons">
+          <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
+          <i class="fa-solid fa-reply"></i>
+          <i class="far fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
+          <i class="fa-regular fa-eye"></i>
         </div>
       </div>
+      {% endfor %}
+
+      <!-- endd -->
+
+    </form>
+  </div>
+  <!-- search box -->
+</div>
+<div class="col-3 content-1a">
+  <div class="search-container">
+    <input type="text" name="search-input" class="search-input" id="search-input" placeholder="Search here...">
+    <i class="fas fa-search search-icon" id="search-icon"></i>
+  </div>
+
+  <div class="trending">
+    <h4 class="trending-heading">Trending on PseudoSpeak</h4>
+    <div class="trending-topics">
+      {% for tag in hashtags %}
+      <div class="t1">
+        <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+        <a class="trends" href="#">{{tag.tag}}</a>
+      </div>
+      {% endfor %}
     </div>
   </div>
+</div>
+</div>
 </div>
 
 
@@ -89,92 +88,96 @@
 
   let check = false; // Define check at the top level so it's accessible everywhere
 
-function uploadImage() {
+  function uploadImage() {
     document.getElementById('imageInput').click();
-}
+  }
 
-function handleFile(event) {
+  function handleFile(event) {
     const file = event.target.files[0];
     console.log(file.Array)
     if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            console.log(img.src);
-            check = true; // Set check to true when a file is loaded
-        }
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        console.log(img.src);
+        check = true; // Set check to true when a file is loaded
+      }
+      reader.readAsDataURL(file);
     }
-}
+  }
 
-document.getElementById('imageInput').addEventListener('change', handleFile);
+  document.getElementById('imageInput').addEventListener('change', handleFile);
 
-socket.onopen = function () {
+  socket.onopen = function () {
     console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
     console.log("WebSocket connection established.");
 
     const username = JSON.parse(document.getElementById("json-username").textContent);
     const post = document.querySelector('#post-msg');
     post.onclick = function (e) {
-        e.preventDefault();
-        const data = document.querySelector('#data1');
-        const inputdata = data.value;
+      e.preventDefault();
+      const data = document.querySelector('#data1');
+      const inputdata = data.value;
 
-        if (inputdata.trim() !== "") {
-            if (check) {
-                // Get the file from the file input
-                const file = document.getElementById('imageInput').files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const imgBase64 = e.target.result;
+      if (inputdata.trim() !== "") {
+        if (check) {
+          // Get the file from the file input
+          const file = document.getElementById('imageInput').files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const imgBase64 = e.target.result;
 
-                        // Send the image and the inputdata together
-                        socket.send(JSON.stringify({
-                            'content': inputdata,
-                            'username': username,
-                            'image': imgBase64
-                        }));
+              // Send the image and the inputdata together
+              socket.send(JSON.stringify({
+                'content': inputdata,
+                'username': username,
+                'image': imgBase64
+              }));
 
-                        // Clear the input field and image container
-                        data.value = "";
-                        check = false; // Reset check to false after sending the image
-                    }
-                    reader.readAsDataURL(file);
-                }
-            } else {
-                // If there is no image, send only the inputdata
-                socket.send(JSON.stringify({
-                    'content': inputdata,
-                    'username': username,
-                    'image':null
-                }));
-
-                // Clear the input field
-                data.value = "";
+              // Clear the input field and image container
+              data.value = "";
+              check = false; // Reset check to false after sending the image
             }
+            reader.readAsDataURL(file);
+          }
+        } else {
+          // If there is no image, send only the inputdata
+          socket.send(JSON.stringify({
+            'content': inputdata,
+            'username': username,
+            'image': null
+          }));
+
+          // Clear the input field
+          data.value = "";
         }
+      }
     };
-};
+  };
 
   socket.onmessage = function (e) {
     const data = JSON.parse(e.data);
+    const targetId = data['likeId'];  // Replace with your target id
+    const newLikesCount = data['likes'];
     console.log(data['content']);
     console.log(data['username']);
     console.log(data['profile_img']);
     console.log(data['image']);
+    console.log(data['likeId']);
+    console.log(data['likes']);
     if (Array.isArray(data['hashtags'])) {
-    const trending = document.querySelector('.trending-topics');
-    trending.innerHTML = "";
-    data['hashtags'].forEach(function (item) {
+      const trending = document.querySelector('.trending-topics');
+      trending.innerHTML = "";
+      data['hashtags'].forEach(function (item) {
         console.log(item);
         trending.innerHTML += `
             <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a href="#" style="font-weight: bold; text-decoration: none; color: rgb(96, 63, 216);">${item}</a><br>`; //checking hashtags
-    });
-  }
-  
+            <a href="#" style="font-weight: bold; text-decoration: none; color: rgb(29, 155, 240);">${item}</a><br>`; //checking hashtags
+      });
+    }
+
     // Create an HTML template string for the new message
     const template = `
         <div class="msg-output-main row">
@@ -214,13 +217,13 @@ socket.onopen = function () {
     objDiv.scrollTop = objDiv.scrollBottom;
   }
 
-  document.querySelector('#profile_img_navbar').onclick=function(){
-    var redirecturl='{% url "dashboard" %}';
-    window.location.href=redirecturl;
+  document.querySelector('#profile_img_navbar').onclick = function () {
+    var redirecturl = '{% url "dashboard" %}';
+    window.location.href = redirecturl;
   }
 
-  document.querySelectorAll('#comment').forEach(function(commentIcon) {
-    commentIcon.addEventListener('click', function() {
+  document.querySelectorAll('#comment').forEach(function (commentIcon) {
+    commentIcon.addEventListener('click', function () {
       const messageID = this.getAttribute('data-message-id');
       console.log(messageID)
       const redirectURL = `/view_message/${messageID}/`;
@@ -229,35 +232,58 @@ socket.onopen = function () {
   });
 
   // search bar
-document.getElementById("search-input").addEventListener("keydown", function(event){
-  if (event.key === "Enter"){
-    event.preventDefault();
-    const searchTxt = document.getElementById("search-input").value;
-    if (searchTxt){
-      console.log(searchTxt);
-      socket.send(JSON.stringify({
-        'hashtag': searchTxt,
-      }));
+  document.getElementById("search-input").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const searchTxt = document.getElementById("search-input").value;
+      if (searchTxt) {
+        console.log(searchTxt);
+        socket.send(JSON.stringify({
+          'hashtag': searchTxt,
+        }));
+      }
     }
-  }
-});
+  });
 
 
   // message likes
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('#likes').forEach(function(likeButton) {
-        likeButton.addEventListener('click', function() {
-            const messageID = this.getAttribute('data-message-id');
-            console.log(messageID);
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('#likes').forEach(function (likeButton) {
+      likeButton.addEventListener('click', function () {
+        const messageID = this.getAttribute('data-likes-id');
+        const userName=JSON.parse(document.getElementById('json-username').textContent);
+        console.log(messageID);
 
-            socket.send(JSON.stringify({
-              'likeId':messageID
-            }))
-        });
+        socket.send(JSON.stringify({
+          'likeId': messageID,
+          'username':userName
+        }))
+
+        socket.onmessage=function(e){
+          const data=JSON.parse(e.data);
+          const likeId = data['likeId'];
+          const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
+          console.log(likesIcon);
+          likesIcon.innerHTML=data['likes'];
+        }
+
+        
+        
+      });
     });
-});
+  });
 
+  // displaying hashtags in diff color
 
+  document.addEventListener('DOMContentLoaded', (event) => {
+    console.log('DOMContentLoaded event fired');
+    const messages = document.querySelectorAll('.msg-output-details p');
+    messages.forEach((message) => {
+      message.innerHTML = message.innerText.replace(/#\w+/g, '<span class="hashtag" style="color: rgb(29, 155, 240);">$&</span>');
+    });
+  });
+
+  
 
 
 </script>

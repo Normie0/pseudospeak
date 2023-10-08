@@ -34,10 +34,18 @@ def save_image(image_data, username):
 
 
 @sync_to_async
-def like_message(like_id):
+def like_message(like_id,username):
     message = TrendingMessage.objects.get(pk=like_id)
-    message.likes += 1
-    message.save()
+    user=User.objects.get(username=username)
+    if user in message.userLiked.all():
+        message.likes-=1
+        message.userLiked.remove(user)
+        message.save()
+    else:
+        message.likes += 1
+        message.userLiked.add(user)
+        message.save()
+    return message.likes
 
 
 class IndexConsumer(AsyncWebsocketConsumer):
@@ -60,7 +68,11 @@ class IndexConsumer(AsyncWebsocketConsumer):
 
         elif 'likeId' in data:
             print(data['likeId'])
-            await like_message(data['likeId'])
+            likeId=data['likeId']
+            username=data['username']
+            likes=await like_message(data['likeId'],username)
+            print(likes)
+            await self.send_likes(likeId,likes)
 
         else:
             content = data['content']
@@ -157,4 +169,21 @@ class IndexConsumer(AsyncWebsocketConsumer):
             'profile_img':profile_img,
             'hashtag':hashtag,
             'image':image
+        }))
+
+
+    async def send_likes(self, likeId, likes):
+        await self.channel_layer.group_add("index_group", self.channel_name)
+        await self.channel_layer.group_send("index_group", {
+            "type": "broadcast_likes",
+            "likeId":likeId,
+            "likes":likes,
+        })
+
+    async def broadcast_likes(self, event):
+        likeId = event["likeId"]
+        likes = event["likes"]
+        await self.send(text_data=json.dumps({
+            'likeId': likeId,
+            'likes': likes,
         }))

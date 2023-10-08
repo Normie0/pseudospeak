@@ -43,6 +43,7 @@ def index(request):
 
 
 def login_or_signup_view(request):
+    username = generate_unique_username()
     if request.method == "POST":
         action = request.POST.get("action")
         print(action)
@@ -77,7 +78,7 @@ def login_or_signup_view(request):
                 return render(
                     request,
                     "main/signup.html",
-                    {"error_message": "Passwords do not match"},
+                    {"error_message": "Passwords do not match","username": username},
                 )
 
         elif action == "login":
@@ -96,9 +97,8 @@ def login_or_signup_view(request):
                 return render(
                     request,
                     "main/signup.html",
-                    {"error_message": "Invalid username or password"},
+                    {"error_message": "Invalid username or password","username": username},
                 )
-    username = generate_unique_username()
     return render(request, "main/signup.html", {"username": username})
 
 
@@ -117,6 +117,7 @@ def dashboard(request):
         request,
         "main/dashboard.html",
         {
+            "user":user,
             "trendingmessagescount": trendingmessagescount,
             "trendingmessages": trendingmessages,
         },

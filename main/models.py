@@ -14,6 +14,7 @@ class TrendingMessage(models.Model):
     content=models.TextField()
     image=models.ImageField(null=True,blank=True,upload_to="images/")
     likes=models.IntegerField(null=True,default=0)
+    userLiked=models.ManyToManyField(User,related_name='user_like')
     view_count=models.IntegerField(null=True,default=0)
     hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)

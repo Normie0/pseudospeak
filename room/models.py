@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 class Room(models.Model):
-    users=models.ManyToManyField(User,related_name='joined_user',null=True)
+    users=models.ManyToManyField(User,related_name='joined_user')
     name=models.CharField(max_length=255)
     slug=models.SlugField(unique=True)
 
