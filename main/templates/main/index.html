@@ -66,10 +66,15 @@
     <div class="trending-topics">
       {% for tag in hashtags %}
       <div class="t1">
-        <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-        <a class="trends" href="#">{{tag.tag}}</a>
+        <form method="post" style="display: inline;" id="hashform{{ forloop.counter }}">
+          {% csrf_token %}
+          <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+          <input type="hidden" name="tag" value="{{ tag.tag }}">
+          <a class="trends" style="cursor: pointer;" onclick="document.getElementById('hashform{{ forloop.counter }}').submit();">{{ tag.tag}}</a>
+        </form>
       </div>
       {% endfor %}
+
     </div>
   </div>
 </div>
@@ -251,24 +256,24 @@
     document.querySelectorAll('#likes').forEach(function (likeButton) {
       likeButton.addEventListener('click', function () {
         const messageID = this.getAttribute('data-likes-id');
-        const userName=JSON.parse(document.getElementById('json-username').textContent);
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
         console.log(messageID);
 
         socket.send(JSON.stringify({
           'likeId': messageID,
-          'username':userName
+          'username': userName
         }))
 
-        socket.onmessage=function(e){
-          const data=JSON.parse(e.data);
+        socket.onmessage = function (e) {
+          const data = JSON.parse(e.data);
           const likeId = data['likeId'];
           const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
           console.log(likesIcon);
-          likesIcon.innerHTML=data['likes'];
+          likesIcon.innerHTML = data['likes'];
         }
 
-        
-        
+
+
       });
     });
   });
@@ -282,8 +287,6 @@
       message.innerHTML = message.innerText.replace(/#\w+/g, '<span class="hashtag" style="color: rgb(29, 155, 240);">$&</span>');
     });
   });
-
-  
 
 
 </script>

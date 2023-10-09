@@ -2,220 +2,217 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      .chat-container {
-        width: 80%;
-        background-color: white;
-        padding-top: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        position: relative;
-      }
 
-      .group-name {
-        background-color: #811472;
-        padding: 20px;
-        text-align: center;
-        width: 100%;
-        max-height: 40px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        top: 0;
-        z-index: 999;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    .chat-container {
+      width: 80%;
+      background-color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+    }
 
-      .content-below-group-name {
-        margin-top: 60px;
-      }
+    .group-name {
+      background-color: #811472;
+      padding: 20px;
+      text-align: center;
+      width: 100%;
+      max-height: 40px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      z-index: 999;
+    }
 
-      /* Style the group name text */
-      .group-name h1 {
-        font-size: 2rem;
-        color: white;
-        margin: 0;
-      }
+    .content-below-group-name {
+      margin-top: 60px;
+    }
 
-      .message-input-form {
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
-      }
+    /* Style the group name text */
+    .group-name h1 {
+      font-size: 2rem;
+      color: white;
+      margin: 0;
+    }
 
-      #chat-message-input {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        margin-right: 10px;
-        width: 80%;
-      }
+    .message-input-form {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+    }
 
-      #chat-message-submit {
-        padding: 10px 20px;
-        border: none;
-        background-color: #bb1fa5;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-      }
+    #chat-message-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      margin-right: 10px;
+      width: 80%;
+    }
 
-      #chat-message-submit:hover {
-        background-color: #811472;
-      }
+    #chat-message-submit {
+      padding: 10px 20px;
+      border: none;
+      background-color: #bb1fa5;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-      .chat-messages {
-        width: 100%; /* Set the width to 100% */
-        margin: 20px auto;
-      }
+    #chat-message-submit:hover {
+      background-color: #811472;
+    }
 
-      /* Style individual chat messages */
-      .chat-message {
-        background-color: white;
-        color: black;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-      }
+    .chat-messages {
+      width: 100%;
+      /* Set the width to 100% */
+      margin: 20px auto;
+    }
 
-      .chat-message b {
-        font-weight: bold;
-        color: #811472;
-      }
+    /* Style individual chat messages */
+    .chat-message {
+      background-color: white;
+      color: black;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
 
-      .json-script {
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="chat-container">
-      <div class="group-name">
-        <h1>Group Name-{{ room.name }}</h1>
-      </div>
+    .chat-message b {
+      font-weight: bold;
+      color: #811472;
+    }
 
-      <div class="lg:w-2/4 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
-        <div class="chat-messages space-y-3" id="chat-messages">
-          {% for m in messages %}
-          <div class="chat-message">
-            <b
-              ><img
-                src="{{m.user.profile.profile_img.url}}"
-                alt=""
-                style="width: 40px; height: 40px; border-radius: 50%" /></b
-            ><b>{{ m.user.username }}</b>: {{ m.content }}
-          </div>
-          {% endfor %}
+    .json-script {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container">
+    <div class="group-name">
+      <h1>Group Name-{{ room.name }}</h1>
+    </div>
+
+    <div class="lg:w-2/4 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
+      <div class="chat-messages space-y-3" id="chat-messages">
+        {% for m in messages %}
+        <div class="chat-message">
+          <b><img src="{{m.user.profile.profile_img.url}}" alt=""
+              style="width: 40px; height: 40px; border-radius: 50%" /></b><b>{{ m.user.username }}</b>: {{ m.content }}
         </div>
-      </div>
-
-      {{ room.slug|json_script:"json-roomname" }}
-      {{request.user.username|json_script:"json-username" }}
-
-      <div class="w-80 mx-auto p-4 bg-white rounded-xl">
-        <form method="post" action="." class="message-input-form">
-          <input
-            type="text"
-            name="content"
-            class="flex-1 mr-3 w-full rounded-l-lg"
-            placeholder="Your message..."
-            id="chat-message-input"
-          />
-          <button
-            class="px-5 py-3 rounded-r-lg text-white bg-teal-600 hover:bg-teal-700"
-            id="chat-message-submit"
-          >
-            Submit
-          </button>
-        </form>
+        {% endfor %}
       </div>
     </div>
 
-    <script>
-      const roomName = JSON.parse(
-        document.getElementById("json-roomname").textContent
-      );
-      const userName = JSON.parse(
-        document.getElementById("json-username").textContent
-      );
-      const chatSocket = new WebSocket(
-        "ws://" + window.location.host + "/ws/" + roomName + "/"
-      );
+    {{ room.slug|json_script:"json-roomname" }}
+    {{request.user.username|json_script:"json-username" }}
 
-      chatSocket.onclose = function (e) {
-        console.log("onclose");
-      };
+    <div class="w-80 mx-auto p-4 bg-white rounded-xl">
+      <form method="post" action="." class="message-input-form">
+        <input type="text" name="content" class="flex-1 mr-3 w-full rounded-l-lg" placeholder="Your message..."
+          id="chat-message-input" />
+        <button class="px-5 py-3 rounded-r-lg text-white bg-teal-600 hover:bg-teal-700" id="chat-message-submit">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
 
-      chatSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
+  <script>
+    const roomName = JSON.parse(
+      document.getElementById("json-roomname").textContent
+    );
+    const userName = JSON.parse(
+      document.getElementById("json-username").textContent
+    );
+    const chatSocket = new WebSocket(
+      "ws://" + window.location.host + "/ws/" + roomName + "/"
+    );
 
+    chatSocket.onclose = function (e) {
+      console.log("onclose");
+    };
+
+    chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+
+      if (data.message) {
         if (data.message) {
-          document.querySelector("#chat-messages").innerHTML +=
-            "<b>" +
-            data.profile_img +
-            "</b>" +
-            "<b>" +
-            data.username +
-            "</b>: " +
-            data.message +
-            "<br>";
+          const newMessageHtml = `<div class="lg:w-2/4 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
+                              <div class="chat-messages space-y-3">
+                                <div class="chat-message">
+                                  <b><img src="${data.profile_img}" alt="" style="width: 40px; height: 40px; border-radius: 50%" /></b>
+                                  <b>${data.username}</b>: ${data.message}
+                                </div>
+                              </div>
+                            </div>`;
+          document.querySelector("#chat-messages").insertAdjacentHTML("beforeend", newMessageHtml);
         } else {
           console.log("The message is empty");
         }
         scrollToBottom();
-      };
+      } else {
+        console.log("The message is empty");
+      }
+      scrollToBottom();
+    };
 
-      document.querySelector("#chat-message-input").focus();
-      document.querySelector("#chat-message-input").onkeyup = function (e) {
-        if (e.keyCode === 13) {
-          document.querySelector("#chat-message-submit").click();
-        }
-      };
+    document.querySelector("#chat-message-input").focus();
+    document.querySelector("#chat-message-input").onkeyup = function (e) {
+      if (e.keyCode === 13) {
+        document.querySelector("#chat-message-submit").click();
+      }
+    };
 
-      document.querySelector("#chat-message-submit").onclick = function (e) {
-        e.preventDefault();
+    document.querySelector("#chat-message-submit").onclick = function (e) {
+      e.preventDefault();
 
-        const messageInputDom = document.querySelector("#chat-message-input");
-        const message = messageInputDom.value;
+      const messageInputDom = document.querySelector("#chat-message-input");
+      const message = messageInputDom.value;
 
-        console.log({
+      console.log({
+        message: message,
+        username: userName,
+        room: roomName,
+      });
+
+      chatSocket.send(
+        JSON.stringify({
           message: message,
           username: userName,
           room: roomName,
-        });
+        })
+      );
 
-        chatSocket.send(
-          JSON.stringify({
-            message: message,
-            username: userName,
-            room: roomName,
-          })
-        );
+      messageInputDom.value = "";
 
-        messageInputDom.value = "";
+      return false;
+    };
 
-        return false;
-      };
+    /**
+     * A function for finding the messages element, and scroll to the bottom of it.
+     */
+    function scrollToBottom() {
+      let objDiv = document.getElementById("chat-messages");
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
 
-      /**
-       * A function for finding the messages element, and scroll to the bottom of it.
-       */
-      function scrollToBottom() {
-        let objDiv = document.getElementById("chat-messages");
-        objDiv.scrollTop = objDiv.scrollHeight;
-      }
+    // Add this below the function to trigger the scroll on load.
+    scrollToBottom();
+  </script>
+</body>
 
-      // Add this below the function to trigger the scroll on load.
-      scrollToBottom();
-    </script>
-  </body>
 </html>

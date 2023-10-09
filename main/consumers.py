@@ -122,7 +122,7 @@ class IndexConsumer(AsyncWebsocketConsumer):
             TrendingMessage.objects.create(
                 user=user,
                 content=message,
-                image=image_file_path  # Pass the file path of the saved image
+                image=image_file_path,  # Pass the file path of the saved image
             )
 
             for tag in hashtag:
@@ -136,6 +136,11 @@ class IndexConsumer(AsyncWebsocketConsumer):
                 except:
                     # If the hashtag doesn't exist, create it with a count of 1
                     Hashtag.objects.create(tag=tag, count=1)
+                hashtag=Hashtag.objects.get(tag=tag)
+                messagehash=TrendingMessage.objects.get(user=user,content=message)
+                messagehash.hashtags.add(hashtag)
+                    
+                    
 
 
     @sync_to_async

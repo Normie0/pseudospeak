@@ -31,6 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = data['message']
         username = data['username']
         room = data['room']
+        profile_img=await self.get_profile_img(username)
 
         await self.save_message(username, room, message)
 
@@ -40,7 +41,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'username': username
+                'username': username,
+                'profile_img':profile_img
             }
         )
 
@@ -48,11 +50,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         message = event['message']
         username = event['username']
+        profile_img= event['profile_img']
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
-            'username': username
+            'username': username,
+            'profile_img':profile_img
         }))
 
     @sync_to_async
@@ -61,6 +65,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room = Room.objects.get(slug=room)
         if message:
             Message.objects.create(user=user, room=room, content=message)
+
+    @sync_to_async
+    def get_profile_img(self,username):
+        user=User.objects.get(username=username)
+        return user.profile.profile_img.url
 
 
 class RoomConsumer(AsyncWebsocketConsumer):
