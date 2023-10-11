@@ -10,7 +10,7 @@
         <div class="msgbox-img ">
           <img src="{{user.profile.profile_img.url}}" alt="">
         </div>
-        <input id="data1" type="text" placeholder="Write fearlessly...">
+        <input id="data1" type="text" placeholder="Write fearlessly..." value="{{hashtag}}">
       </div>
       <div class="msg-con row">
 
@@ -44,7 +44,7 @@
           <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
           <i class="fa-solid fa-reply"></i>
           <i class="far fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
-          <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
+          <i class="fa-regular fa-eye" id="views" data-likes-id="${m.pk}">{{m.view_count}}</i>
         </div>
       </div>
       {% endfor %}
@@ -233,18 +233,16 @@
     }
   }
 
-  
-  const msgId = data['msgId'];
-  const viewsCount = data['views'];
-  if (data['msgId'] && data['views'] !== undefined) {
-  // Find all existing view count elements with the correct data-views-id attribute
-  const viewsElement = document.querySelector(`[data-views-id="${msgId}"]`);
-  
-  viewsElement.innerHTML=viewsCount;
-  
-}
-
-
+  if (data['msgId']) {
+        const msgId = data['msgId'];
+        const viewsIcon = document.querySelector(`[data-views-id="${msgId}"]`);
+        if (viewsIcon) {
+            console.log("Updating views for message:", msgId, "new count:", data['views']);
+            viewsIcon.textContent = data['views'];
+        } else {
+            console.error("No element found with data-views-id:", msgId);
+        }
+    }
 
     
   };
@@ -264,19 +262,18 @@
   }
 
   document.body.addEventListener('click', function (e) {
-  if (e.target && e.target.id == 'comment') {
-    const messageID = e.target.getAttribute('data-message-id');
-    const userName = JSON.parse(document.getElementById('json-username').textContent);
-    console.log(messageID);
-    socket.send(JSON.stringify({
-      'msgId':messageID,
-      'username':userName
-    }));
-    const redirectURL = `/view_message/${messageID}/`;
-    window.location.href = redirectURL;
-  }
-});
-
+    if (e.target && e.target.id == 'comment') {
+      const messageID = e.target.getAttribute('data-message-id');
+      const userName = JSON.parse(document.getElementById('json-username').textContent);
+      console.log(messageID);
+      socket.send(JSON.stringify({
+        'msgId':messageID,
+        'username':userName
+      }));
+      const redirectURL = `/view_message/${messageID}/`;
+      window.location.href = redirectURL;
+    }
+  });
 
 
   // search bar

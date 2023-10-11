@@ -23,22 +23,21 @@ def get_random_image():
 
 # Create your views here.
 def index(request):
-    if request.method == 'POST':
-        tag_name = request.POST.get('tag')
-        print(tag_name)
-        try:
-            tag=Hashtag.objects.get(tag=tag_name)
-        except Hashtag.DoesNotExist:
-            messages=None
-        else:
-            messages=TrendingMessage.objects.filter(parent_message=None,hashtags=tag)
-    else:
-        messages = TrendingMessage.objects.filter(parent_message=None)
+    messages = TrendingMessage.objects.filter(parent_message=None)
     hashtags = Hashtag.objects.all()[:3]
     return render(
         request, "main/index.html", {"messages": messages, "hashtags": hashtags}
     )
 
+def hashtagMessages(request,hashtag):
+    tag=f'#{hashtag}'
+    try:
+        hashtag=Hashtag.objects.get(tag=tag)
+    except Hashtag.DoesNotExist:
+        hashtag=None
+    messages=TrendingMessage.objects.filter(parent_message=None,hashtags=hashtag)
+    hashtags = Hashtag.objects.all()[:3]
+    return render(request,"main/hashtagMessages.html",{'hashtag':hashtag,'messages':messages,'hashtags':hashtags})
 
 def login_or_signup_view(request):
     username = generate_unique_username()

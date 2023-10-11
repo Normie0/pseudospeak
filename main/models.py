@@ -16,6 +16,7 @@ class TrendingMessage(models.Model):
     likes=models.IntegerField(null=True,default=0)
     userLiked=models.ManyToManyField(User,related_name='user_like')
     view_count=models.IntegerField(null=True,default=0)
+    viewed=models.ManyToManyField(User,related_name='viewed')
     hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)
     parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')

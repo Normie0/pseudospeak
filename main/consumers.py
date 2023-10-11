@@ -47,6 +47,17 @@ def like_message(like_id,username):
         message.save()
     return message.likes
 
+@sync_to_async
+def get_count(msgId,username):
+    message = TrendingMessage.objects.get(pk=msgId)
+    user=User.objects.get(username=username)
+    if user not in message.viewed.all():
+        message.view_count += 1
+        message.viewed.add(user)
+        message.save()
+    return message.view_count
+
+
 
 class IndexConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -74,6 +85,13 @@ class IndexConsumer(AsyncWebsocketConsumer):
             print(likes)
             await self.send_likes(likeId,likes)
 
+        elif 'msgId' in data:
+            print(data['msgId'])
+            msgId=data['msgId']
+            username=data['username']
+            views=await get_count(msgId,username)
+            await self.send_count(msgId,views)
+
         else:
             content = data['content']
             username = data['username']
@@ -85,10 +103,10 @@ class IndexConsumer(AsyncWebsocketConsumer):
 
             hashtag = await self.hashtag_identifier(content)
 
-            await self.save_message(username, content, hashtag, image)
+            contentId=await self.save_message(username, content, hashtag, image)
 
             # Broadcast the received message to all connected clients
-            await self.send_group_message(username,content,profile_img_url,hashtag,image)
+            await self.send_group_message(username,content,contentId,profile_img_url,hashtag,image)
 
     @sync_to_async
     def get_profile_img(self,username):
@@ -119,7 +137,7 @@ class IndexConsumer(AsyncWebsocketConsumer):
 
         if message:
             # If there's message content, create the TrendingMessage object
-            TrendingMessage.objects.create(
+            recentMessage=TrendingMessage.objects.create(
                 user=user,
                 content=message,
                 image=image_file_path,  # Pass the file path of the saved image
@@ -137,9 +155,9 @@ class IndexConsumer(AsyncWebsocketConsumer):
                     # If the hashtag doesn't exist, create it with a count of 1
                     Hashtag.objects.create(tag=tag, count=1)
                 hashtag=Hashtag.objects.get(tag=tag)
-                messagehash=TrendingMessage.objects.get(user=user,content=message)
-                messagehash.hashtags.add(hashtag)
-                    
+                recentMessage.hashtags.add(hashtag)
+        
+        return recentMessage.pk
                     
 
 
@@ -150,7 +168,7 @@ class IndexConsumer(AsyncWebsocketConsumer):
         return hashtags
 
     # Helper function to send a message to all clients in the same group
-    async def send_group_message(self, username, content,profile_img_url,hashtag,image):
+    async def send_group_message(self, username, content,contentId,profile_img_url,hashtag,image):
         await self.channel_layer.group_add("index_group", self.channel_name)
         await self.channel_layer.group_send("index_group", {
             "type": "broadcast_message",
@@ -158,7 +176,8 @@ class IndexConsumer(AsyncWebsocketConsumer):
             "content": content,
             "profile_img":profile_img_url,
             "hashtag":hashtag,
-            "image":image
+            "image":image,
+            "contentId":contentId
         })
 
     # Receive broadcasted message and send it to the WebSocket
@@ -168,12 +187,14 @@ class IndexConsumer(AsyncWebsocketConsumer):
         profile_img=event["profile_img"]
         hashtag=event["hashtag"]
         image=event["image"]
+        contentId=event["contentId"]
         await self.send(text_data=json.dumps({
             'username': username,
             'content': content,
             'profile_img':profile_img,
             'hashtag':hashtag,
-            'image':image
+            'image':image,
+            'contentId':contentId
         }))
 
 
@@ -191,4 +212,21 @@ class IndexConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'likeId': likeId,
             'likes': likes,
+        }))
+
+    async def send_count(self, msgId, views):
+        print("sending",views)
+        await self.channel_layer.group_add("index_group", self.channel_name)
+        await self.channel_layer.group_send("index_group", {
+            "type": "broadcast_views",
+            "msgId":msgId,
+            "views":views,
+        })
+
+    async def broadcast_views(self, event):
+        msgId = event["msgId"]
+        views = event["views"]
+        await self.send(text_data=json.dumps({
+            'msgId': msgId,
+            'views': views,
         }))
