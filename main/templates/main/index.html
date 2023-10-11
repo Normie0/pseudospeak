@@ -66,10 +66,9 @@
     <div class="trending-topics">
       {% for tag in hashtags %}
       <div class="t1">
-          <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-          <input type="hidden" name="tag" value="{{ tag.tag }}">
-          <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}"
-            >{{ tag.tag}}</a>
+        <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+        <input type="hidden" name="tag" value="{{ tag.tag }}">
+        <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}">{{ tag.tag}}</a>
       </div>
       {% endfor %}
 
@@ -209,44 +208,41 @@
     `;
 
     // Get the message container and insert the new message at the beginning
-    if (data['content']){
+    if (data['content']) {
       const msgOutputMain = document.querySelector('.msg-output-main');
-    msgOutputMain.insertAdjacentHTML('afterbegin', template);
+      msgOutputMain.insertAdjacentHTML('afterbegin', template);
 
-    const newMessage = msgOutputMain.children[0];
+      const newMessage = msgOutputMain.children[0];
 
-    // Find the hashtags within the new message and update their HTML
-    const newMessageHashtags = newMessage.querySelectorAll('.msg-output-details p');
-    newMessageHashtags.forEach((hashtag) => {
-      hashtag.innerHTML = hashtag.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
-    });
+      // Find the hashtags within the new message and update their HTML
+      const newMessageHashtags = newMessage.querySelectorAll('.msg-output-details p');
+      newMessageHashtags.forEach((hashtag) => {
+        hashtag.innerHTML = hashtag.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
+      });
     }
 
     if (data['likeId']) {
-    const likeId = data['likeId'];
-    const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
-    if (likesIcon) {
-      console.log("Updating likes for message:", likeId, "new count:", data['likes']);
-      likesIcon.innerHTML = data['likes'];
-    } else {
-      console.error("No element found with id likes and data-likes-id:", likeId);
+      const likeId = data['likeId'];
+      const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
+      if (likesIcon) {
+        console.log("Updating likes for message:", likeId, "new count:", data['likes']);
+        likesIcon.innerHTML = data['likes'];
+      } else {
+        console.error("No element found with id likes and data-likes-id:", likeId);
+      }
     }
-  }
-
-  
-  const msgId = data['msgId'];
-  const viewsCount = data['views'];
-  if (data['msgId'] && data['views'] !== undefined) {
-  // Find all existing view count elements with the correct data-views-id attribute
-  const viewsElement = document.querySelector(`[data-views-id="${msgId}"]`);
-  
-  viewsElement.innerHTML=viewsCount;
-  
-}
 
 
+    const msgId = data['msgId'];
+    const viewsCount = data['views'];
+    if (data['msgId'] && data['views'] !== undefined) {
+      // Find all existing view count elements with the correct data-views-id attribute
+      const viewsElement = document.querySelector(`[data-views-id="${msgId}"]`);
 
-    
+      viewsElement.innerHTML = viewsCount;
+
+    }
+
   };
 
   socket.onclose = function (e) {
@@ -264,18 +260,18 @@
   }
 
   document.body.addEventListener('click', function (e) {
-  if (e.target && e.target.id == 'comment') {
-    const messageID = e.target.getAttribute('data-message-id');
-    const userName = JSON.parse(document.getElementById('json-username').textContent);
-    console.log(messageID);
-    socket.send(JSON.stringify({
-      'msgId':messageID,
-      'username':userName
-    }));
-    const redirectURL = `/view_message/${messageID}/`;
-    window.location.href = redirectURL;
-  }
-});
+    if (e.target && e.target.id == 'comment') {
+      const messageID = e.target.getAttribute('data-message-id');
+      const userName = JSON.parse(document.getElementById('json-username').textContent);
+      console.log(messageID);
+      socket.send(JSON.stringify({
+        'msgId': messageID,
+        'username': userName
+      }));
+      const redirectURL = `/message/${messageID}/`;
+      window.location.href = redirectURL;
+    }
+  });
 
 
 
@@ -296,27 +292,27 @@
 
   // message likes
   document.body.addEventListener('click', function (e) {
-  if (e.target && e.target.id == 'likes') {
-    const messageID = e.target.getAttribute('data-likes-id');
-    const userName = JSON.parse(document.getElementById('json-username').textContent);
-    console.log(messageID);
+    if (e.target && e.target.id == 'likes') {
+      const messageID = e.target.getAttribute('data-likes-id');
+      const userName = JSON.parse(document.getElementById('json-username').textContent);
+      console.log(messageID);
 
-    socket.send(JSON.stringify({
-      'likeId': messageID,
-      'username': userName
-    }));
+      socket.send(JSON.stringify({
+        'likeId': messageID,
+        'username': userName
+      }));
+    }
+  });
+
+  // onhover function
+  function hover(element) {
+    element.style.cursor = 'pointer';
+    element.style.textDecoration = 'underline';
   }
-});
 
-// onhover function
-function hover(element) {
-        element.style.cursor = 'pointer';
-        element.style.textDecoration = 'underline';
-      }
-
-function unhover(element) {
-        element.style.textDecoration = 'none';
-      }
+  function unhover(element) {
+    element.style.textDecoration = 'none';
+  }
 
   // displaying hashtags in diff color
 
@@ -326,19 +322,19 @@ function unhover(element) {
     messages.forEach((message) => {
       message.innerHTML = message.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
     });
-});
+  });
 
-// Delegate the event to the document body
-document.body.addEventListener('click', function(e) {
+  // Delegate the event to the document body
+  document.body.addEventListener('click', function (e) {
     // Check if the clicked element has the class 'trends' or 'hashtag'
     if (e.target && (e.target.classList.contains('trends') || e.target.classList.contains('hashtag'))) {
-        var tag = e.target.getAttribute('data-tag');
-        tag = tag.replace('#', ''); // Remove '#' if present
-        console.log(tag);
-        var redirectURL = `/${tag}/`;
-        window.location.href = redirectURL;
+      var tag = e.target.getAttribute('data-tag');
+      tag = tag.replace('#', ''); // Remove '#' if present
+      console.log(tag);
+      var redirectURL = `/view_hashtag/${tag}/`;
+      window.location.href = redirectURL;
     }
-});
+  });
 
 
 </script>

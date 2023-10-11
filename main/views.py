@@ -23,7 +23,7 @@ def get_random_image():
 
 # Create your views here.
 def index(request):
-    messages = TrendingMessage.objects.filter(parent_message=None)
+    messages = TrendingMessage.objects.filter(parent_message=None).order_by('-view_count')
     hashtags = Hashtag.objects.all()[:3]
     return render(
         request, "main/index.html", {"messages": messages, "hashtags": hashtags}

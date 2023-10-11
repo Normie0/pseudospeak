@@ -270,7 +270,7 @@
         'msgId':messageID,
         'username':userName
       }));
-      const redirectURL = `/view_message/${messageID}/`;
+      const redirectURL = `/message/${messageID}/`;
       window.location.href = redirectURL;
     }
   });
@@ -332,7 +332,7 @@ document.body.addEventListener('click', function(e) {
         var tag = e.target.getAttribute('data-tag');
         tag = tag.replace('#', ''); // Remove '#' if present
         console.log(tag);
-        var redirectURL = `/${tag}/`;
+        var redirectURL = `/view_hashtag/${tag}/`;
         window.location.href = redirectURL;
     }
 });
