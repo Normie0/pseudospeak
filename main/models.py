@@ -5,9 +5,20 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user=models.OneToOneField(User,null=True,on_delete=models.CASCADE)
     profile_img=models.ImageField(null=True,blank=True,upload_to='images/')
+    bio=models.CharField(null=True,max_length=512)
+    follow=models.ManyToManyField(User,related_name='follow')
+    following=models.ManyToManyField(User,related_name='following')
 
     def __str__(self) -> str:
         return str(self.user)
+    
+    @property
+    def follow_count(self):
+        return self.follow.count()
+    
+    @property
+    def following_count(self):
+        return self.following.count()
     
 class TrendingMessage(models.Model):
     user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
