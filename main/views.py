@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from faker import Faker
 from .forms import *
@@ -20,7 +21,7 @@ def get_random_image():
     images = ["images/teddy.jpg", "images/toycar.jpg", "images/Woody.jpg"]
     return random.choice(images)
 
-
+@login_required(login_url='login_or_signup_view')
 # Create your views here.
 def index(request):
     messages = TrendingMessage.objects.filter(parent_message=None).order_by('-view_count')
@@ -89,7 +90,7 @@ def login_or_signup_view(request):
 
             if user:
                 login(request, user)
-                return redirect("index")
+                return redirect('index')
             else:
                 return render(
                     request,
@@ -104,8 +105,8 @@ def logoutuser(request):
     return redirect("login_or_signup_view")
 
 
-def dashboard(request):
-    user = request.user
+def dashboard(request,profileId):
+    user = User.objects.get(username=profileId)
     trendingmessages = TrendingMessage.objects.filter(
         user=user, parent_message=None
     ).order_by("date_added")

@@ -32,7 +32,7 @@
         </div>
         <div class="msg-output">
           <div class="msg-output-img">
-            <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
+            <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture" id="profile-img" data-img-id="{{m.user.username}}">
           </div>
           <div class="msg-output-details">
             <h5>{{m.user.username}}</h5>
@@ -256,12 +256,7 @@
     objDiv.scrollTop = objDiv.scrollBottom;
   }
 
-  document.querySelector('#profile_img_navbar').onclick = function () {
-    var redirecturl = '{% url "dashboard" %}';
-    window.location.href = redirecturl;
-  }
-
-  document.body.addEventListener('click', function (e) {
+    document.body.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'comment') {
       const messageID = e.target.getAttribute('data-message-id');
       const userName = JSON.parse(document.getElementById('json-username').textContent);
@@ -306,6 +301,25 @@
     }
   });
 
+
+  // dashboard
+
+  document.querySelector('#profile_img_navbar').onclick = function () {
+    const userName=JSON.parse(document.getElementById('json-username').textContent);
+    var redirectURL = '/dashboard/' + userName + '/';
+    window.location.href = redirecturl;
+  }
+
+  document.body.addEventListener('click', function(e) {
+    if (e.target && e.target.id == 'profile-img') {
+        const profileId = e.target.getAttribute('data-img-id');
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        var redirectURL = '/dashboard/' + profileId + '/';
+        window.location.href = redirectURL;
+    }
+});
+
+
   // onhover function
   function hover(element) {
     element.style.cursor = 'pointer';
@@ -330,13 +344,15 @@
   document.body.addEventListener('click', function (e) {
     // Check if the clicked element has the class 'trends' or 'hashtag'
     if (e.target && (e.target.classList.contains('trends') || e.target.classList.contains('hashtag'))) {
-      var tag = e.target.getAttribute('data-tag');
-      tag = tag.replace('#', ''); // Remove '#' if present
-      console.log(tag);
-      var redirectURL = `/view_hashtag/${tag}/`;
-      window.location.href = redirectURL;
+        var tag = e.target.getAttribute('data-tag');
+        tag = tag.replace('#', ''); // Remove '#' if present
+        console.log(tag);
+        var redirectURL = '/view_hashtag/message/' + tag + '/';
+        window.location.href = redirectURL;
     }
-  });
+});
+
+
 
 // emoji picker
 const inputField = document.getElementById('data1');

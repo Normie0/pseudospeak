@@ -17,11 +17,13 @@
         <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"
             onclick="uploadImage()"></i></button>
         <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
-        <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-face-smile"></i></button>
+        <button class="msgbox-btn2 col-2 align-self-center" id="emoji-button"><i class="fa-solid fa-face-smile"></i></button>
         <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
       </div>
       <!-- Create a hidden file input for image upload -->
       <input type="file" id="imageInput" accept="image/*" style="display: none;">
+      <emoji-picker id="emoji-picker"></emoji-picker>
+
       <!-- sd -->
       {% for m in messages %}
       <div id="message-output" class="msg-output-main row">
@@ -30,7 +32,7 @@
         </div>
         <div class="msg-output">
           <div class="msg-output-img">
-            <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture">
+            <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture" id="profile-img" data-img-id="{{m.user.username}}">
           </div>
           <div class="msg-output-details">
             <h5>{{m.user.username}}</h5>
@@ -44,7 +46,7 @@
           <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
           <i class="fa-solid fa-reply"></i>
           <i class="far fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
-          <i class="fa-regular fa-eye" id="views" data-likes-id="${m.pk}">{{m.view_count}}</i>
+          <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
         </div>
       </div>
       {% endfor %}
@@ -66,10 +68,9 @@
     <div class="trending-topics">
       {% for tag in hashtags %}
       <div class="t1">
-          <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-          <input type="hidden" name="tag" value="{{ tag.tag }}">
-          <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}"
-            >{{ tag.tag}}</a>
+        <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+        <input type="hidden" name="tag" value="{{ tag.tag }}">
+        <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}">{{ tag.tag}}</a>
       </div>
       {% endfor %}
 
@@ -79,14 +80,14 @@
 </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 <script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 {{ request.user.username|json_script:"json-username"}}
 <script>
+
+  // This is correct
   const socket = new WebSocket('ws://' + window.location.host + '/ws/');
 
   let check = false; // Define check at the top level so it's accessible everywhere
@@ -209,42 +210,41 @@
     `;
 
     // Get the message container and insert the new message at the beginning
-    if (data['content']){
+    if (data['content']) {
       const msgOutputMain = document.querySelector('.msg-output-main');
-    msgOutputMain.insertAdjacentHTML('afterbegin', template);
+      msgOutputMain.insertAdjacentHTML('afterbegin', template);
 
-    const newMessage = msgOutputMain.children[0];
+      const newMessage = msgOutputMain.children[0];
 
-    // Find the hashtags within the new message and update their HTML
-    const newMessageHashtags = newMessage.querySelectorAll('.msg-output-details p');
-    newMessageHashtags.forEach((hashtag) => {
-      hashtag.innerHTML = hashtag.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
-    });
+      // Find the hashtags within the new message and update their HTML
+      const newMessageHashtags = newMessage.querySelectorAll('.msg-output-details p');
+      newMessageHashtags.forEach((hashtag) => {
+        hashtag.innerHTML = hashtag.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
+      });
     }
 
     if (data['likeId']) {
-    const likeId = data['likeId'];
-    const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
-    if (likesIcon) {
-      console.log("Updating likes for message:", likeId, "new count:", data['likes']);
-      likesIcon.innerHTML = data['likes'];
-    } else {
-      console.error("No element found with id likes and data-likes-id:", likeId);
-    }
-  }
-
-  if (data['msgId']) {
-        const msgId = data['msgId'];
-        const viewsIcon = document.querySelector(`[data-views-id="${msgId}"]`);
-        if (viewsIcon) {
-            console.log("Updating views for message:", msgId, "new count:", data['views']);
-            viewsIcon.textContent = data['views'];
-        } else {
-            console.error("No element found with data-views-id:", msgId);
-        }
+      const likeId = data['likeId'];
+      const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
+      if (likesIcon) {
+        console.log("Updating likes for message:", likeId, "new count:", data['likes']);
+        likesIcon.innerHTML = data['likes'];
+      } else {
+        console.error("No element found with id likes and data-likes-id:", likeId);
+      }
     }
 
-    
+
+    const msgId = data['msgId'];
+    const viewsCount = data['views'];
+    if (data['msgId'] && data['views'] !== undefined) {
+      // Find all existing view count elements with the correct data-views-id attribute
+      const viewsElement = document.querySelector(`[data-views-id="${msgId}"]`);
+
+      viewsElement.innerHTML = viewsCount;
+
+    }
+
   };
 
   socket.onclose = function (e) {
@@ -256,24 +256,20 @@
     objDiv.scrollTop = objDiv.scrollBottom;
   }
 
-  document.querySelector('#profile_img_navbar').onclick = function () {
-    var redirecturl = '{% url "dashboard" %}';
-    window.location.href = redirecturl;
-  }
-
-  document.body.addEventListener('click', function (e) {
+    document.body.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'comment') {
       const messageID = e.target.getAttribute('data-message-id');
       const userName = JSON.parse(document.getElementById('json-username').textContent);
       console.log(messageID);
       socket.send(JSON.stringify({
-        'msgId':messageID,
-        'username':userName
+        'msgId': messageID,
+        'username': userName
       }));
       const redirectURL = `/message/${messageID}/`;
       window.location.href = redirectURL;
     }
   });
+
 
 
   // search bar
@@ -293,27 +289,46 @@
 
   // message likes
   document.body.addEventListener('click', function (e) {
-  if (e.target && e.target.id == 'likes') {
-    const messageID = e.target.getAttribute('data-likes-id');
-    const userName = JSON.parse(document.getElementById('json-username').textContent);
-    console.log(messageID);
+    if (e.target && e.target.id == 'likes') {
+      const messageID = e.target.getAttribute('data-likes-id');
+      const userName = JSON.parse(document.getElementById('json-username').textContent);
+      console.log(messageID);
 
-    socket.send(JSON.stringify({
-      'likeId': messageID,
-      'username': userName
-    }));
+      socket.send(JSON.stringify({
+        'likeId': messageID,
+        'username': userName
+      }));
+    }
+  });
+
+
+  // dashboard
+
+  document.querySelector('#profile_img_navbar').onclick = function () {
+    const userName=JSON.parse(document.getElementById('json-username').textContent);
+    var redirectURL = '/dashboard/' + userName + '/';
+    window.location.href = redirecturl;
   }
+
+  document.body.addEventListener('click', function(e) {
+    if (e.target && e.target.id == 'profile-img') {
+        const profileId = e.target.getAttribute('data-img-id');
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        var redirectURL = '/dashboard/' + profileId + '/';
+        window.location.href = redirectURL;
+    }
 });
 
-// onhover function
-function hover(element) {
-        element.style.cursor = 'pointer';
-        element.style.textDecoration = 'underline';
-      }
 
-function unhover(element) {
-        element.style.textDecoration = 'none';
-      }
+  // onhover function
+  function hover(element) {
+    element.style.cursor = 'pointer';
+    element.style.textDecoration = 'underline';
+  }
+
+  function unhover(element) {
+    element.style.textDecoration = 'none';
+  }
 
   // displaying hashtags in diff color
 
@@ -323,19 +338,44 @@ function unhover(element) {
     messages.forEach((message) => {
       message.innerHTML = message.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
     });
-});
+  });
 
-// Delegate the event to the document body
-document.body.addEventListener('click', function(e) {
+  // Delegate the event to the document body
+  document.body.addEventListener('click', function (e) {
     // Check if the clicked element has the class 'trends' or 'hashtag'
     if (e.target && (e.target.classList.contains('trends') || e.target.classList.contains('hashtag'))) {
         var tag = e.target.getAttribute('data-tag');
         tag = tag.replace('#', ''); // Remove '#' if present
         console.log(tag);
-        var redirectURL = `/view_hashtag/${tag}/`;
+        var redirectURL = '/view_hashtag/message/' + tag + '/';
         window.location.href = redirectURL;
     }
 });
+
+
+
+// emoji picker
+const inputField = document.getElementById('data1');
+const emojiButton = document.getElementById('emoji-button');
+const emojiPicker = document.getElementById('emoji-picker');
+
+emojiButton.addEventListener('click', () => {
+  event.preventDefault(); 
+  emojiPicker.style.display = 'block';
+});
+
+emojiPicker.addEventListener('emoji-click', (event) => {
+  const { emoji } = event.detail;
+  inputField.value += emoji;
+  emojiPicker.style.display = 'none';
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('#emoji-button') && !event.target.closest('#emoji-picker')) {
+    emojiPicker.style.display = 'none';
+  }
+});
+
 
 
 </script>
