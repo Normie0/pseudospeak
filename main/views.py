@@ -21,24 +21,33 @@ def get_random_image():
     images = ["images/teddy.jpg", "images/toycar.jpg", "images/Woody.jpg"]
     return random.choice(images)
 
-@login_required(login_url='login_or_signup_view')
+
+@login_required(login_url="login_or_signup_view")
 # Create your views here.
 def index(request):
-    messages = TrendingMessage.objects.filter(parent_message=None).order_by('-view_count')
+    messages = TrendingMessage.objects.filter(parent_message=None).order_by(
+        "-view_count"
+    )
     hashtags = Hashtag.objects.all()[:3]
     return render(
         request, "main/index.html", {"messages": messages, "hashtags": hashtags}
     )
 
-def hashtagMessages(request,hashtag):
-    tag=f'#{hashtag}'
+
+def hashtagMessages(request, hashtag):
+    tag = f"#{hashtag}"
     try:
-        hashtag=Hashtag.objects.get(tag=tag)
+        hashtag = Hashtag.objects.get(tag=tag)
     except Hashtag.DoesNotExist:
-        hashtag=None
-    messages=TrendingMessage.objects.filter(parent_message=None,hashtags=hashtag)
+        hashtag = None
+    messages = TrendingMessage.objects.filter(parent_message=None, hashtags=hashtag)
     hashtags = Hashtag.objects.all()[:3]
-    return render(request,"main/hashtagMessages.html",{'hashtag':hashtag,'messages':messages,'hashtags':hashtags})
+    return render(
+        request,
+        "main/hashtagMessages.html",
+        {"hashtag": hashtag, "messages": messages, "hashtags": hashtags},
+    )
+
 
 def login_or_signup_view(request):
     username = generate_unique_username()
@@ -76,26 +85,27 @@ def login_or_signup_view(request):
                 return render(
                     request,
                     "main/signup.html",
-                    {"error_message": "Passwords do not match","username": username},
+                    {"error_message": "Passwords do not match", "username": username},
                 )
 
         elif action == "login":
             username = request.POST.get("username")
             password = request.POST.get("password")
             print("This is a login action")
-            user = authenticate(
-                request, username=username, password=password
-            )
+            user = authenticate(request, username=username, password=password)
             print(user)
 
             if user:
                 login(request, user)
-                return redirect('index')
+                return redirect("index")
             else:
                 return render(
                     request,
                     "main/signup.html",
-                    {"error_message": "Invalid username or password","username": username},
+                    {
+                        "error_message": "Invalid username or password",
+                        "username": username,
+                    },
                 )
     return render(request, "main/signup.html", {"username": username})
 
@@ -105,19 +115,25 @@ def logoutuser(request):
     return redirect("login_or_signup_view")
 
 
-def dashboard(request,profileId):
+def dashboard(request, profileId):
     user = User.objects.get(username=profileId)
     trendingmessages = TrendingMessage.objects.filter(
         user=user, parent_message=None
     ).order_by("date_added")
     trendingmessagescount = len(trendingmessages)
+    follow_count = user.profile.follow_count
+    following_count = user.profile.following_count
+    bio=user.profile.bio
     return render(
         request,
         "main/dashboard.html",
         {
-            "user":user,
+            "user": user,
             "trendingmessagescount": trendingmessagescount,
             "trendingmessages": trendingmessages,
+            "follow_count": follow_count,
+            "following_count":following_count,
+            "bio":bio
         },
     )
 

@@ -1,40 +1,135 @@
-<p>username:{{user.username}}</p>
-{% if user in user.profile.follow.all %}
-<button class="follow-btn" style="background-color: rgb(82, 255, 47)">
-  Unfollow
-</button>
-{% else %}
-<button class="follow-btn">follow</button>
-{% endif %}
-<p>bio:{{user.profile.bio}}</p>
-<p id="followers">Follow Count:{{user.profile.follow_count}}</p>
-<div class="followers">
-  <p>Followers</p>
-  {% for follower in user.profile.follow.all %}
-  <p>{{follower.username}}</p>
-  {% endfor %}
-</div>
-<p>Following Count:{{user.profile.following_count}}</p>
-<div class="following">
-  <p>Followers</p>
-  {% for follower in user.profile.following.all %}
-  <p>{{follower.username}}</p>
-  {% endfor %}
-</div>
-<p>count:{{trendingmessagescount}}</p>
-{% for m in trendingmessages %}
-<p>{{m.content}}</p>
-{% endfor %}
+{% extends 'main/base.html' %}
+{% block style %}
 
+<style>
+.profile-img {
+  width: 7vw;
+  height: 14vh;
+  margin: 20px;
+  overflow: hidden;
+  border-radius: 50%;
+  }
+  .profile-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  }
+  .profile{
+    border:1px solid hsla(0,0%,53%,0.07);
+  }
+  .profile-username{
+    /* margin-top: -5vw; */
+    padding: 0 3px;
+    display: inline-block;
+  }
+  .profile-data{
+    display: flex;
+    justify-content: space-around;
+    margin-top:15px;
+    border:1px solid hsla(0,0%,53%,0.07);
+  }
+  
+  .prof-dt{
+    text-align: center;
+  }
+  .profile-d2{
+    display: flex;
+    justify-content: space-between;
+  }
+  .follow-button{
+    padding: 48px 60px;
+  }
+  
+  #editButton{
+    width: 2vw;
+    height: 4vh;
+    background-color: #1f1f20;;
+    border: none;
+  }
+  .fas{
+    /* color: #e90ccb; */
+    color:white;
+  }
+</style>
+{% endblock %}  
+
+{% block content %}
+<div class="col-9 group-con">
+    <div class="profile">
+        <h3>Profile</h3>
+    </div>
+    <div class="profile-d2">
+        <div class="profile-img">
+            <img src="{{user.profile.profile_img.url}}" alt=""
+                style="width: 50px; height: 50px; border-radius: 50%;">
+        </div>
+        {% if user != request.user %}
+        <div class="follow-button">
+            <a href="#" class="btn signbtn me-4">Follow</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="profile-username">
+        <h4>{{user.username}}</h4>
+        {% if user == request.user %}
+        <button id="editButton">
+          <i class="fas fa-edit"></i>
+        </button>
+        {% endif %}
+        <p>{{bio}}</p>
+    </div>
+    
+    <div class="profile-data">
+        <div class="post-count prof-dt">
+            <h5>{{trendingmessagescount}}</h5>
+            <p>Post</p>
+        </div>
+        <div class="following prof-dt">
+            <h5>{{following_count}}</h5>
+            <p>Following</p>
+        </div>
+        <div class="follower prof-dt">
+            <h5>{{follow_count}}</h5>
+            <p>Followers</p>
+        </div>
+        <div class="post-view prof-dt">
+            <h5>16</h5>
+            <p>Post Views</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
 <script>
-  var follow = document.querySelector(".follow-btn");
+    document.addEventListener('DOMContentLoaded', function () {
+        var listItems = document.querySelectorAll('.group-recom li');
 
-  follow.addEventListener("click", function () {
-    var followcontent = follow.textContent;
-    if (followcontent === "follow") {
-      follow.innerHTML = "Unfollow";
-    } else if (followcontent === "Unfollow") {
-      follow.innerHTML = "follow";
-    }
-  });
+        listItems.forEach(function (item) {
+            item.addEventListener('click', function () {
+                // Remove "active2" class from all list items
+                listItems.forEach(function (listItem) {
+                    listItem.classList.remove('active2');
+                });
+
+                // Add "active2" class to the clicked list item
+                item.classList.add('active2');
+            });
+        });
+
+        // Note: Ensure that the element with ID "checkbox-i" exists in your base.html
+        document.getElementById("checkbox-i").addEventListener("change", function () {
+            var sidebar = document.getElementById("sidebar");
+            if (this.checked) {
+                sidebar.classList.add("sidebar-visible");
+            } else {
+                sidebar.classList.remove("sidebar-visible");
+            }
+        });
+    });
 </script>
+
+{% endblock %}

@@ -392,7 +392,7 @@ body {
 
 .msg-output-icons i {
   margin-right: 10px;
-  font-size: 18px;
+  font-size: 15px;
   color: #f7f1f1f5;
 }
 
@@ -463,9 +463,6 @@ a {
   height: 50px;
 }
 
-.liked {
-  color: blue !important;
-}
 
 
 #emoji-picker {

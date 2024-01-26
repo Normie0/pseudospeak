@@ -1,10 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+from django.db import models
+from django.contrib.auth.models import User
+# Create your models here.
+
+class Category(models.Model):
+    name=models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return self.name
+
 class Room(models.Model):
     users=models.ManyToManyField(User,related_name='joined_user')
     name=models.CharField(max_length=255)
     slug=models.SlugField(unique=True)
+    room_img=models.ImageField(null=True)
+    category=models.ForeignKey(Category,null=True,on_delete=models.CASCADE)
 
     def __str__(self) :
         return self.name
@@ -36,3 +48,4 @@ class Hashtag(models.Model):
 
     def __str__(self):
         return self.tag
+    

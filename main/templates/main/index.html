@@ -298,6 +298,7 @@
         'likeId': messageID,
         'username': userName
       }));
+      e.target.classList.toggle('liked');
     }
   });
 
@@ -306,8 +307,9 @@
 
   document.querySelector('#profile_img_navbar').onclick = function () {
     const userName=JSON.parse(document.getElementById('json-username').textContent);
+    console.log(userName);
     var redirectURL = '/dashboard/' + userName + '/';
-    window.location.href = redirecturl;
+    window.location.href = redirectURL;
   }
 
   document.body.addEventListener('click', function(e) {
