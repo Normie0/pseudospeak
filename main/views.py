@@ -6,6 +6,9 @@ from faker import Faker
 from .forms import *
 import random
 from .models import Profile, TrendingMessage, Hashtag
+from django.db.models import Sum
+from main import models
+
 
 
 def generate_unique_username():
@@ -120,10 +123,16 @@ def dashboard(request, profileId):
     trendingmessages = TrendingMessage.objects.filter(
         user=user, parent_message=None
     ).order_by("date_added")
+
     trendingmessagescount = len(trendingmessages)
     follow_count = user.profile.follow_count
     following_count = user.profile.following_count
     bio=user.profile.bio
+
+    posts=TrendingMessage.objects.filter(user=user)
+    followers_usernames = user.profile.following.values_list('username', flat=True)
+    total_viewcount = TrendingMessage.objects.filter(user=user).aggregate(Sum("view_count"))['view_count__sum']
+    print(total_viewcount)
     return render(
         request,
         "main/dashboard.html",
@@ -133,7 +142,10 @@ def dashboard(request, profileId):
             "trendingmessages": trendingmessages,
             "follow_count": follow_count,
             "following_count":following_count,
-            "bio":bio
+            "bio":bio,
+            "posts":posts,
+            "followingUsers":followers_usernames,
+            "total_viewcount":total_viewcount,
         },
     )
 

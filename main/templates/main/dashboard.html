@@ -1,135 +1,167 @@
-{% extends 'main/base.html' %}
-{% block style %}
+{% extends 'main/base.html' %} {% block style %}
 
 <style>
-.profile-img {
-  width: 7vw;
-  height: 14vh;
-  margin: 20px;
-  overflow: hidden;
-  border-radius: 50%;
+  .profile-img {
+    width: 7vw;
+    height: 14vh;
+    margin: 20px;
+    overflow: hidden;
+    border-radius: 50%;
   }
   .profile-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  .profile{
-    border:1px solid hsla(0,0%,53%,0.07);
+  .profile {
+    border: 1px solid hsla(0, 0%, 53%, 0.07);
   }
-  .profile-username{
+  .profile-username {
     /* margin-top: -5vw; */
     padding: 0 3px;
     display: inline-block;
   }
-  .profile-data{
+  .profile-username h4 {
+    display: inline;
+  }
+  .profile-data {
     display: flex;
     justify-content: space-around;
-    margin-top:15px;
-    border:1px solid hsla(0,0%,53%,0.07);
+    margin-top: 15px;
+    border: 1px solid hsla(0, 0%, 53%, 0.07);
   }
-  
-  .prof-dt{
+
+  .prof-dt {
     text-align: center;
+    padding: 0 9.5%;
   }
-  .profile-d2{
+
+  .prof-dt:hover {
+    background-color: hsla(0, 0%, 53%, 0.07);
+    cursor: pointer;
+  }
+
+  .profile-d2 {
     display: flex;
     justify-content: space-between;
   }
-  .follow-button{
+  .follow-button {
     padding: 48px 60px;
   }
-  
-  #editButton{
+
+  #editButton {
     width: 2vw;
     height: 4vh;
-    background-color: #1f1f20;;
+    background-color: #1f1f20;
     border: none;
   }
-  .fas{
+  .fas {
     /* color: #e90ccb; */
-    color:white;
+    color: white;
+  }
+  .active2 {
+    background-color: hsla(0, 0%, 53%, 0.07);
   }
 </style>
-{% endblock %}  
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="col-9 group-con">
-    <div class="profile">
-        <h3>Profile</h3>
+  <div class="profile">
+    <h3>Profile</h3>
+  </div>
+  <div class="profile-d2">
+    <div class="profile-img">
+      <img
+        src="{{user.profile.profile_img.url}}"
+        alt=""
+        style="width: 50px; height: 50px; border-radius: 50%"
+      />
     </div>
-    <div class="profile-d2">
-        <div class="profile-img">
-            <img src="{{user.profile.profile_img.url}}" alt=""
-                style="width: 50px; height: 50px; border-radius: 50%;">
-        </div>
-        {% if user != request.user %}
-        <div class="follow-button">
-            <a href="#" class="btn signbtn me-4">Follow</a>
-        </div>
-        {% endif %}
+    {% if user != request.user %}
+    <div class="follow-button">
+      <a href="#" class="btn signbtn me-4">Follow</a>
     </div>
-    <div class="profile-username">
-        <h4>{{user.username}}</h4>
-        {% if user == request.user %}
-        <button id="editButton">
-          <i class="fas fa-edit"></i>
-        </button>
-        {% endif %}
-        <p>{{bio}}</p>
+    {% endif %}
+  </div>
+  <div class="profile-username">
+    <h4>{{user.username}}</h4>
+    {% if user == request.user %}
+    <button id="editButton">
+      <i class="fas fa-edit"></i>
+    </button>
+    {% endif %}
+    <p>{{bio}}</p>
+  </div>
+
+  <div class="profile-data">
+    <div class="post-count prof-dt" onclick="toggleActive(this,name='posts')">
+      <h5>{{trendingmessagescount}}</h5>
+      <p>Post</p>
     </div>
-    
-    <div class="profile-data">
-        <div class="post-count prof-dt">
-            <h5>{{trendingmessagescount}}</h5>
-            <p>Post</p>
-        </div>
-        <div class="following prof-dt">
-            <h5>{{following_count}}</h5>
-            <p>Following</p>
-        </div>
-        <div class="follower prof-dt">
-            <h5>{{follow_count}}</h5>
-            <p>Followers</p>
-        </div>
-        <div class="post-view prof-dt">
-            <h5>16</h5>
-            <p>Post Views</p>
-        </div>
+    <div class="following prof-dt" onclick="toggleActive(this,name='followingNames')">
+      <h5>{{following_count}}</h5>
+      <p>Following</p>
     </div>
+    <div class="follower prof-dt" onclick="toggleActive(this)">
+      <h5>{{follow_count}}</h5>
+      <p>Followers</p>
+    </div>
+    <div class="post-view prof-dt" onclick="toggleActive(this)">
+      <h5>{{total_viewcount}}</h5>
+      <p>Views</p>
+    </div>
+  </div>
+
+  <div class="posts" style="display: none;">
+    {% for post in posts %}
+    <p>{{post.user.username}}</p>
+    <p>{{post.content}}</p>
+    {% endfor %}
+  </div>
+
+  <div class="followingNames">
+    {% for following in followingUsers %}
+    <p>{{following}}</p>
+    {% endfor %}
+  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://kit.fontawesome.com/76b0e8fe7d.js"
+  crossorigin="anonymous"
+></script>
+{{ request.user.username|json_script:"json-username"}}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var listItems = document.querySelectorAll('.group-recom li');
 
-        listItems.forEach(function (item) {
-            item.addEventListener('click', function () {
-                // Remove "active2" class from all list items
-                listItems.forEach(function (listItem) {
-                    listItem.classList.remove('active2');
-                });
+let activeDiv = null;
+let previousName=null;
 
-                // Add "active2" class to the clicked list item
-                item.classList.add('active2');
-            });
-        });
+function toggleActive(clickedDiv,name) {
+    if (activeDiv !== null) {
+        activeDiv.classList.remove('active2');
+    }
 
-        // Note: Ensure that the element with ID "checkbox-i" exists in your base.html
-        document.getElementById("checkbox-i").addEventListener("change", function () {
-            var sidebar = document.getElementById("sidebar");
-            if (this.checked) {
-                sidebar.classList.add("sidebar-visible");
-            } else {
-                sidebar.classList.remove("sidebar-visible");
-            }
-        });
-    });
+    clickedDiv.classList.add('active2');
+    activeDiv = clickedDiv;
+
+}
+
+    // Note: Ensure that the element with ID "checkbox-i" exists in your base.html
+    document
+      .getElementById("checkbox-i")
+      .addEventListener("change", function () {
+        var sidebar = document.getElementById("sidebar");
+        if (this.checked) {
+          sidebar.classList.add("sidebar-visible");
+        } else {
+          sidebar.classList.remove("sidebar-visible");
+        }
+      });
 </script>
 
 {% endblock %}
