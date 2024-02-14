@@ -21,7 +21,7 @@ def generate_unique_username():
 
 
 def get_random_image():
-    images = ["images/teddy.jpg", "images/toycar.jpg", "images/Woody.jpg"]
+    images = ["images/girl.jpg", "images/ninja.jpg", "images/fire.jpg","images/panda.jpg"]
     return random.choice(images)
 
 

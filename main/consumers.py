@@ -12,6 +12,10 @@ from .models import Profile
 from django.db.models import F
 import re,time
 from django.core.files.storage import default_storage
+from django.conf import settings
+from cryptography.fernet import Fernet
+
+f=Fernet(settings.ENCRYPT_KEY)
 
 def save_image(image_data, username):
     # Remove the part of the image_data that indicates the encoding
@@ -136,10 +140,13 @@ class IndexConsumer(AsyncWebsocketConsumer):
             image_file_path = None
 
         if message:
+            message_bytes=message.encode('utf-8')
+            message_encrypted=f.encrypt(message_bytes)
+            message_decoded=message_encrypted.decode('utf-8')
             # If there's message content, create the TrendingMessage object
             recentMessage=TrendingMessage.objects.create(
                 user=user,
-                content=message,
+                content=message_decoded,
                 image=image_file_path,  # Pass the file path of the saved image
             )
 

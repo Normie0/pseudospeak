@@ -1,8 +1,14 @@
+import base64
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
+from cryptography.fernet import Fernet
+from django.conf import settings
+
+f=Fernet(settings.ENCRYPT_KEY)
+
 # Create your models here.
 
 class Category(models.Model):
@@ -31,6 +37,17 @@ class Message(models.Model):
     hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)
     parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+
+    def decrypt_message(self):  # Replace with your actual secret key
+        try:
+            print("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+            message_decrypted=f.decrypt(self.content)
+            message_decoded=message_decrypted.decode('utf-8')
+            return message_decoded
+        except Exception as e:
+            print(f"InvalidToken exception: {e.__cause__}")
+            return "Invalid decryption token"
+
 
     class Meta:
         ordering = ('date_added',)

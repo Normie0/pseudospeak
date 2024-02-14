@@ -98,7 +98,7 @@
           </div>
           <div class="field btn">
             <div class="btn-layer"></div>
-            <input type="submit" value="Signup">
+            <input type="submit" value="Signup" id="signin-btn">
           </div>
         </form>
       </div>
@@ -107,13 +107,20 @@
 
   <div class="loading-container" style="display: none;">
     <div class="quote-box">
-        <p style="color: rgba(233, 11, 233, 0.973);">"Your quote goes here"</p>
+        <p style="color: rgba(233, 11, 233, 0.973);">"Welcome to PseudoSpeak"</p>
         <div class="loading-spinner"></div>
     </div>
 </div>
 <script>
     
     document.querySelector("#login-btn").addEventListener('click',function(){
+      let loadingContainer=document.querySelector(".loading-container");
+      let wrapper=document.querySelector(".wrapper");
+      wrapper.style.display="none";
+      loadingContainer.style.display="flex";
+    })
+
+    document.querySelector("#signin-btn").addEventListener('click',function(){
       let loadingContainer=document.querySelector(".loading-container");
       let wrapper=document.querySelector(".wrapper");
       wrapper.style.display="none";

@@ -1,167 +1,542 @@
-{% extends 'main/base.html' %} {% block style %}
-
-<style>
-  .profile-img {
-    width: 7vw;
-    height: 14vh;
-    margin: 20px;
-    overflow: hidden;
-    border-radius: 50%;
-  }
-  .profile-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .profile {
-    border: 1px solid hsla(0, 0%, 53%, 0.07);
-  }
-  .profile-username {
-    /* margin-top: -5vw; */
-    padding: 0 3px;
-    display: inline-block;
-  }
-  .profile-username h4 {
-    display: inline;
-  }
-  .profile-data {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
-    border: 1px solid hsla(0, 0%, 53%, 0.07);
-  }
-
-  .prof-dt {
-    text-align: center;
-    padding: 0 9.5%;
-  }
-
-  .prof-dt:hover {
-    background-color: hsla(0, 0%, 53%, 0.07);
-    cursor: pointer;
-  }
-
-  .profile-d2 {
-    display: flex;
-    justify-content: space-between;
-  }
-  .follow-button {
-    padding: 48px 60px;
-  }
-
-  #editButton {
-    width: 2vw;
-    height: 4vh;
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"/>
+    <style>
+      
+body {
     background-color: #1f1f20;
-    border: none;
+    color: #e90ccb;
   }
-  .fas {
-    /* color: #e90ccb; */
+      
+  .nav-logo {
+    color: rgba(233, 11, 233, 0.973);
+    font-size: xx-large;
+    font-weight: bolder;
+    font-family: serif;
+  }
+  
+  .nav-logo:hover {
     color: white;
   }
-  .active2 {
-    background-color: hsla(0, 0%, 53%, 0.07);
+  
+  .navbar.bg-body-tertiary {
+    background-color: transparent !important;
+    color: white;
   }
-</style>
-{% endblock %} {% block content %}
-<div class="col-9 group-con">
-  <div class="profile">
-    <h3>Profile</h3>
-  </div>
-  <div class="profile-d2">
-    <div class="profile-img">
-      <img
-        src="{{user.profile.profile_img.url}}"
-        alt=""
-        style="width: 50px; height: 50px; border-radius: 50%"
-      />
-    </div>
-    {% if user != request.user %}
-    <div class="follow-button">
-      <a href="#" class="btn signbtn me-4">Follow</a>
-    </div>
-    {% endif %}
-  </div>
-  <div class="profile-username">
-    <h4>{{user.username}}</h4>
-    {% if user == request.user %}
-    <button id="editButton">
-      <i class="fas fa-edit"></i>
-    </button>
-    {% endif %}
-    <p>{{bio}}</p>
-  </div>
-
-  <div class="profile-data">
-    <div class="post-count prof-dt" onclick="toggleActive(this,name='posts')">
-      <h5>{{trendingmessagescount}}</h5>
-      <p>Post</p>
-    </div>
-    <div class="following prof-dt" onclick="toggleActive(this,name='followingNames')">
-      <h5>{{following_count}}</h5>
-      <p>Following</p>
-    </div>
-    <div class="follower prof-dt" onclick="toggleActive(this)">
-      <h5>{{follow_count}}</h5>
-      <p>Followers</p>
-    </div>
-    <div class="post-view prof-dt" onclick="toggleActive(this)">
-      <h5>{{total_viewcount}}</h5>
-      <p>Views</p>
-    </div>
-  </div>
-
-  <div class="posts" style="display: none;">
-    {% for post in posts %}
-    <p>{{post.user.username}}</p>
-    <p>{{post.content}}</p>
-    {% endfor %}
-  </div>
-
-  <div class="followingNames">
-    {% for following in followingUsers %}
-    <p>{{following}}</p>
-    {% endfor %}
-  </div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-  crossorigin="anonymous"
-></script>
-<script
-  src="https://kit.fontawesome.com/76b0e8fe7d.js"
-  crossorigin="anonymous"
-></script>
-{{ request.user.username|json_script:"json-username"}}
-<script>
-
-let activeDiv = null;
-let previousName=null;
-
-function toggleActive(clickedDiv,name) {
-    if (activeDiv !== null) {
-        activeDiv.classList.remove('active2');
-    }
-
-    clickedDiv.classList.add('active2');
-    activeDiv = clickedDiv;
-
+  
+  .signbtn {
+    background-color: #e90ccb;
+    color: rgb(5, 5, 5);
+    border-radius: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+  }
+  
+  .signbtn:hover {
+    background-color: #050100;
+    color: rgb(236, 22, 208);
+  }
+  a {
+    color: white;
+    text-decoration: none;
+  }
+  #profile_img_navbar:hover{
+    cursor: pointer;
+  }
+  #comment:hover{
+    cursor: pointer;
+  }
+  #imageContainer{
+    width: 50px;
+    height: 50px;
+  }
+  .search-input-2 {
+    width: 70vw;
+    border-radius: 20px;
+    height: 7vh;
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: hsla(0, 0%, 53%, 0.07);
+    color: #ccc;
+    padding-left: 30px;
+  }
+  
+.content-1 {
+/* border: 1px solid rgba(61, 5, 5, 1); */
+height: 90vh;
 }
 
-    // Note: Ensure that the element with ID "checkbox-i" exists in your base.html
-    document
-      .getElementById("checkbox-i")
-      .addEventListener("change", function () {
-        var sidebar = document.getElementById("sidebar");
-        if (this.checked) {
-          sidebar.classList.add("sidebar-visible");
-        } else {
-          sidebar.classList.remove("sidebar-visible");
+.content-1b {
+border: 1px solid #1f1f20;
+height: 100vh;
+/* width: 70vh; */
+}
+
+.content-1a {
+border: 2px solid #1f1f20;
+height: 90vh;
+}
+
+.content-1a ul li {
+list-style: none;
+margin: 30px 18px;
+font-size: x-large;
+font-weight: 600;
+border-radius: 30px;
+padding-left: 20px;
+padding-top: 5px;
+height: 8vh;
+background: none;
+}
+
+/*end of content-1a*/
+.content-1a ul {
+list-style-type: none;
+padding: 0;
+}
+
+.content-1a li {
+display: flex;
+align-items: center;
+color: rgba(233, 11, 233, 0.973);
+background-color: transparent;
+padding: 10px 15px;
+cursor: pointer;
+transition: background-color 0.2s ease;
+}
+
+.content-1a li:hover {
+background-color: rgba(128, 0, 128, 0.123);
+text-decoration: underline;
+}
+.content-1a i.fa-solid {
+font-size: 24px;
+margin-right: 10px;
+}
+
+
+.content-1a li a {
+color: rgba(233, 11, 233, 0.973);
+text-decoration: none;
+}
+
+.content-1a li a:hover {
+text-decoration: underline;
+}
+.joinbtn {
+background-color: #e90ccb;
+width:90px;
+color: rgb(5, 5, 5);
+border-radius: 15px;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+font-weight: bold;
+}
+.joinbtn:hover {
+background-color: #050100;
+color: rgb(236, 22, 208);
+}
+
+.button-i{
+display:none;
+visibility:hidden;
+-webkit-appearance: none;
+}
+.toggle2{
+position:absolute;
+height:30px;
+width:30px;
+background-color:rgba(233, 11, 233, 0.973);
+z-index:1;
+cursor:pointer;
+border-radius:2px;
+top:22px;
+left:20px;
+box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.toggle2 .common{
+position:absolute;
+height:2px;
+width:20px;
+background-color:black;
+border-radius:50px;
+transition: 0.3s ease;
+}
+.toggle2 .top-line{
+top:30%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+.toggle2 .middle-line{
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+.toggle2 .bottom-line{
+top:70%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+input:checked ~ .toggle2 .top-line{
+left:2px;
+top:14px;
+width:25px;
+transform: rotate(45deg);
+}
+input:checked ~ .toggle2 .bottom-line{
+left:2px;
+top:14px;
+width:25px;
+transform: rotate(-45deg);
+}
+input:checked ~ .toggle2 .middle-line{ 
+transform: rotate(20px);
+opacity:0;
+}
+.button-res{
+display:none; 
+}
+
+
+@media (max-width: 850px) {
+.sidebar {
+height: 100%;
+width: 0;
+left: -250px;
+position: fixed;
+top: 0;
+background-color: #1f1f20;
+overflow-x: hidden;
+transition: 0.5s;
+padding-top: 60px;
+}
+
+.sidebar {
+width: 0;
+left: -250px;
+transition: width 0.5s, left 0.5s;
+}
+
+.sidebar-visible {
+width: 250px;
+left: 0;
+}
+
+.col-9 {
+width: 100%;
+}
+.button-res {
+display: block;
+}
+.search-input-2{
+width:94vw;
+}
+}
+
+/*1*/
+.profile-img {
+width: 7vw;
+height: 14vh;
+margin: 20px;
+overflow: hidden;
+border-radius: 50%;
+}
+.profile-img img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+.profile{
+  border:1px solid hsla(0,0%,53%,0.07);
+}
+.profile-username{
+  padding: 0 3px;
+  display: inline-block;
+}
+.profile-username h4{
+  display: inline;
+}
+.profile-data{
+  display: flex;
+  justify-content: space-around;
+  margin-top:25px;
+  border:1px solid hsla(0,0%,53%,0.07);
+}
+
+.prof-dt{
+  text-align: center;
+  cursor: pointer;
+}
+.profile-d2{
+  display: flex;
+  justify-content: space-between;
+}
+.follow-button{
+  padding: 48px 60px;
+}
+
+#editButton{
+  width: 2vw;
+  height: 4vh;
+  background-color: #1f1f20;;
+  border: none;
+}
+.fas{
+  /* color: #e90ccb; */
+  color:white;
+}
+
+
+/*cnt*/
+
+.user-posts, .user-followers, .user-followings{
+  display: none;
+}
+
+.followers, .followings{
+  display: flex;
+  text-align:center;
+  border: 1px solid hsla(0,0%,53%,0.07); 
+  margin-top: 7px;
+}
+.user-followers{
+}
+.follower-img, .following-img{
+  width: 5vw;
+  height: 10vh;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.follower-img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.following-img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.follower-name, .following-name{
+  padding-top:10px;
+  padding-left: 10px;
+}
+    </style>
+  </head>
+  <body>
+    <label class="button-res">
+    <input type="checkbox" class="button-i" id="checkbox-i">
+    <div class="toggle2">
+    <span class="top-line common"></span>
+    <span class="middle-line common"></span>
+    <span class="bottom-line common"></span>
+    </div>
+    </label>
+
+
+    <nav class="navbar navbar-expand bg-body-tertiary">
+      <div class="container-fluid">
+        <!-- <img src="/img/logo2.png" alt=""> -->
+        <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}">PseudoSpeak</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span> 
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          </ul>
+          {% if user.is_authenticated %}
+          <img id="profile_img_navbar" src="{{ user.profile.profile_img.url }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+          <a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
+          {% else %}
+            <a href="{% url 'login_or_signup_view' %}" class="btn signbtn me-4">Sign in</a>
+          {% endif %}
+          
+    
+        </div>
+      </div>
+    </nav>
+   <!-- {% comment %} SIDEBAR {% endcomment %} -->
+  <div class="container-fluid">
+    <div class="row content-1">
+      <div class="col-3 content-1a res2 sidebar" id="sidebar">
+        <ul>
+          <li class="active"><i class="fa-solid fa-house"></i><a href="{% url 'index' %}">Feed</a></li>
+          <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' name='recommended' %}">Groups</a></li>
+          <li><i class="fa-solid fa-comments"></i>Topics</li>
+          <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
+          <li><i class="fa-solid fa-gear"></i><a href="{% url 'logout' %}">Settings</a></li>
+        </ul>
+      </div>
+      <div class="col-9 group-con">
+        <div class="profile">
+            <h3>Profile</h3>
+        </div>
+        <div class="profile-d2">
+          <div class="profile-img">
+              <img src="{{user.profile.profile_img.url}}" alt="">
+          </div>
+          {% if user.username != request.user.username %}
+          <div class="follow-button">
+            <a href="#" class="btn signbtn me-4">Follow</a>
+          </div>
+          {% endif %}
+        </div>
+        <div class="profile-username">
+            <h4>{{user.username}}</h4>
+            <button id="editButton" onclick="enableEdit()">
+            <i class="fas fa-edit"></i>
+            </button>
+            <p>{{bio}}</p>
+        </div>
+        
+        <div class="profile-data">
+            <div class="post-count prof-dt" onclick="toggleVisibility('user-posts', 'user-followers', 'user-followings')">
+                <h5>{{trendingmessagescount}}</h5>
+                <p>Post</p>
+            </div>
+            <div class="following prof-dt" onclick="toggleVisibility('user-followings', 'user-posts', 'user-followers')">
+                <h5>{{following_count}}</h5>
+                <p>Following</p>
+            </div>
+            <div class="follower prof-dt" onclick="toggleVisibility('user-followers', 'user-followings', 'user-posts')">
+                <h5>{{follow_count}}</h5>
+                <p>Followers</p>
+            </div>
+            <div class="post-view prof-dt">
+              <h5>16</h5>
+              <p>Post Views</p>
+            </div>
+
+        </div>
+        <div class="user-posts">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates, fugiat a facilis repellat temporibus ratione rem voluptate, doloremque vero eaque vitae saepe incidunt sequi exercitationem, voluptas quisquam reprehenderit perspiciatis assumenda iure pariatur reiciendis placeat.
+        </div>
+        <div class="user-followers">
+          {% for follower in followUsers %}
+          <div class="followers">
+            <div class="follower-img">
+              <img src="{{follower.profile.profile_img.url}}" alt="">
+            </div>
+            <div class="follower-name">
+              <h5>{{follower.username}}</h5>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="user-followings">
+          {% for follower in followingUsers %}
+          <div class="followings">
+            <div class="following-img">
+              <img src="{{follower.profile.profile_img.url}}" alt="">
+            </div>
+            <div class="following-name">
+              <h5>{{follower.username}}</h5>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+
+    </div>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var listItems = document.querySelectorAll('.group-recom li');
+
+    listItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        // Remove "active2" class from all list items
+        listItems.forEach(function (listItem) {
+          listItem.classList.remove('active2');
+        });
+
+        // Add "active2" class to the clicked list item
+        item.classList.add('active2');
+      });
+    });
+
+
+    function enableEdit() {
+      var usernameElement = document.querySelector('.profile-username h4');
+      var editButton = document.getElementById("editButton");
+
+      // Create an input field
+      var inputField = document.createElement("input");
+      inputField.type = "text";
+      inputField.value = usernameElement.textContent;
+
+      // Replace the username h4 with the input field
+      usernameElement.replaceWith(inputField);
+
+      // Disable the edit button while editing
+      editButton.disabled = true;
+
+      // Focus on the input field
+      inputField.focus();
+
+      // Add an event listener for the Enter key
+      inputField.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+          // Update the username if Enter key is pressed
+          usernameElement.textContent = inputField.value;
+          // Replace the input field with the username h4
+          inputField.replaceWith(usernameElement);
+          // Enable the edit button after editing
+          editButton.disabled = false;
         }
       });
+
+      // Remove the input field and enable the edit button if the user clicks outside the input field
+      document.addEventListener("click", function (e) {
+        if (!inputField.contains(e.target)) {
+          usernameElement.textContent = inputField.value;
+          inputField.replaceWith(usernameElement);
+          editButton.disabled = false;
+        }
+      });
+    }
+
+    // Attach enableEdit function to the global scope for the onclick attribute to work
+    window.enableEdit = enableEdit;
+  });
+  document.getElementById("checkbox-i").addEventListener("change", function () {
+    var sidebar = document.getElementById("sidebar");
+    if (this.checked) {
+        sidebar.classList.add("sidebar-visible");
+    } else {
+        sidebar.classList.remove("sidebar-visible");
+    }
+  });
+  // cnt 
+
+  function toggleVisibility(showClassName, hideClassName1, hideClassName2) {
+            var showDiv = document.querySelector('.' + showClassName);
+            var hideDiv1 = document.querySelector('.' + hideClassName1);
+            var hideDiv2 = document.querySelector('.' + hideClassName2);
+
+            showDiv.style.display = 'block';
+          
+            hideDiv1.style.display = 'none';
+
+            hideDiv2.style.display = 'none';
+        }
+        
+      
 </script>
 
-{% endblock %}
+
+  </body>
+</html>

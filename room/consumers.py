@@ -3,10 +3,23 @@ import json
 from django.contrib.auth.models import User
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-
+from cryptography.fernet import Fernet
+from django.conf import settings
 from .models import Room, Message
 
+f=Fernet(settings.ENCRYPT_KEY)
+
 class ChatConsumer(AsyncWebsocketConsumer):
+    @sync_to_async
+    def generate_key():
+        return Fernet.generate_key()
+
+    @sync_to_async
+    def encrypt_data(data, key):
+        cipher = Fernet(key)
+        encrypted_data = cipher.encrypt(data)
+        return encrypted_data
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
@@ -64,7 +77,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = User.objects.get(username=username)
         room = Room.objects.get(slug=room)
         if message:
-            Message.objects.create(user=user, room=room, content=message)
+            message_bytes=message.encode('utf-8')
+            encrypt_message= f.encrypt(message_bytes)
+            print(encrypt_message)
+            message_decoded=encrypt_message.decode('utf-8')
+            Message.objects.create(user=user, room=room, content=message_decoded)
 
     @sync_to_async
     def get_profile_img(self,username):

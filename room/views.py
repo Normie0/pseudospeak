@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from cryptography.fernet import Fernet
 # Create your views here.
 @login_required
 def rooms(request,name):
@@ -19,8 +20,10 @@ def rooms(request,name):
     return render(request,"room/rooms.html",{'rooms':rooms,'joinedRooms':joinedRooms,'categories':categories})
 
 
-@login_required
-def room(request,slug):
+
+def room(request, slug):
     room=Room.objects.get(slug=slug)
     messages=Message.objects.filter(room=room)
-    return render(request,'room/room.html',{'room':room,'messages':messages})
+    for message in messages:
+        print(message.decrypt_message())
+    return render(request, 'room/room.html', {'room': room, 'messages': messages})
