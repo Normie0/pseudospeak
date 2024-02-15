@@ -295,7 +295,11 @@ object-fit: cover;
 
 /*cnt*/
 
-.user-posts, .user-followers, .user-followings{
+.user-posts{
+  display: block;
+}
+
+.user-followers, .user-followings{
   display: none;
 }
 
@@ -495,6 +499,7 @@ integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgr
 
     document.querySelector('#profile_img_navbar').onclick = function () {
     var redirectURL = '/dashboard/' + loggedusername + '/';
+    console.log(redirectURL);
     window.location.href = redirectURL;
   }
 
