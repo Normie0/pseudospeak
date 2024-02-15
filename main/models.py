@@ -9,9 +9,9 @@ f=Fernet(settings.ENCRYPT_KEY)
 class Profile(models.Model):
     user=models.OneToOneField(User,null=True,on_delete=models.CASCADE)
     profile_img=models.ImageField(null=True,blank=True,upload_to='images/')
-    bio=models.CharField(null=True,max_length=512)
-    follow=models.ManyToManyField(User,related_name='follow')
-    following=models.ManyToManyField(User,related_name='following')
+    bio=models.CharField(null=True,max_length=51)
+    follow=models.ManyToManyField(User,related_name='follow',null=True)
+    following=models.ManyToManyField(User,related_name='following',null=True)
     
     def __str__(self) -> str:
         return str(self.user)

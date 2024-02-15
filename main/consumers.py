@@ -237,3 +237,41 @@ class IndexConsumer(AsyncWebsocketConsumer):
             'msgId': msgId,
             'views': views,
         }))
+
+
+class DashboardConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['username']
+        print(self.room_name)
+        self.room_group_name = 'chat_%s' % self.room_name
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        await self.accept()
+
+    async def disconnect(self, code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        await self.follow(data)
+        
+    @sync_to_async
+    def follow(self,data):
+        user=User.objects.get(username=data['username'])
+        print(user.username)
+        loggeduser=User.objects.get(username=data['loggedusername'])
+        
+        if data['followStatus']=='Unfollow':
+            user.profile.follow.remove(loggeduser)
+            loggeduser.profile.following.remove(user)
+            print("Done")
+        else:
+            user.profile.follow.add(loggeduser)
+            loggeduser.profile.following.add(user)
+            print("followed")

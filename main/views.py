@@ -68,8 +68,6 @@ def login_or_signup_view(request):
                 existing_user = User.objects.get(username=username)
             except User.DoesNotExist:
                 existing_user = None
-            print(existing_user)
-            print("completed fetching data from form")
             if confirm_password == password and existing_user is None:
                 # Create the user first
                 create_user = User.objects.create_user(
@@ -78,7 +76,7 @@ def login_or_signup_view(request):
                 random_image_path = get_random_image()
 
                 # Create the user's profile with the random image
-                profile = Profile(user=create_user, profile_img=random_image_path)
+                profile = Profile(user=create_user, profile_img=random_image_path,bio="New User")
                 print("completed registering user")
                 profile.save()
                 login(request, create_user)
@@ -125,6 +123,9 @@ def dashboard(request, profileId):
     ).order_by("date_added")
 
     trendingmessagescount = len(trendingmessages)
+    followers=user.profile.follow.all()
+    following=user.profile.following.all()
+
     follow_count = user.profile.follow_count
     following_count = user.profile.following_count
     bio=user.profile.bio
@@ -144,7 +145,8 @@ def dashboard(request, profileId):
             "following_count":following_count,
             "bio":bio,
             "posts":posts,
-            "followingUsers":followers_usernames,
+            "followingUsers":following,
+            "followUsers":followers,
             "total_viewcount":total_viewcount,
         },
     )

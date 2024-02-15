@@ -327,6 +327,10 @@ object-fit: cover;
   padding-top:10px;
   padding-left: 10px;
 }
+#follow-img,#follower-img:hover{
+  cursor:pointer;
+}
+
     </style>
   </head>
   <body>
@@ -352,7 +356,7 @@ object-fit: cover;
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           </ul>
           {% if user.is_authenticated %}
-          <img id="profile_img_navbar" src="{{ user.profile.profile_img.url }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+          <img id="profile_img_navbar" src="{{ request.user.profile.profile_img.url }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
           <a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
           {% else %}
             <a href="{% url 'login_or_signup_view' %}" class="btn signbtn me-4">Sign in</a>
@@ -384,7 +388,11 @@ object-fit: cover;
           </div>
           {% if user.username != request.user.username %}
           <div class="follow-button">
-            <a href="#" class="btn signbtn me-4">Follow</a>
+            {% if user not in request.user.profile.following.all %}
+            <a href="#" class="btn signbtn followbtn me-4">Follow</a>
+            {% else %}
+            <a href="#" class="btn signbtn followbtn me-4">Unfollow</a>
+            {% endif %}
           </div>
           {% endif %}
         </div>
@@ -410,7 +418,7 @@ object-fit: cover;
                 <p>Followers</p>
             </div>
             <div class="post-view prof-dt">
-              <h5>16</h5>
+              <h5>{{total_viewcount}}</h5>
               <p>Post Views</p>
             </div>
 
@@ -422,7 +430,7 @@ object-fit: cover;
           {% for follower in followUsers %}
           <div class="followers">
             <div class="follower-img">
-              <img src="{{follower.profile.profile_img.url}}" alt="">
+              <img src="{{follower.profile.profile_img.url}}" alt="" id="follow-img" data-img-id="{{follower.username}}">
             </div>
             <div class="follower-name">
               <h5>{{follower.username}}</h5>
@@ -434,7 +442,7 @@ object-fit: cover;
           {% for follower in followingUsers %}
           <div class="followings">
             <div class="following-img">
-              <img src="{{follower.profile.profile_img.url}}" alt="">
+              <img src="{{follower.profile.profile_img.url}}" alt="" id="follower-img" data-img-id="{{follower.username}}">
             </div>
             <div class="following-name">
               <h5>{{follower.username}}</h5>
@@ -447,6 +455,9 @@ object-fit: cover;
 
     </div>
   </div>
+
+  {{ user.username|json_script:"json-username"}}
+  {{ request.user.username|json_script:"json-loggedusername"}}
   
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
 integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
@@ -454,7 +465,38 @@ integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgr
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+
+    const username = JSON.parse(document.getElementById("json-username").textContent);
+    const loggedusername = JSON.parse(document.getElementById("json-loggedusername").textContent);
+
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/dashboard/' + username + '/');
+
+    socket.onopen=function(e){
+      console.log("Connection Established")
+    }
+
     var listItems = document.querySelectorAll('.group-recom li');
+
+    document.querySelector('.follow-button').addEventListener('click',function(){
+      const followTxtElement=document.querySelector('.followbtn');
+      const followTxt=followTxtElement.innerHTML;
+      if (followTxt==="Follow"){
+        followTxtElement.innerHTML="Unfollow";
+      }
+      else{
+        followTxtElement.innerHTML="Follow"
+      }
+      socket.send(JSON.stringify({
+        'username':username,
+        'followStatus':followTxt,
+        'loggedusername':loggedusername,
+      }))
+    })
+
+    document.querySelector('#profile_img_navbar').onclick = function () {
+    var redirectURL = '/dashboard/' + loggedusername + '/';
+    window.location.href = redirectURL;
+  }
 
     listItems.forEach(function (item) {
       item.addEventListener('click', function () {
@@ -468,50 +510,28 @@ integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgr
       });
     });
 
-
-    function enableEdit() {
-      var usernameElement = document.querySelector('.profile-username h4');
-      var editButton = document.getElementById("editButton");
-
-      // Create an input field
-      var inputField = document.createElement("input");
-      inputField.type = "text";
-      inputField.value = usernameElement.textContent;
-
-      // Replace the username h4 with the input field
-      usernameElement.replaceWith(inputField);
-
-      // Disable the edit button while editing
-      editButton.disabled = true;
-
       // Focus on the input field
-      inputField.focus();
-
-      // Add an event listener for the Enter key
-      inputField.addEventListener("keyup", function (event) {
-        if (event.key === "Enter") {
-          // Update the username if Enter key is pressed
-          usernameElement.textContent = inputField.value;
-          // Replace the input field with the username h4
-          inputField.replaceWith(usernameElement);
-          // Enable the edit button after editing
-          editButton.disabled = false;
-        }
-      });
-
-      // Remove the input field and enable the edit button if the user clicks outside the input field
-      document.addEventListener("click", function (e) {
-        if (!inputField.contains(e.target)) {
-          usernameElement.textContent = inputField.value;
-          inputField.replaceWith(usernameElement);
-          editButton.disabled = false;
-        }
-      });
-    }
-
-    // Attach enableEdit function to the global scope for the onclick attribute to work
-    window.enableEdit = enableEdit;
+    
   });
+
+  document.body.addEventListener('click', function(e) {
+    if (e.target && e.target.id == 'follower-img') {
+        const profileId = e.target.getAttribute('data-img-id');
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        var redirectURL = '/dashboard/' + profileId + '/';
+        window.location.href = redirectURL;
+    }
+});
+
+  document.body.addEventListener('click', function(e) {
+    if (e.target && e.target.id == 'follow-img') {
+        const profileId = e.target.getAttribute('data-img-id');
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        var redirectURL = '/dashboard/' + profileId + '/';
+        window.location.href = redirectURL;
+    }
+});
+
   document.getElementById("checkbox-i").addEventListener("change", function () {
     var sidebar = document.getElementById("sidebar");
     if (this.checked) {
