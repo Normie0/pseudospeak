@@ -36,7 +36,7 @@
           </div>
           <div class="msg-output-details">
             <h5>{{m.user.username}}</h5>
-            <p>{{m.content}}</p>
+            <p>{{m.decrypt_message}}</p>
             {% if m.image %}
             <img src="{{m.image.url}}" alt="">
             {% endif %}
@@ -192,7 +192,7 @@
             </div>
             <div class="msg-output">
                 <div class="msg-output-img">
-                    <img src="${data.profile_img}" alt="Profile Picture">
+                  <img src="${data.profile_img}" alt="Profile Picture" id="profile-img" data-img-id="${data.username}">
                 </div>
                 <div class="msg-output-details">
                     <h5>${data.username}</h5>

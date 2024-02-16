@@ -22,6 +22,12 @@ def rooms(request,name):
 
 
 def room(request, slug):
+    if request.method=='POST':
+        user=request.user
+        room=Room.objects.get(slug=slug)
+        room.users.remove(user)
+        room.save()
+        return redirect(rooms,name="recommended")
     room=Room.objects.get(slug=slug)
     messages=Message.objects.filter(room=room)
     for message in messages:

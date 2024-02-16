@@ -147,6 +147,7 @@ color: rgb(236, 22, 208);
 display:none;
 visibility:hidden;
 -webkit-appearance: none;
+appearance:inherit;
 }
 .toggle2{
 position:absolute;
@@ -295,7 +296,7 @@ object-fit: cover;
 
 /*cnt*/
 
-.user-posts{
+.msg-post{
   display: block;
 }
 
@@ -308,8 +309,6 @@ object-fit: cover;
   text-align:center;
   border: 1px solid hsla(0,0%,53%,0.07); 
   margin-top: 7px;
-}
-.user-followers{
 }
 .follower-img, .following-img{
   width: 5vw;
@@ -333,6 +332,104 @@ object-fit: cover;
 }
 #follow-img,#follower-img:hover{
   cursor:pointer;
+}
+.msg-post {
+  display: flex;
+  margin-top: 1%;
+  align-items: flex-start;
+}
+
+.msg-post {
+  display: flex;
+  margin-top: 1%;
+  align-items: flex-start;
+}
+
+.msg-post-img {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #f8f8fa;  
+}
+
+.msg-post-img img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+}
+
+/* Style for the message details container */
+.msg-post-details {
+  flex-grow: 1;
+  color: #f8f8fa;
+}
+
+.msg-post-details h5 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  
+}
+
+.msg-post-details p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.msg-post-details img{
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  margin-top: 5px;
+  border-radius: 2%; 
+}
+
+.msg-post-details button{
+  width:2vw;
+  border-radius:45px;
+  border:0;
+  background-color:#1f1f20;
+}
+.msg-post-details button:hover{
+  background-color:#333333;
+}
+.delete1{
+  padding-right:20px;
+  display:flex;
+}
+.msg-username1{
+  display:flex;
+  justify-content:space-between;
+}
+
+.msg-output-details img{
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  margin-top: 5px;
+  border-radius: 2%;
+}
+
+.delete1 ul li{
+  list-style: none;
+  border: 1px solid white;
+  position:relative;
+}
+
+.delbutton{
+  margin-right:2px;
+  width:6vw;
+  cursor:pointer;
+  background:#18191a;
+  text-align: center;
+  display:none;
 }
 
     </style>
@@ -377,7 +474,7 @@ object-fit: cover;
         <ul>
           <li class="active"><i class="fa-solid fa-house"></i><a href="{% url 'index' %}">Feed</a></li>
           <li><i class="fa-solid fa-user-group"></i><a href="{% url 'rooms' name='recommended' %}">Groups</a></li>
-          <li><i class="fa-solid fa-comments"></i>Topics</li>
+          <li><i class="fa-solid fa-comments"></i><a href="{% url 'messenger' %}">Messenger</a></li>
           <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
           <li><i class="fa-solid fa-gear"></i><a href="{% url 'logout' %}">Settings</a></li>
         </ul>
@@ -409,15 +506,15 @@ object-fit: cover;
         </div>
         
         <div class="profile-data">
-            <div class="post-count prof-dt" onclick="toggleVisibility('user-posts', 'user-followers', 'user-followings')">
+            <div class="post-count prof-dt" onclick="toggleVisibility('user-post', 'user-followers', 'user-followings')">
                 <h5>{{trendingmessagescount}}</h5>
                 <p>Post</p>
             </div>
-            <div class="following prof-dt" onclick="toggleVisibility('user-followings', 'user-posts', 'user-followers')">
+            <div class="following prof-dt" onclick="toggleVisibility('user-followings', 'user-post', 'user-followers')">
                 <h5>{{following_count}}</h5>
                 <p>Following</p>
             </div>
-            <div class="follower prof-dt" onclick="toggleVisibility('user-followers', 'user-followings', 'user-posts')">
+            <div class="follower prof-dt" onclick="toggleVisibility('user-followers', 'user-followings', 'user-post')">
                 <h5>{{follow_count}}</h5>
                 <p>Followers</p>
             </div>
@@ -427,9 +524,32 @@ object-fit: cover;
             </div>
 
         </div>
-        <div class="user-posts">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates, fugiat a facilis repellat temporibus ratione rem voluptate, doloremque vero eaque vitae saepe incidunt sequi exercitationem, voluptas quisquam reprehenderit perspiciatis assumenda iure pariatur reiciendis placeat.
+
+        <div class="user-post">
+        {% for message in trendingmessages %}
+        <div class="msg-post">
+          <div class="msg-post-img">
+            <img src="{{user.profile.profile_img.url}}" alt="Profile Picture">
+          </div>
+          <div class="msg-post-details">
+            <div class="msg-username1">
+              <h5>{{user.username}}</h5>
+              <div class="delete1">
+                <div class="delbutton" id="delbutton">delete</div>
+                <button type="button" class="button12" onclick="showonclick1()"><i class="fa-solid fa-ellipsis-vertical" style="color: #ffffff;"></i></button>
+              </div>
+            </div>
+            <p>
+              {{message.decrypt_message}}
+            </p>
+            {% if message.image %}
+            <img src="{{message.image.url}}" alt="">
+            {% endif %}
+          </div>
         </div>
+        {% endfor %}
+      </div>
+
         <div class="user-followers">
           {% for follower in followUsers %}
           <div class="followers">
@@ -455,8 +575,6 @@ object-fit: cover;
           {% endfor %}
         </div>
       </div>
-      
-
     </div>
   </div>
 
@@ -468,6 +586,25 @@ integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgr
 <script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+function showonclick1() {
+        var container2 = document.getElementById('delbutton');
+        if (container2.style.display === 'none') {
+            container2.style.display = 'block';
+        } else {
+            container2.style.display = 'none';
+        }
+    }
+
+    document.body.addEventListener('click', function(event) {
+        var container1 = document.querySelector('.button12');
+        var container2 = document.getElementById('delbutton');
+        var target = event.target;
+        if (!container1.contains(target) && target !== container1 && target !== container2) {
+            container2.style.display = 'none';
+        }
+    });
+
   document.addEventListener('DOMContentLoaded', function () {
 
     const username = JSON.parse(document.getElementById("json-username").textContent);
@@ -514,8 +651,6 @@ integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgr
         item.classList.add('active2');
       });
     });
-
-      // Focus on the input field
     
   });
 

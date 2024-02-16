@@ -40,7 +40,6 @@ class Message(models.Model):
 
     def decrypt_message(self):  # Replace with your actual secret key
         try:
-            print("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
             message_decrypted=f.decrypt(self.content)
             message_decoded=message_decrypted.decode('utf-8')
             return message_decoded

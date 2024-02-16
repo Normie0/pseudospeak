@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async
 from cryptography.fernet import Fernet
 from django.conf import settings
 from .models import Room, Message
+from django.db.models import Q 
 
 f=Fernet(settings.ENCRYPT_KEY)
 
@@ -100,11 +101,20 @@ class RoomConsumer(AsyncWebsocketConsumer):
         data=json.loads(text_data)
 
         print(data)
-
-        id=data['id']
-        username=data['username']
-
-        await self.add_user_room(username,id)
+        if 'searchRoom' in data:
+            searchinput=data['searchRoom']
+            username=data['username']
+            print(searchinput)
+            results=await self.fetch_room(searchinput,username)
+            await self.send(text_data=json.dumps({
+                'searchRooms':results
+            }))
+            
+        else:
+            id=data['id']
+            username=data['username']
+        
+            await self.add_user_room(username,id)
 
     @sync_to_async
     def add_user_room(self,username,id):
@@ -113,3 +123,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
         room.users.add(user)
         room.save()
         print(room.users.all())
+
+    @sync_to_async
+    def fetch_room(self,searchinput,username):
+        user=User.objects.get(username=username)
+        room=Room.objects.filter(name__startswith=searchinput).exclude(Q(users=user))
+        json_data = [{'name': item.name, 'room_img_url': item.room_img.url, 'pk': item.pk} for item in room]
+
+        return json_data
+        

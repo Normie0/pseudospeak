@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block style %}
+<style>
+    *{
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    {{ my_html_content|safe }}
+    <h1>Hello</h1>
+{% endblock %}
+
+

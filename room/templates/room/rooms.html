@@ -396,7 +396,10 @@
               <i class="fa-solid fa-user-group"></i
               ><a href="{% url 'rooms' name='recommended' %}">Groups</a>
             </li>
-            <li><i class="fa-solid fa-comments"></i>Topics</li>
+            <li>
+              <i class="fa-solid fa-comments"></i
+              ><a href="{% url 'messenger' %}">Messenger</a>
+            </li>
             <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
             <li>
               <i class="fa-solid fa-gear"></i
@@ -445,26 +448,28 @@
               {% endfor %}
             </ul>
           </div>
-          {% for room in rooms %}
-          <div class="group-container-3">
-            <div class="group-con-name">
-              <div class="group-container-img">
-                <img src="{{room.room_img.url}}" alt="" />
+          <div id="grouplist">
+            {% for room in rooms %}
+            <div class="group-container-3">
+              <div class="group-con-name">
+                <div class="group-container-img">
+                  <img src="{{room.room_img.url}}" alt="" />
+                </div>
+                <div class="group-container-name">
+                  <h4>{{room.name}}</h4>
+                </div>
               </div>
-              <div class="group-container-name">
-                <h4>{{room.name}}</h4>
+              <div class="join-button">
+                <a
+                  href="#"
+                  class="joinbtn btn btn-success"
+                  data-message-id="{{room.pk}}"
+                  >Join</a
+                >
               </div>
             </div>
-            <div class="join-button">
-              <a
-                href="#"
-                class="joinbtn btn btn-success"
-                data-message-id="{{room.pk}}"
-                >Join</a
-              >
-            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
       </div>
     </div>
@@ -491,6 +496,9 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         var listItems = document.querySelectorAll(".group-recom li");
+        const username = JSON.parse(
+          document.getElementById("json-username").textContent
+        );
 
         listItems.forEach(function (item) {
           item.addEventListener("click", function () {
@@ -510,10 +518,56 @@
           "ws://" + window.location.host + "/ws/room/"
         );
 
+        socket.onmessage = function (e) {
+          const data = JSON.parse(e.data);
+
+          if (Array.isArray(data["searchRooms"])) {
+            const template = document.getElementById("grouplist");
+            template.innerHTML = "";
+            data["searchRooms"].forEach(function (item) {
+              console.log(item);
+              console.log(item.pk);
+              template.innerHTML += `
+                <div class="group-container-3">
+                    <div class="group-con-name">
+                        <div class="group-container-img">
+                            <img src="${item.room_img_url}" alt="" />
+                        </div>
+                        <div class="group-container-name">
+                            <h4>${item.name}</h4>
+                        </div>
+                    </div>
+                    <div class="join-button">
+                    <a
+                      href="#"
+                      class="joinbtn btn btn-success"
+                      data-message-id="${item.pk}"
+                      >Join</a
+                    >
+                  </div>
+                </div>`;
+            });
+          }
+        };
+
         socket.onopen = function () {
-          const username = JSON.parse(
-            document.getElementById("json-username").textContent
-          );
+          document
+            .getElementById("data2")
+            .addEventListener("keydown", function (event) {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                const searchTxt = document.getElementById("data2").value;
+                if (searchTxt) {
+                  socket.send(
+                    JSON.stringify({
+                      username: username,
+                      searchRoom: searchTxt,
+                    })
+                  );
+                }
+              }
+            });
+
           document.querySelectorAll(".joinbtn").forEach(function (joinButton) {
             joinButton.addEventListener("click", function () {
               const id = this.getAttribute("data-message-id");
@@ -524,6 +578,7 @@
                   username: username,
                 })
               );
+              window.location
               location.reload(true);
             });
           });

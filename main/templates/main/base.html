@@ -71,7 +71,7 @@
               <i class="fa-solid fa-user-group"></i
               ><a href="{% url 'rooms' name='recommended' %}">Groups</a>
             </li>
-            <li><i class="fa-solid fa-comments"></i>Topics</li>
+            <li><i class="fa-solid fa-comments"></i><a href="{% url 'messenger' %}">Messenger</a></li>
             <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
             <li>
               <i class="fa-solid fa-gear"></i
@@ -82,5 +82,20 @@
       
 
     {% block content %} {% endblock %}
+    </div></div>
+    {{ request.user.username|json_script:"json-username"}}
+    <script>
+      document.querySelector('#profile_img_navbar').onclick = function () {
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        console.log(userName);
+
+        if (userName) {
+            var redirectURL = '/dashboard/' + userName + '/';
+            window.location.href = redirectURL;
+        } else {
+            console.error('Username not found.');
+        }
+    }
+    </script>
   </body>
 </html>

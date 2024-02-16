@@ -120,7 +120,7 @@ def dashboard(request, profileId):
     user = User.objects.get(username=profileId)
     trendingmessages = TrendingMessage.objects.filter(
         user=user, parent_message=None
-    ).order_by("date_added")
+    ).order_by("-date_added")
 
     trendingmessagescount = len(trendingmessages)
     followers=user.profile.follow.all()
@@ -131,7 +131,6 @@ def dashboard(request, profileId):
     bio=user.profile.bio
 
     posts=TrendingMessage.objects.filter(user=user)
-    followers_usernames = user.profile.following.values_list('username', flat=True)
     total_viewcount = TrendingMessage.objects.filter(user=user).aggregate(Sum("view_count"))['view_count__sum']
     print(total_viewcount)
     return render(
@@ -169,4 +168,13 @@ def view_message(request, message_id):
     replies = message.replies.all().order_by("date_added")
     return render(
         request, "main/view_message.html", {"message": message, "replies": replies}
+    )
+
+
+def messenger(request):
+    user=request.user
+    followingUsers=user.profile.following.all()
+    print(len(followingUsers))
+    return render(
+        request,"main/messenger.html",{"followingUsers":followingUsers}
     )
