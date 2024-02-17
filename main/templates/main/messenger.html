@@ -193,11 +193,42 @@
     width:70vw;
     cursor:pointer;
   }
-
+  .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #1f1f1f /* Semi-transparent white background */
+    }
+    .quote-box {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .quote-box p{
+        font-weight: bold;
+    }
+    .loading-spinner {
+        /* Add your spinner styles here */
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid rgba(233, 11, 233, 0.973);
+        width: 40px;
+        height: 40px;
+        margin: 10px auto;
+        animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 
     </style>
   </head>
   <body>
+    <div class="wrapper">
     <nav class="navbar navbar-expand bg-body-tertiary">
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
@@ -275,7 +306,7 @@
             {% for conversation in conversations %}
             {% for member in conversation.members.all %}
             {% if member != request.user %}
-            <a href="{% url 'conversation' conversation_id=conversation.pk %}">
+            <a href="{% url 'conversation' conversation_id=conversation.pk %}" class="conversationLink">
             <div class="user-container-3">
               <div class="user-con-name">
                 <div class="user-container-img">
@@ -296,6 +327,16 @@
         </div>
       </div>
     </div>
+  </div>
+
+    <div class="loading-container" style="display: none;">
+      <div class="quote-box" style="background-color: #1f1f20; color:white; border: 1px solid #1f1f20; border-radius: 20px;">
+          <p style="color: rgba(233, 11, 233, 0.973);">"Your privacy matters the most"</p>
+          <div class="loading-spinner"></div>
+      </div>
+  </div>
+
+    
 
     {{ request.user.username|json_script:"json-username"}}
 
@@ -310,87 +351,92 @@
     ></script>
     <script>
 
-      const username=document.getElementById("json-username").textContent;
-
-      const socket=new WebSocket(
-        "ws://"+
-        window.location.host+
-        "/ws/messenger/"
-      )
-      
-      socket.onopen=function(){
-        console.log("Connection Established")
-        document
-            .getElementById("data3")
-            .addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    const searchTxt = document.getElementById("data3").value;
-                    if (searchTxt) {
-                        socket.send(
-                            JSON.stringify({
-                                username: username,
-                                searchTxt:searchTxt,
-                            })
-                        );
-                    }
-                    if (searchTxt === ""){
-                      location.reload();
-                    }
-                }
-      })}
-
-      socket.onmessage=function(e){
-        const data=JSON.parse(e.data)
-        if (Array.isArray(data["conversations"])) {
-      const template = document.getElementById("userlist");
-    template.innerHTML = "";
-
-    data["conversations"].forEach(function (conversation) {
-        const conversationLink = document.createElement("a");
-        conversationLink.href = `/messenger/${conversation.id}/`;
-
-        const conversationContainer = document.createElement("div");
-        conversationContainer.className = "user-container-3";
-
-        for (let i = 0; i < conversation.members.length; i++) {
-            const member = conversation.members[i];
-            if (member.username !== username) {
-                const userConName = document.createElement("div");
-                userConName.className = "user-con-name";
-
-                const userContainerImg = document.createElement("div");
-                userContainerImg.className = "user-container-img";
-
-                const img = document.createElement("img");
-                img.src = member.profile_img;
-                img.alt = "";
-
-                userContainerImg.appendChild(img);
-
-                const userContainerName = document.createElement("div");
-                userContainerName.className = "user-container-name";
-
-                const h4 = document.createElement("h4");
-                h4.textContent = member.username;
-
-                userContainerName.appendChild(h4);
-
-                userConName.appendChild(userContainerImg);
-                userConName.appendChild(userContainerName);
-
-                conversationContainer.appendChild(userConName);
-            }
-        }
-
-        conversationLink.appendChild(conversationContainer);
-        template.appendChild(conversationLink);
+document.querySelectorAll('.conversationLink').forEach(function(link) {
+    link.addEventListener('click', function() {
+        // Display the loading container when a link is clicked
+        let loadingContainer = document.querySelector(".loading-container");
+        let wrapper = document.querySelector(".wrapper");
+        wrapper.style.display = "none";
+        loadingContainer.style.display = "flex";
     });
+});
 
-    // Attach event listeners after updating the DOM
+const username = document.getElementById("json-username").textContent;
+
+const socket = new WebSocket(
+    "ws://" +
+    window.location.host +
+    "/ws/messenger/"
+)
+
+socket.onopen = function () {
+    console.log("Connection Established")
+    document
+        .getElementById("data3")
+        .addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                const searchTxt = document.getElementById("data3").value;
+                if (searchTxt) {
+                    socket.send(
+                        JSON.stringify({
+                            username: username,
+                            searchTxt: searchTxt,
+                        })
+                    );
+                }
+                if (searchTxt === "") {
+                    location.reload();
+                }
+            }
+        })
 }
 
-      }
+socket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+
+    if (Array.isArray(data["conversations"])) {
+        const template = document.getElementById("userlist");
+        // Clear the previous content before updating
+        template.innerHTML = "";
+
+        data["conversations"].forEach(function (conversation) {
+            conversation.members.forEach(function (member) {
+                // Access profile_img and username for each member
+                const profileImg = member.profile_img;
+                const username = member.username;
+                const url = conversation.id + "/";
+
+                console.log(profileImg);
+                console.log(username);
+
+                template.innerHTML += `
+                    <a href="${url}" class="conversationLink">
+                        <div class="user-container-3">
+                            <div class="user-con-name">
+                                <div class="user-container-img">
+                                    <img src="${profileImg}" alt="" />
+                                </div>
+                                <div class="user-container-name">
+                                    <h4>${username}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </a>`;
+            });
+        });
+
+        // Complete the loading process
+        let wrapper = document.querySelector(".wrapper");
+        let loadingContainer = document.querySelector(".loading-container");
+        wrapper.style.display = "block";
+        loadingContainer.style.display = "none";
+
+        // Simulate completing the loading process after a delay (adjust as needed)
+        
+    }
+}
+
     </script>
   </body>
 </html>

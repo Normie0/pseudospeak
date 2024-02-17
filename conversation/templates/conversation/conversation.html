@@ -459,7 +459,7 @@
       const username = document.getElementById("json-username").textContent;
       console.log(id);
       const socket = new WebSocket(
-        "ws://" + window.location.host + "/ws/messenger/" + 2 + "/"
+        "ws://" + window.location.host + "/ws/messenger/conversation/" + id + "/"
       );
 
       socket.onopen = function (e) {
