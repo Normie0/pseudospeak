@@ -35,6 +35,7 @@ class TrendingMessage(models.Model):
     hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)
     parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    custom_ordering = models.FloatField(default=0)
 
     def decrypt_message(self):  # Replace with your actual secret key
         try:
@@ -45,8 +46,15 @@ class TrendingMessage(models.Model):
             print(f"InvalidToken exception: {e.__cause__}")
             return "Invalid decryption token"
 
+
+    def save(self, *args, **kwargs):
+        # Your custom logic to calculate the ordering value
+        self.custom_ordering = (0.7 * self.view_count) + (0.3 * self.likes)
+
+        super().save(*args, **kwargs)
+
     class Meta:
-        ordering = ('-date_added',)
+        ordering = ['custom_ordering']
 
     def __str__(self) :
         return f'{self.user}->{self.content}'

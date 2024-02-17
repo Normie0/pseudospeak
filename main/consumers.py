@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime, timezone
 from django.core.files.base import ContentFile
 import base64
 import json
@@ -393,5 +393,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         img_url=user.profile.profile_img.url
         conversation=Conversation.objects.get(pk=data['id'])
         conversation_message=ConversationMessage.objects.create(conversation=conversation,content=data['content'],created_by=user,)
+        conversation.modified_at=datetime.now
+        conversation.save()
         
         return username,img_url

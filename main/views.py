@@ -6,9 +6,8 @@ from faker import Faker
 from .forms import *
 import random
 from .models import Profile, TrendingMessage, Hashtag
-from django.db.models import Sum
-from conversation.models import Conversation,ConversationMessage
-
+from django.db.models import Sum, OuterRef
+from conversation.models import Conversation, ConversationMessage
 
 
 def generate_unique_username():
@@ -21,7 +20,12 @@ def generate_unique_username():
 
 
 def get_random_image():
-    images = ["images/girl.jpg", "images/ninja.jpg", "images/fire.jpg","images/panda.jpg"]
+    images = [
+        "images/girl.jpg",
+        "images/ninja.jpg",
+        "images/fire.jpg",
+        "images/panda.jpg",
+    ]
     return random.choice(images)
 
 
@@ -29,7 +33,7 @@ def get_random_image():
 # Create your views here.
 def index(request):
     messages = TrendingMessage.objects.filter(parent_message=None).order_by(
-        "-view_count"
+        "-custom_ordering"
     )
     hashtags = Hashtag.objects.all()[:3]
     return render(
@@ -76,7 +80,9 @@ def login_or_signup_view(request):
                 random_image_path = get_random_image()
 
                 # Create the user's profile with the random image
-                profile = Profile(user=create_user, profile_img=random_image_path,bio="New User")
+                profile = Profile(
+                    user=create_user, profile_img=random_image_path, bio="New User"
+                )
                 print("completed registering user")
                 profile.save()
                 login(request, create_user)
@@ -123,15 +129,17 @@ def dashboard(request, profileId):
     ).order_by("-date_added")
 
     trendingmessagescount = len(trendingmessages)
-    followers=user.profile.follow.all()
-    following=user.profile.following.all()
+    followers = user.profile.follow.all()
+    following = user.profile.following.all()
 
     follow_count = user.profile.follow_count
     following_count = user.profile.following_count
-    bio=user.profile.bio
+    bio = user.profile.bio
 
-    posts=TrendingMessage.objects.filter(user=user)
-    total_viewcount = TrendingMessage.objects.filter(user=user).aggregate(Sum("view_count"))['view_count__sum']
+    posts = TrendingMessage.objects.filter(user=user)
+    total_viewcount = TrendingMessage.objects.filter(user=user).aggregate(
+        Sum("view_count")
+    )["view_count__sum"]
     print(total_viewcount)
     return render(
         request,
@@ -141,12 +149,12 @@ def dashboard(request, profileId):
             "trendingmessagescount": trendingmessagescount,
             "trendingmessages": trendingmessages,
             "follow_count": follow_count,
-            "following_count":following_count,
-            "bio":bio,
-            "posts":posts,
-            "followingUsers":following,
-            "followUsers":followers,
-            "total_viewcount":total_viewcount,
+            "following_count": following_count,
+            "bio": bio,
+            "posts": posts,
+            "followingUsers": following,
+            "followUsers": followers,
+            "total_viewcount": total_viewcount,
         },
     )
 
@@ -170,24 +178,28 @@ def view_message(request, message_id):
         request, "main/view_message.html", {"message": message, "replies": replies}
     )
 
-
+from django.db.models import Subquery
 def messenger(request):
-    user=request.user
-    followingUsers=user.profile.following.all()
-    conversations=Conversation.objects.filter(members__in=[user])
-    
+    user = request.user
+    followingUsers = user.profile.following.all()
+    conversations = Conversation.objects.filter(members__in=[user]).order_by("create_at")
+
     return render(
-        request,"main/messenger.html",{"followingUsers":followingUsers,"conversations":conversations}
+        request,
+        "main/messenger.html",
+        {"followingUsers": followingUsers, "conversations": conversations},
     )
 
-def conversation(request,conversation_id):
-    conversation=Conversation.objects.filter(members=request.user).get(pk=conversation_id)
 
-    conversation_message=ConversationMessage.objects.filter(conversation=conversation)
+def conversation(request, conversation_id):
+    conversation = Conversation.objects.filter(members=request.user).get(
+        pk=conversation_id
+    )
 
-    for message in conversation_message:
-        print(message.created_by)
-        print(message.content)
-        print(message.created_by.profile.profile_img.url)
-    
-    return render(request,"conversation/conversation.html",{'conversation':conversation,'conversation_messages':conversation_message})
+    conversation_message = ConversationMessage.objects.filter(conversation=conversation)
+
+    return render(
+        request,
+        "conversation/conversation.html",
+        {"conversation": conversation, "conversation_messages": conversation_message},
+    )

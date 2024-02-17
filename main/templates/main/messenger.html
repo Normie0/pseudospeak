@@ -318,7 +318,7 @@
               </div>
             </div>
         </a>
-            {% endif %}
+          {% endif %}
             {% endfor %}
             {% endfor %}
           </div>
@@ -373,8 +373,8 @@ socket.onopen = function () {
     console.log("Connection Established")
     document
         .getElementById("data3")
-        .addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
+        .addEventListener("input", function (event) {
+            
                 event.preventDefault();
                 const searchTxt = document.getElementById("data3").value;
                 if (searchTxt) {
@@ -388,11 +388,9 @@ socket.onopen = function () {
                 if (searchTxt === "") {
                     location.reload();
                 }
-            }
+            
         })
-}
-
-socket.onmessage = function (e) {
+        socket.onmessage = function (e) {
     const data = JSON.parse(e.data);
 
     if (Array.isArray(data["conversations"])) {
@@ -436,6 +434,9 @@ socket.onmessage = function (e) {
         
     }
 }
+}
+
+
 
     </script>
   </body>
