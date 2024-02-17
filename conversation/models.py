@@ -22,7 +22,7 @@ class ConversationMessage(models.Model):
     created_by = models.ForeignKey(User, related_name='created_messages', on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ('created_at',)
 
     def __str__(self) :
         return f'[{self.conversation}-{self.created_by}->{self.content}'

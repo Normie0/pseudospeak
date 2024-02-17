@@ -182,7 +182,7 @@ from django.db.models import Subquery
 def messenger(request):
     user = request.user
     followingUsers = user.profile.following.all()
-    conversations = Conversation.objects.filter(members__in=[user]).order_by("create_at")
+    conversations = Conversation.objects.filter(members__in=[user])
 
     return render(
         request,
