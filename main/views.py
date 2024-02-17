@@ -7,7 +7,7 @@ from .forms import *
 import random
 from .models import Profile, TrendingMessage, Hashtag
 from django.db.models import Sum
-from main import models
+from conversation.models import Conversation,ConversationMessage
 
 
 
@@ -174,7 +174,20 @@ def view_message(request, message_id):
 def messenger(request):
     user=request.user
     followingUsers=user.profile.following.all()
-    print(len(followingUsers))
+    conversations=Conversation.objects.filter(members__in=[user])
+    
     return render(
-        request,"main/messenger.html",{"followingUsers":followingUsers}
+        request,"main/messenger.html",{"followingUsers":followingUsers,"conversations":conversations}
     )
+
+def conversation(request,conversation_id):
+    conversation=Conversation.objects.filter(members=request.user).get(pk=conversation_id)
+
+    conversation_message=ConversationMessage.objects.filter(conversation=conversation)
+
+    for message in conversation_message:
+        print(message.created_by)
+        print(message.content)
+        print(message.created_by.profile.profile_img.url)
+    
+    return render(request,"conversation/conversation.html",{'conversation':conversation,'conversation_messages':conversation_message})

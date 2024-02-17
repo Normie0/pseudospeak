@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.core.files.base import ContentFile
 import base64
 import json
@@ -7,21 +8,24 @@ from django.contrib.auth.models import User
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.urls import reverse
-from .models import TrendingMessage,Hashtag
+from .models import TrendingMessage, Hashtag
 from .models import Profile
 from django.db.models import F
-import re,time
+import re, time
 from django.core.files.storage import default_storage
 from django.conf import settings
 from cryptography.fernet import Fernet
+from conversation.models import Conversation, ConversationMessage
+from django.db.models import Q
 
-f=Fernet(settings.ENCRYPT_KEY)
+f = Fernet(settings.ENCRYPT_KEY)
+
 
 def save_image(image_data, username):
     # Remove the part of the image_data that indicates the encoding
-    format, imgstr = image_data.split(';base64,') 
+    format, imgstr = image_data.split(";base64,")
     # Find out the file format (jpeg, png)
-    ext = format.split('/')[-1] 
+    ext = format.split("/")[-1]
     print(imgstr)
 
     # Generate a filename
@@ -38,11 +42,11 @@ def save_image(image_data, username):
 
 
 @sync_to_async
-def like_message(like_id,username):
+def like_message(like_id, username):
     message = TrendingMessage.objects.get(pk=like_id)
-    user=User.objects.get(username=username)
+    user = User.objects.get(username=username)
     if user in message.userLiked.all():
-        message.likes-=1
+        message.likes -= 1
         message.userLiked.remove(user)
         message.save()
     else:
@@ -51,16 +55,16 @@ def like_message(like_id,username):
         message.save()
     return message.likes
 
+
 @sync_to_async
-def get_count(msgId,username):
+def get_count(msgId, username):
     message = TrendingMessage.objects.get(pk=msgId)
-    user=User.objects.get(username=username)
+    user = User.objects.get(username=username)
     if user not in message.viewed.all():
         message.view_count += 1
         message.viewed.add(user)
         message.save()
     return message.view_count
-
 
 
 class IndexConsumer(AsyncWebsocketConsumer):
@@ -73,33 +77,34 @@ class IndexConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
 
-        if 'hashtag' in data:
-            print(data['hashtag'])
-            hashtag=data['hashtag']
+        if "hashtag" in data:
+            print(data["hashtag"])
+            hashtag = data["hashtag"]
             hashtag_list = await self.get_hashtags(hashtag)
-            await self.send(text_data=json.dumps({
-                'hashtags':hashtag_list
-            }))
+            await self.send(text_data=json.dumps({"hashtags": hashtag_list}))
 
-        elif 'likeId' in data:
-            print(data['likeId'])
-            likeId=data['likeId']
-            username=data['username']
-            likes=await like_message(data['likeId'],username)
+        elif "likeId" in data:
+            print(data["likeId"])
+            likeId = data["likeId"]
+            username = data["username"]
+            likes = await like_message(data["likeId"], username)
             print(likes)
-            await self.send_likes(likeId,likes)
+            await self.send_likes(likeId, likes)
 
-        elif 'msgId' in data:
-            print(data['msgId'])
-            msgId=data['msgId']
-            username=data['username']
-            views=await get_count(msgId,username)
-            await self.send_count(msgId,views)
+        elif "msgId" in data:
+            print(data["msgId"])
+            msgId = data["msgId"]
+            username = data["username"]
+            views = await get_count(msgId, username)
+            await self.send_count(msgId, views)
+
+        elif "ping" in data:
+            print("pong")
 
         else:
-            content = data['content']
-            username = data['username']
-            image=data['image']
+            content = data["content"]
+            username = data["username"]
+            image = data["image"]
 
             profile_img_url = await self.get_profile_img(username)
 
@@ -107,26 +112,32 @@ class IndexConsumer(AsyncWebsocketConsumer):
 
             hashtag = await self.hashtag_identifier(content)
 
-            contentId=await self.save_message(username, content, hashtag, image)
+            contentId = await self.save_message(username, content, hashtag, image)
 
             # Broadcast the received message to all connected clients
-            await self.send_group_message(username,content,contentId,profile_img_url,hashtag,image)
+            await self.send_group_message(
+                username, content, contentId, profile_img_url, hashtag, image
+            )
 
     @sync_to_async
-    def get_profile_img(self,username):
-        user=User.objects.get(username=username)
-        profile=Profile.objects.get(user=user)
+    def get_profile_img(self, username):
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
         return profile.profile_img.url
 
     @sync_to_async
-    def like_message(self,like_id):
+    def like_message(self, like_id):
         message = TrendingMessage.objects.get(pk=like_id)
         message.likes += 1
         message.save()
-        
+
     @sync_to_async
-    def get_hashtags(self,hashtag_name):
-        return list(Hashtag.objects.filter(tag__icontains=hashtag_name).values_list('tag', flat=True))
+    def get_hashtags(self, hashtag_name):
+        return list(
+            Hashtag.objects.filter(tag__icontains=hashtag_name).values_list(
+                "tag", flat=True
+            )
+        )
 
     @sync_to_async
     def save_message(self, username, message, hashtag, image):
@@ -140,11 +151,11 @@ class IndexConsumer(AsyncWebsocketConsumer):
             image_file_path = None
 
         if message:
-            message_bytes=message.encode('utf-8')
-            message_encrypted=f.encrypt(message_bytes)
-            message_decoded=message_encrypted.decode('utf-8')
+            message_bytes = message.encode("utf-8")
+            message_encrypted = f.encrypt(message_bytes)
+            message_decoded = message_encrypted.decode("utf-8")
             # If there's message content, create the TrendingMessage object
-            recentMessage=TrendingMessage.objects.create(
+            recentMessage = TrendingMessage.objects.create(
                 user=user,
                 content=message_decoded,
                 image=image_file_path,  # Pass the file path of the saved image
@@ -156,122 +167,231 @@ class IndexConsumer(AsyncWebsocketConsumer):
                     hashtag = Hashtag.objects.get(tag=tag)
 
                     # Increment the count using F expression
-                    hashtag.count = F('count') + 1
+                    hashtag.count = F("count") + 1
                     hashtag.save()
                 except:
                     # If the hashtag doesn't exist, create it with a count of 1
                     Hashtag.objects.create(tag=tag, count=1)
-                hashtag=Hashtag.objects.get(tag=tag)
+                hashtag = Hashtag.objects.get(tag=tag)
                 recentMessage.hashtags.add(hashtag)
-        
-        return recentMessage.pk
-                    
 
+        return recentMessage.pk
 
     @sync_to_async
-    def hashtag_identifier(self,content):
-        hashtag_pattern=re.compile(r'#\w+')
-        hashtags=hashtag_pattern.findall(content)
+    def hashtag_identifier(self, content):
+        hashtag_pattern = re.compile(r"#\w+")
+        hashtags = hashtag_pattern.findall(content)
         return hashtags
 
     # Helper function to send a message to all clients in the same group
-    async def send_group_message(self, username, content,contentId,profile_img_url,hashtag,image):
+    async def send_group_message(
+        self, username, content, contentId, profile_img_url, hashtag, image
+    ):
         await self.channel_layer.group_add("index_group", self.channel_name)
-        await self.channel_layer.group_send("index_group", {
-            "type": "broadcast_message",
-            "username": username,
-            "content": content,
-            "profile_img":profile_img_url,
-            "hashtag":hashtag,
-            "image":image,
-            "contentId":contentId
-        })
+        await self.channel_layer.group_send(
+            "index_group",
+            {
+                "type": "broadcast_message",
+                "username": username,
+                "content": content,
+                "profile_img": profile_img_url,
+                "hashtag": hashtag,
+                "image": image,
+                "contentId": contentId,
+            },
+        )
 
     # Receive broadcasted message and send it to the WebSocket
     async def broadcast_message(self, event):
         username = event["username"]
         content = event["content"]
-        profile_img=event["profile_img"]
-        hashtag=event["hashtag"]
-        image=event["image"]
-        contentId=event["contentId"]
-        await self.send(text_data=json.dumps({
-            'username': username,
-            'content': content,
-            'profile_img':profile_img,
-            'hashtag':hashtag,
-            'image':image,
-            'contentId':contentId
-        }))
-
+        profile_img = event["profile_img"]
+        hashtag = event["hashtag"]
+        image = event["image"]
+        contentId = event["contentId"]
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "username": username,
+                    "content": content,
+                    "profile_img": profile_img,
+                    "hashtag": hashtag,
+                    "image": image,
+                    "contentId": contentId,
+                }
+            )
+        )
 
     async def send_likes(self, likeId, likes):
         await self.channel_layer.group_add("index_group", self.channel_name)
-        await self.channel_layer.group_send("index_group", {
-            "type": "broadcast_likes",
-            "likeId":likeId,
-            "likes":likes,
-        })
+        await self.channel_layer.group_send(
+            "index_group",
+            {
+                "type": "broadcast_likes",
+                "likeId": likeId,
+                "likes": likes,
+            },
+        )
 
     async def broadcast_likes(self, event):
         likeId = event["likeId"]
         likes = event["likes"]
-        await self.send(text_data=json.dumps({
-            'likeId': likeId,
-            'likes': likes,
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "likeId": likeId,
+                    "likes": likes,
+                }
+            )
+        )
 
     async def send_count(self, msgId, views):
-        print("sending",views)
+        print("sending", views)
         await self.channel_layer.group_add("index_group", self.channel_name)
-        await self.channel_layer.group_send("index_group", {
-            "type": "broadcast_views",
-            "msgId":msgId,
-            "views":views,
-        })
+        await self.channel_layer.group_send(
+            "index_group",
+            {
+                "type": "broadcast_views",
+                "msgId": msgId,
+                "views": views,
+            },
+        )
 
     async def broadcast_views(self, event):
         msgId = event["msgId"]
         views = event["views"]
-        await self.send(text_data=json.dumps({
-            'msgId': msgId,
-            'views': views,
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "msgId": msgId,
+                    "views": views,
+                }
+            )
+        )
 
 
 class DashboardConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['username']
-        print(self.room_name)
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.room_name = self.scope["url_route"]["kwargs"]["username"]
+        self.room_group_name = "chat_%s" % self.room_name
 
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
     async def disconnect(self, code):
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         await self.follow(data)
-        
+
     @sync_to_async
-    def follow(self,data):
-        user=User.objects.get(username=data['username'])
-        print(user.username)
-        loggeduser=User.objects.get(username=data['loggedusername'])
-        
-        if data['followStatus']=='Unfollow':
+    def follow(self, data):
+        user = User.objects.get(username=data["username"])
+        loggeduser = User.objects.get(username=data["loggedusername"])
+
+        if data["followStatus"] == "Unfollow":
             user.profile.follow.remove(loggeduser)
             loggeduser.profile.following.remove(user)
-            print("Done")
+
         else:
             user.profile.follow.add(loggeduser)
             loggeduser.profile.following.add(user)
-            print("followed")
+            conversation = Conversation.objects.filter(members=user).filter(
+                members=loggeduser
+            )
+            if not conversation.exists():
+                conversation = Conversation.objects.create()
+                conversation.members.add(loggeduser)
+                conversation.members.add(user)
+
+
+class MessengerConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+
+    async def disconnect(self, code):
+        pass
+
+    async def receive(self, text_data):
+        data=json.loads(text_data)
+        print(data)
+        conversation_list=await self.fetchconversation(data)
+        
+        await self.send(text_data=json.dumps({
+            'conversations':conversation_list
+        }))
+
+    @sync_to_async
+    def fetchconversation(self,data):
+        username_with_comma=data['username']
+        username=username_with_comma.replace('"','')
+        user=User.objects.get(username=username)
+        users=User.objects.filter(username__startswith=data['searchTxt'])
+
+        conversations=[]
+        for user2 in users:
+            conversations+=Conversation.objects.filter(members=user).filter(members=user2)
+        
+        conversation_list=[]
+        for conv in conversations:
+            members = conv.members.exclude(username=user.username)
+            member_details = [{'id': member.pk, 'username': member.username, 'profile_img': member.profile.profile_img.url} for member in members]
+
+
+            conversation_list.append({
+                'id': conv.id,
+                'members': member_details,
+                # Add other conversation fields as needed
+            })
+        print(conversation_list)
+        return conversation_list
+
+
+class ConversationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.room_name = self.scope["url_route"]["kwargs"]["id"]
+        self.room_group_name = "chat_%s" % self.room_name
+
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, code):
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        username,img_url=await self.saveconversation(data)
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat.content',  # Specify the type attribute
+                'content': data['content'],
+                'username': username,
+                'id': data['id'],
+                'img_url': img_url
+            }
+        )
+
+    async def chat_content(self, event):
+        # Handle the incoming message
+        await self.send(text_data=json.dumps({
+            'type': 'chat.content',
+            'content': event['content'],
+            'username': event['username'],
+            'id': event['id'],
+            'img_url': event['img_url'],
+        }))
+
+    @sync_to_async
+    def saveconversation(self,data):
+        username_with_strip=data['username']
+        username=username_with_strip.replace('"','')
+        print(username)
+        user=User.objects.get(username=username)
+        img_url=user.profile.profile_img.url
+        conversation=Conversation.objects.get(pk=data['id'])
+        conversation_message=ConversationMessage.objects.create(conversation=conversation,content=data['content'],created_by=user,)
+        
+        return username,img_url

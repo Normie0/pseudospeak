@@ -88,6 +88,14 @@
   // This is correct
   const socket = new WebSocket('ws://' + window.location.host + '/ws/');
 
+  setInterval(() => {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+                ping:"ping"
+              }));
+  }
+}, 30000); 
+
   let check = false; // Define check at the top level so it's accessible everywhere
 
   function uploadImage() {

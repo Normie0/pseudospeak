@@ -42,23 +42,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         print(data)
-        message = data['message']
-        username = data['username']
-        room = data['room']
-        profile_img=await self.get_profile_img(username)
+        if 'message' in data:
+            message = data['message']
+            username = data['username']
+            room = data['room']
+            profile_img = await self.get_profile_img(username)  
 
-        await self.save_message(username, room, message)
+            await self.save_message(username, room, message)
 
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'username': username,
-                'profile_img':profile_img
-            }
-        )
+            # Send message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'username': username,
+                    'profile_img': profile_img
+                }
+            )
+        else:
+            print("No 'message' key in the received data.")
 
     # Receive message from room group
     async def chat_message(self, event):
@@ -113,7 +116,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         else:
             id=data['id']
             username=data['username']
-        
+            print(username)
             await self.add_user_room(username,id)
 
     @sync_to_async

@@ -495,95 +495,103 @@
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        var listItems = document.querySelectorAll(".group-recom li");
-        const username = JSON.parse(
-          document.getElementById("json-username").textContent
-        );
+    var listItems = document.querySelectorAll(".group-recom li");
+    const username = JSON.parse(
+        document.getElementById("json-username").textContent
+    );
 
-        listItems.forEach(function (item) {
-          item.addEventListener("click", function () {
+    listItems.forEach(function (item) {
+        item.addEventListener("click", function () {
             // Remove "active2" class from all list items
             listItems.forEach(function (listItem) {
-              listItem.classList.remove("active2");
+                listItem.classList.remove("active2");
             });
 
             // Add "active2" class to the clicked list item
             item.classList.add("active2");
-          });
         });
+    });
 
-        // });
+    const socket = new WebSocket(
+        "ws://" + window.location.host + "/ws/room/"
+    );
 
-        const socket = new WebSocket(
-          "ws://" + window.location.host + "/ws/room/"
-        );
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
 
-        socket.onmessage = function (e) {
-          const data = JSON.parse(e.data);
-
-          if (Array.isArray(data["searchRooms"])) {
+        if (Array.isArray(data["searchRooms"])) {
             const template = document.getElementById("grouplist");
             template.innerHTML = "";
             data["searchRooms"].forEach(function (item) {
-              console.log(item);
-              console.log(item.pk);
-              template.innerHTML += `
-                <div class="group-container-3">
-                    <div class="group-con-name">
-                        <div class="group-container-img">
-                            <img src="${item.room_img_url}" alt="" />
+                console.log(item);
+                console.log(item.pk);
+                template.innerHTML += `
+                    <div class="group-container-3">
+                        <div class="group-con-name">
+                            <div class="group-container-img">
+                                <img src="${item.room_img_url}" alt="" />
+                            </div>
+                            <div class="group-container-name">
+                                <h4>${item.name}</h4>
+                            </div>
                         </div>
-                        <div class="group-container-name">
-                            <h4>${item.name}</h4>
+                        <div class="join-button">
+                            <a
+                                href="#"
+                                class="joinbtn btn btn-success"
+                                data-message-id="${item.pk}"
+                            >Join</a>
                         </div>
-                    </div>
-                    <div class="join-button">
-                    <a
-                      href="#"
-                      class="joinbtn btn btn-success"
-                      data-message-id="${item.pk}"
-                      >Join</a
-                    >
-                  </div>
-                </div>`;
+                    </div>`;
             });
-          }
-        };
 
-        socket.onopen = function () {
-          document
+            // Attach event listeners after updating the DOM
+            attachJoinBtnListeners();
+        }
+    };
+
+    socket.onopen = function () {
+        document
             .getElementById("data2")
             .addEventListener("keydown", function (event) {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                const searchTxt = document.getElementById("data2").value;
-                if (searchTxt) {
-                  socket.send(
-                    JSON.stringify({
-                      username: username,
-                      searchRoom: searchTxt,
-                    })
-                  );
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    const searchTxt = document.getElementById("data2").value;
+                    if (searchTxt) {
+                        socket.send(
+                            JSON.stringify({
+                                username: username,
+                                searchRoom: searchTxt,
+                            })
+                        );
+                    }
                 }
-              }
             });
 
-          document.querySelectorAll(".joinbtn").forEach(function (joinButton) {
+        // Attach event listeners after the WebSocket connection is open
+        attachJoinBtnListeners();
+    };
+
+    function attachJoinBtnListeners() {
+        document.querySelectorAll(".joinbtn").forEach(function (joinButton) {
             joinButton.addEventListener("click", function () {
-              const id = this.getAttribute("data-message-id");
-              console.log(id);
-              socket.send(
-                JSON.stringify({
-                  id: id,
-                  username: username,
-                })
-              );
-              window.location
-              location.reload(true);
+                const id = this.getAttribute("data-message-id");
+                console.log(id);
+                console.log("clicked");
+                socket.send(
+                    JSON.stringify({
+                        id: id,
+                        username: username,
+                    })
+                );
+                // Note: It's generally not recommended to use location.reload(true)
+                // as it forces a hard refresh. Consider using a more appropriate approach.
+                window.location.reload(true);
             });
-          });
-        };
-      });
+        });
+    }
+});
+
     </script>
   </body>
 </html>

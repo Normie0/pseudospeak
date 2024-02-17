@@ -14,7 +14,9 @@ body {
   width: 100%;
   place-items: center;
   /* background: linear-gradient(0deg, rgba(22, 1, 22, 1) 1%, rgba(61, 5, 5, 1) 100%); */
-  background: #1f1f20;
+  /* background: #387aa1;
+   */
+   background-image: url("/media/images/bg1.jpg");
 }
 
 ::selection {

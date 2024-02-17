@@ -1,0 +1,530 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <style>
+      .chat-container {
+        width: 73%;
+        background-color: hsla(0, 0%, 53%, 0.07);
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        height: 80vh;
+        overflow-y: auto;
+        border-radius: 26px;
+      }
+      .chat-container::-webkit-scrollbar {
+        width: 0em;
+      }
+
+      body {
+        background-color: #1f1f20;
+        color: #e90ccb;
+        overflow-y: hidden;
+      }
+
+      .nav-logo {
+        color: rgba(233, 11, 233, 0.973);
+        font-size: xx-large;
+        font-weight: bolder;
+        font-family: serif;
+      }
+
+      .nav-logo:hover {
+        color: white;
+      }
+
+      .navbar.bg-body-tertiary {
+        background-color: transparent !important;
+        color: white;
+      }
+
+      .signbtn {
+        background-color: #e90ccb;
+        color: rgb(5, 5, 5);
+        border-radius: 15px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+      }
+
+      .signbtn:hover {
+        background-color: #050100;
+        color: rgb(236, 22, 208);
+      }
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      #profile_img_navbar:hover {
+        cursor: pointer;
+      }
+      #comment:hover {
+        cursor: pointer;
+      }
+      #imageContainer {
+        width: 50px;
+        height: 50px;
+      }
+
+      .content-1 {
+        /* border: 1px solid rgba(61, 5, 5, 1); */
+        height: 90vh;
+      }
+
+      .content-1b {
+        border: 1px solid #1f1f20;
+        height: 100vh;
+        /* width: 70vh; */
+      }
+
+      .content-1a {
+        border: 2px solid #1f1f20;
+        height: 90vh;
+      }
+
+      .content-1a ul li {
+        list-style: none;
+        margin: 30px 18px;
+        font-size: x-large;
+        font-weight: 600;
+        border-radius: 30px;
+        padding-left: 20px;
+        padding-top: 5px;
+        height: 8vh;
+        background: none;
+      }
+
+      /*end of content-1a*/
+      .content-1a ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .content-1a li {
+        display: flex;
+        align-items: center;
+        color: rgba(233, 11, 233, 0.973);
+        background-color: transparent;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .content-1a li:hover {
+        background-color: rgba(128, 0, 128, 0.123);
+        text-decoration: underline;
+      }
+      .content-1a i.fa-solid {
+        font-size: 24px;
+        margin-right: 10px;
+      }
+
+      .content-1a li a {
+        color: rgba(233, 11, 233, 0.973);
+        text-decoration: none;
+      }
+
+      .content-1a li a:hover {
+        text-decoration: underline;
+      }
+
+      .card {
+        width: 70vw;
+        height: 500px;
+        border-radius: 15px !important;
+        background-color: rgba(0, 0, 0, 0.4) !important;
+      }
+      .chat {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+      .user_img {
+        height: 60px;
+        width: 60px;
+        border: 1.5px solid #f5f6fa;
+      }
+
+      .user_info {
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 15px;
+      }
+
+      .user_info span {
+        font-size: 20px;
+        color: white;
+      }
+
+      .user_info p {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .msg_head {
+        position: relative;
+      }
+
+      .img_cont {
+        position: relative;
+        height: 70px;
+        width: 70px;
+      }
+
+      .msg_card_body {
+        overflow-y: auto;
+      }
+
+      .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        border-bottom: 0 !important;
+      }
+
+      .card-footer {
+        border-radius: 0 0 15px 15px !important;
+        border-top: 0 !important;
+      }
+
+      .user_img_msg {
+        height: 40px;
+        width: 40px;
+        border: 1.5px solid #f5f6fa;
+      }
+
+      .img_cont_msg {
+        height: 40px;
+        width: 40px;
+      }
+      .msg_cotainer {
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 10px;
+        border-radius: 25px;
+        background-color: #82ccdd;
+        padding: 10px;
+        position: relative;
+      }
+
+      .msg_cotainer_send {
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-right: 10px;
+        border-radius: 25px;
+        background-color: #78e08f;
+        padding: 10px;
+        position: relative;
+      }
+
+      .type_msg {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border: 0 !important;
+        color: white !important;
+        height: 60px !important;
+        overflow-y: auto;
+      }
+
+      .type_msg:focus {
+        box-shadow: none !important;
+        outline: 0px !important;
+      }
+
+      .attach_btn {
+        border-radius: 15px 0 0 15px !important;
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border: 0 !important;
+        color: white !important;
+        cursor: pointer;
+      }
+
+      .send_btn {
+        border-radius: 0 15px 15px 0 !important;
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border: 0 !important;
+        color: white !important;
+        cursor: pointer;
+      }
+
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .message-input-1 {
+        width: 62vw;
+        height: 6vh;
+        border-radius: 20px 0px 0px 20px;
+        border: none;
+        outline: none;
+        color: white;
+        background: hsla(0, 0%, 53%, 0.07);
+      }
+
+      .input-group form {
+        display: flex;
+      }
+      .msg-button-1 {
+        background-color: #e90ccb;
+        border: none;
+        color: rgb(5, 5, 5);
+        border-radius: 0px 15px 15px 0px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+      }
+      .msg-button-1:hover {
+        background-color: rgb(5, 5, 5);
+        color: #e90ccb;
+      }
+      img {
+        width: 40px;
+        border-radius: 50%;
+      }
+      .card{
+        position: fixed;
+        top: 10%;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand bg-body-tertiary">
+      <div class="container-fluid">
+        <!-- <img src="/img/logo2.png" alt=""> -->
+        <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
+          >PseudoSpeak</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          {% if user.is_authenticated %}
+          <img
+            id="profile_img_navbar"
+            src="{{ user.profile.profile_img.url }}"
+            alt=""
+            style="
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              margin-right: 10px;
+            "
+          />
+          <a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
+          {% else %}
+          <a href="{% url 'login_or_signup_view' %}" class="btn signbtn me-4"
+            >Sign in</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row content-1">
+        <div class="col-3 content-1a res2 sidebar" id="sidebar">
+          <ul>
+            <li class="active">
+              <i class="fa-solid fa-house"></i
+              ><a href="{% url 'index' %}">Feed</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-user-group"></i
+              ><a href="{% url 'rooms' name='recommended' %}">Groups</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-comments"></i
+              ><a href="{% url 'messenger' %}">Messenger</a>
+            </li>
+            <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
+            <li>
+              <i class="fa-solid fa-gear"></i
+              ><a href="{% url 'logout' %}">Settings</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-9 chat-container">
+          <div class="card">
+            {% for m in conversation.members.all %} 
+            {% if m != request.user%}
+            <input type="hidden" id="notrequestuser" value="{{m.username}}">
+            <div class="card-header msg_head">
+              <div class="d-flex bd-highlight">
+                <div class="img_cont">
+                  <img src="{{m.profile.profile_img.url}}" style="width: 40px" />
+                </div>
+                <div class="user_info">
+                  <span>{{m.username}}</span>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+
+            <div class="card-body msg_card_body">
+              {% for message in conversation_messages %}
+                {% if message.created_by != request.user %}
+                
+              <div class="d-flex justify-content-start mb-4">
+                <div class="img_cont_msg">
+                  <img src="{{ message.created_by.profile.profile_img.url }}" />
+                </div>
+                <div class="msg_cotainer">{{ message.content }}</div>
+              </div>
+              {% else %}
+              <div class="d-flex justify-content-end mb-4">
+                <div class="msg_cotainer_send">{{ message.content }}</div>
+                <div class="img_cont_msg">
+                  <img
+                    src="{{ message.created_by.profile.profile_img.url }}"
+                    class="rounded-circle user_img_msg"
+                  />
+                </div>
+              </div>
+              {% endif %}
+            {% endfor %}
+            </div>
+
+            <div class="card-footer">
+              <div class="input-group">
+                  <input
+                    type="text"
+                    class="message-input-1"
+                    placeholder="   Your message..."
+                  />
+                  <button class="msg-button-1">Submit</button>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/76b0e8fe7d.js"
+      crossorigin="anonymous"
+    ></script>
+
+    {{ conversation.pk |json_script:"json-id"}}
+    {{  request.user.username|json_script:"json-username"}}
+
+    <script>
+      function scrollToBottom() {
+        const chatMessages = document.querySelector(".card-body.msg_card_body");
+        const lastMessage = chatMessages.lastElementChild;
+
+        if (lastMessage) {
+          lastMessage.scrollIntoView();
+        }
+      }
+      window.onload = function () {
+        scrollToBottom();
+      };
+
+      const id = document.getElementById("json-id").textContent;
+      const username = document.getElementById("json-username").textContent;
+      console.log(id);
+      const socket = new WebSocket(
+        "ws://" + window.location.host + "/ws/messenger/" + 2 + "/"
+      );
+
+      socket.onopen = function (e) {
+        console.log("Connection Established");
+      };
+
+      document.querySelector(".message-input-1").focus();
+      document.querySelector(".message-input-1").onkeyup = function (e) {
+        if (e.keyCode === 13) {
+          document.querySelector(".msg-button-1").click();
+        }
+      };
+
+      document.querySelector(".msg-button-1").onclick = function (e) {
+        e.preventDefault();
+        const notrequestuser=document.getElementById("notrequestuser").value;
+        const messageInputDom = document.querySelector(".message-input-1");
+        const message = messageInputDom.value;
+        if (message !== ""){
+        socket.send(
+          JSON.stringify({
+            content: message,
+            username: username,
+            id: id,
+          })
+        );
+        }
+        messageInputDom.value = "";
+        return false;
+      };
+
+      socket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+  if (data) {
+    const template = document.querySelector(".card-body.msg_card_body");
+
+      if (data['username'] === notrequestuser.value) {
+        // Add HTML for messages from other users
+        template.innerHTML += `
+          <div class="d-flex justify-content-start mb-4">
+            <div class="img_cont_msg">
+              <img src="${data.img_url}" />
+            </div>
+            <div class="msg_cotainer">${data.content}</div>
+          </div>
+        `;
+      } else {
+        
+        // Add HTML for messages from the current user
+        template.innerHTML += `
+          <div class="d-flex justify-content-end mb-4">
+            <div class="msg_cotainer_send">${data.content}</div>
+            <div class="img_cont_msg">
+              <img src="${data.img_url}" class="rounded-circle user_img_msg" />
+            </div>
+          </div>
+        `;
+      }
+
+      // Append the message HTML to the template
+      scrollToBottom();
+    };
+  }
+
+
+    </script>
+  </body>
+</html>

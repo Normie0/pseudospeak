@@ -23,6 +23,8 @@
         height: 80vh;
         overflow-y: auto;
         border-radius: 26px;
+        position: fixed;
+        right: 1vw;
       }
       .chat-container::-webkit-scrollbar {
         width: 0em;
@@ -42,8 +44,8 @@
         align-items: center;
         justify-content: center;
         position: fixed;
-        top: 10.5%;
-        right: 0;
+        top: 12%;
+        right: 1vw;
         z-index: 999;
       }
 
@@ -57,13 +59,14 @@
         color: white;
         margin: 0;
       }
-      .group-name button{
+      .group-name button {
         color: white;
         margin: 0;
       }
-      .group-name button:hover{
+      #exit:hover {
         cursor: pointer;
       }
+
 
       .message-input-form {
         display: flex;
@@ -284,7 +287,10 @@
               <i class="fa-solid fa-user-group"></i
               ><a href="{% url 'rooms' name='recommended' %}">Groups</a>
             </li>
-            <li><i class="fa-solid fa-comments"></i><a href="{% url 'messenger' %}">Messenger</a></li>
+            <li>
+              <i class="fa-solid fa-comments"></i
+              ><a href="{% url 'messenger' %}">Messenger</a>
+            </li>
             <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
             <li>
               <i class="fa-solid fa-gear"></i
@@ -296,11 +302,21 @@
         <div class="col-9 chat-container">
           <div class="group-name">
             <h1>Group Name-{{ room.name }}</h1>
-            <form method="post" style="margin-top: -2vw;">
+            <form method="post" style="margin-top: -2vw">
               {% csrf_token %}
-              <button id="exit" style="position: absolute; right: 5%; background-color: transparent;border: none;"><i class="fa-solid fa-right-from-bracket"></i></button>
+              <button
+                id="exit"
+                style="
+                  position: absolute;
+                  right: 5%;
+                  background-color: transparent;
+                  border: none;
+                "
+              >
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </button>
             </form>
-            
+            <p style="display: none;background-color: #1f1f2038" id="exitInfo">Exit</p>
           </div>
           <div class="lg:w-2/4 mx-4 lg:mx-auto p-4 rounded-xl">
             <div class="chat-messages space-y-3" id="chat-messages">
@@ -353,7 +369,7 @@
         document.getElementById("json-username").textContent
       );
       const chatSocket = new WebSocket(
-        "ws://" + window.location.host + "/ws/" + roomName + "/"
+        "ws://" + window.location.host + "/ws/messenger/" + roomName + "/"
       );
 
       function scrollToBottom() {
@@ -376,13 +392,13 @@
         const data = JSON.parse(e.data);
 
         if (data.message) {
-          const template=document.getElementById("chat-messages")
-          template.innerHTML+=`
+          const template = document.getElementById("chat-messages");
+          template.innerHTML += `
           <div class="chat-message">
                 <b>${data.username}</b>: ${data.message}
               </div>
               `;
-              scrollToBottom();
+          scrollToBottom();
         } else {
           console.log("The message is empty");
         }

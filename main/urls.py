@@ -10,7 +10,8 @@ urlpatterns=[
     path('dashboard/<str:profileId>/', views.dashboard, name='dashboard'),
     path("authenticate/signup/",views.login_or_signup_view,name="login_or_signup_view"),
     path("authenticate/logout/",views.logoutuser,name="logout"),
-    path("messenger/",views.messenger,name='messenger')
+    path("messenger/",views.messenger,name='messenger'),
+    path("messenger/<int:conversation_id>/",views.conversation,name='conversation')
 ]
 
 if settings.DEBUG:
