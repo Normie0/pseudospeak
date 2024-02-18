@@ -15,7 +15,7 @@ def rooms(request,name):
         print(len(followingUsers))
         if followingUsers:
             rooms = Room.objects.exclude(users=user).filter(Q(users__in=followingUsers) | Q(users=None)).annotate(user_count=models.Count('users')).order_by('-user_count')
-            if len(rooms)<3:
+            if len(rooms)<5:
                 rooms = Room.objects.exclude(users=request.user).annotate(user_count=models.Count('users')).order_by('-user_count')[:5]
         else:
             rooms = Room.objects.exclude(users=request.user).annotate(user_count=models.Count('users')).order_by('-user_count')[:5]
@@ -37,6 +37,4 @@ def room(request, slug):
         return redirect(rooms,name="recommended")
     room=Room.objects.get(slug=slug)
     messages=Message.objects.filter(room=room)
-    for message in messages:
-        print(message.decrypt_message())
     return render(request, 'room/room.html', {'room': room, 'messages': messages})

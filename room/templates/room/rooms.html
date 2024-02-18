@@ -488,6 +488,9 @@
     {{ request.user.username|json_script:"json-username"}}
 
     <script>
+
+      document.getElementById("data2").focus()
+
       function groupPage(roomSlug) {
         console.log(roomSlug);
         const url = "/room/" + "categories/" + roomSlug;

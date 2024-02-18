@@ -67,7 +67,6 @@ def login_or_signup_view(request):
             username = request.POST.get("username")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
-            confirm_password = password
             try:
                 existing_user = User.objects.get(username=username)
             except User.DoesNotExist:
@@ -89,10 +88,14 @@ def login_or_signup_view(request):
                 return redirect("index")
 
             else:
+                if confirm_password != password:
+                    error_message=f'Passwords do not match'
+                else:
+                    error_message=f'User with username - {existing_user.username} already exists!'
                 return render(
                     request,
                     "main/signup.html",
-                    {"error_message": "Passwords do not match", "username": username},
+                    {"error_message": error_message, "username": username},
                 )
 
         elif action == "login":
@@ -121,7 +124,7 @@ def logoutuser(request):
     logout(request)
     return redirect("login_or_signup_view")
 
-
+@login_required(login_url="login_or_signup_view")
 def dashboard(request, profileId):
     user = User.objects.get(username=profileId)
     trendingmessages = TrendingMessage.objects.filter(
@@ -158,7 +161,7 @@ def dashboard(request, profileId):
         },
     )
 
-
+@login_required(login_url="login_or_signup_view")
 def view_message(request, message_id):
     if request.method == "POST":
         content = request.POST.get("replied_content")
@@ -178,7 +181,7 @@ def view_message(request, message_id):
         request, "main/view_message.html", {"message": message, "replies": replies}
     )
 
-from django.db.models import Subquery
+@login_required(login_url="login_or_signup_view")
 def messenger(request):
     user = request.user
     followingUsers = user.profile.following.all()
@@ -191,6 +194,7 @@ def messenger(request):
     )
 
 
+@login_required(login_url="login_or_signup_view")
 def conversation(request, conversation_id):
     conversation = Conversation.objects.filter(members=request.user).get(
         pk=conversation_id
