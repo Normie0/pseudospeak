@@ -27,8 +27,6 @@ body {
   .navbar.bg-body-tertiary {
     background-color: transparent !important;
     color: white;
-    position: absolute;
-    top: 100px;
   }
   
   .signbtn {
@@ -514,10 +512,11 @@ object-fit: cover;
             <h4 class="profileUsername">{{user.username}}</h4>
             <input type="text" value="{{user.username}}" class="profileUsernameInput" style="display: none;">
             
+            {% if user == request.user %}
             <button id="editButton">
             <i class="fas fa-edit"></i>
             </button>
-            
+            {% endif %}
             <p>{{bio}}</p>
         </div>
         
@@ -607,6 +606,7 @@ const username = JSON.parse(document.getElementById("json-username").textContent
 var loggedusername = JSON.parse(document.getElementById("json-loggedusername").textContent);
 const socket = new WebSocket('ws://' + window.location.host + '/ws/dashboard/' + username + '/');
 
+if (document.querySelector("#editButton")!== null){
 document.querySelector("#editButton").onclick = function(){
   const name=document.querySelector(".profileUsername");
   console.log(name.innerHTML);
@@ -632,7 +632,7 @@ document.querySelector("#editButton").onclick = function(){
     window.location.href = redirectURL;
   }
 })
-    }
+    }}
 
 function showonclick1() {
         var container2 = document.getElementById('delbutton');
