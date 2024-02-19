@@ -283,7 +283,22 @@ class DashboardConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        await self.follow(data)
+        if 'changedName' in data:
+            print("Event running")
+            await self.changename(data)
+        else:
+            await self.follow(data)
+
+    @sync_to_async
+    def changename(self,data):
+        user=User.objects.get(username=data['username'])
+        try:
+            user.username=data['changedName']
+            user.save()
+            print(user.username)
+        except:
+            error_message="username already in use"
+        return True
 
     @sync_to_async
     def follow(self, data):

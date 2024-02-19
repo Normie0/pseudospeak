@@ -10,6 +10,9 @@
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <link
+    rel="stylesheet"
+    href="https://site-assets.fontawesome.com/releases/v6.5.1/css/all.css">
     <style>
       body {
         background-color: #1f1f20;
@@ -331,6 +334,17 @@
           width: 94vw;
         }
       }
+
+      .create-logo{
+        height:9vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      .add-group{
+        cursor:pointer;
+      }
+    
     </style>
   </head>
   <body>
@@ -434,6 +448,15 @@
                 </div>
               </div>
               {% endfor %}
+              <div class="add-group">
+                  <div class="create-logo">
+                    <i class="fa-light fa-circle-plus fa-4x"></i>
+                  </div>
+                  <div class="group-name">
+                    <h6>Create group</h6>
+                  </div>
+
+              </div>
             </div>
           </div>
           <div class="group-recom">
@@ -488,6 +511,12 @@
     {{ request.user.username|json_script:"json-username"}}
 
     <script>
+
+      document.querySelector(".create-logo").onclick=function(){
+        var redirectURL="/room/new/create_group/";
+        console.log(redirectURL);
+        window.location.href=redirectURL;
+      }
 
       document.getElementById("data2").focus()
 
@@ -597,6 +626,18 @@
         });
     }
 });
+
+document.querySelector('#profile_img_navbar').onclick = function () {
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        console.log(userName);
+
+        if (userName) {
+            var redirectURL = '/dashboard/' + userName + '/';
+            window.location.href = redirectURL;
+        } else {
+            console.error('Username not found.');
+        }
+    }
 
     </script>
   </body>

@@ -27,6 +27,8 @@ body {
   .navbar.bg-body-tertiary {
     background-color: transparent !important;
     color: white;
+    position: absolute;
+    top: 100px;
   }
   
   .signbtn {
@@ -260,7 +262,7 @@ object-fit: cover;
   padding: 0 3px;
   display: inline-block;
 }
-.profile-username h4{
+.profile-username .profileUsername{
   display: inline;
 }
 .profile-data{
@@ -431,6 +433,17 @@ object-fit: cover;
   text-align: center;
   display:none;
 }
+.profileUsernameInput{
+  border: 2px solid 
+  white;
+  border-radius: 10%;
+  background-color: #1f1f20;
+  color: #e90ccb;
+  width: 90px;
+}
+.profileUsernameInput:focus{
+  outline:#e90ccb;
+}
 
     </style>
   </head>
@@ -498,10 +511,13 @@ object-fit: cover;
           {% endif %}
         </div>
         <div class="profile-username">
-            <h4>{{user.username}}</h4>
-            <button id="editButton" onclick="enableEdit()">
+            <h4 class="profileUsername">{{user.username}}</h4>
+            <input type="text" value="{{user.username}}" class="profileUsernameInput" style="display: none;">
+            
+            <button id="editButton">
             <i class="fas fa-edit"></i>
             </button>
+            
             <p>{{bio}}</p>
         </div>
         
@@ -587,6 +603,37 @@ integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgr
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
+const username = JSON.parse(document.getElementById("json-username").textContent);
+var loggedusername = JSON.parse(document.getElementById("json-loggedusername").textContent);
+const socket = new WebSocket('ws://' + window.location.host + '/ws/dashboard/' + username + '/');
+
+document.querySelector("#editButton").onclick = function(){
+  const name=document.querySelector(".profileUsername");
+  console.log(name.innerHTML);
+  const nameInput=document.querySelector(".profileUsernameInput")
+  name.style.display="none";
+  nameInput.style.display="inline";
+  nameInput.focus();
+  nameInput.addEventListener("keydown",function (e) {
+    if (e.key === "Enter") {
+    e.preventDefault();
+    this.blur();
+    // Update username and send data over the WebSocket
+    const changedName = nameInput.value;
+    name.innerHTML = changedName;
+    nameInput.style.display = "none";
+    name.style.display = "inline";
+    socket.send(JSON.stringify({
+      "changedName": changedName,
+      "username": username
+    }));
+    loggedusername=changedName;
+    var redirectURL = '/dashboard/' + loggedusername + '/';
+    window.location.href = redirectURL;
+  }
+})
+    }
+
 function showonclick1() {
         var container2 = document.getElementById('delbutton');
         if (container2.style.display === 'none') {
@@ -607,10 +654,6 @@ function showonclick1() {
 
   document.addEventListener('DOMContentLoaded', function () {
 
-    const username = JSON.parse(document.getElementById("json-username").textContent);
-    const loggedusername = JSON.parse(document.getElementById("json-loggedusername").textContent);
-
-    const socket = new WebSocket('ws://' + window.location.host + '/ws/dashboard/' + username + '/');
 
     socket.onopen=function(e){
       console.log("Connection Established")
@@ -634,9 +677,9 @@ function showonclick1() {
       }))
     })
 
+
     document.querySelector('#profile_img_navbar').onclick = function () {
     var redirectURL = '/dashboard/' + loggedusername + '/';
-    console.log(redirectURL);
     window.location.href = redirectURL;
   }
 
@@ -694,6 +737,9 @@ function showonclick1() {
             hideDiv2.style.display = 'none';
         }
         
+
+
+    
       
 </script>
 

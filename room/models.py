@@ -34,7 +34,6 @@ class Message(models.Model):
     image=models.ImageField(null=True,blank=True,upload_to="images/")
     likes=models.IntegerField(null=True,default=0)
     view_count=models.IntegerField(null=True,default=0)
-    hashtags=models.ManyToManyField('Hashtag')
     date_added = models.DateTimeField(auto_now_add=True,null=True)
     parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
@@ -53,15 +52,4 @@ class Message(models.Model):
 
     def __str__(self) :
         return f'Message from {self.user.username} in room {self.room.name} content - {self.content}'
-    
-class Hashtag(models.Model):
-    tag=models.CharField(max_length=255)
-    count=models.IntegerField(default=1,null=True)
-
-    class Meta:
-        ordering = ('-count',)
-
-
-    def __str__(self):
-        return self.tag
     

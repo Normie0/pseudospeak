@@ -5,6 +5,8 @@ from django.urls import reverse
 from faker import Faker
 from .forms import *
 import random
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from .models import Profile, TrendingMessage, Hashtag
 from django.db.models import Sum, OuterRef
 from conversation.models import Conversation, ConversationMessage
@@ -63,40 +65,66 @@ def login_or_signup_view(request):
         print(action)
 
         if action == "signup":
+            error_message=None
             print("This method is working")
             username = request.POST.get("username")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
             try:
+                if confirm_password!=password:
+                    raise ValueError("Passwords do not match!")
+                for char in password:
+                    if char.isupper():
+                        break
+                    elif password.index(char)==len(password)-1:
+                        continue
+                    raise ValidationError("Atleast one uppercase character is required")
+                validate_password(password=password,password_validators=None)
+            except ValueError as v:
+                error_message=v
+            except ValidationError as e:
+                error_message=e.messages[:1]
+                error_message=" ".join(error_message)
+            try:
                 existing_user = User.objects.get(username=username)
             except User.DoesNotExist:
                 existing_user = None
-            if confirm_password == password and existing_user is None:
-                # Create the user first
-                create_user = User.objects.create_user(
-                    username=username, password=password
-                )
-                random_image_path = get_random_image()
 
-                # Create the user's profile with the random image
-                profile = Profile(
-                    user=create_user, profile_img=random_image_path, bio="New User"
-                )
-                print("completed registering user")
-                profile.save()
-                login(request, create_user)
-                return redirect("index")
+            if existing_user is None and error_message is None:
+                try:
+                    
+                    if confirm_password == password and existing_user is None:
+                        # Create the user first
+                        create_user = User.objects.create_user(
+                            username=username, password=password
+                        )
+                        random_image_path = get_random_image()
 
+                        # Create the user's profile with the random image
+                        profile = Profile(
+                            user=create_user, profile_img=random_image_path, bio="New User"
+                        )
+                        print("completed registering user")
+                        profile.save()
+                        login(request, create_user)
+                        return redirect("index")
+
+                except ValidationError as e:
+                    error_message=e.messages[:1]
+                    error_message=" ".join(error_message)
+                    return render(
+                            request,
+                            "main/signup.html",
+                            {"error_message": error_message, "username": username},
+                        )
             else:
-                if confirm_password != password:
-                    error_message=f'Passwords do not match'
-                else:
-                    error_message=f'User with username - {existing_user.username} already exists!'
+                if existing_user is not None:
+                    error_message=f'user with username {username} already exists! try using different username'
                 return render(
-                    request,
-                    "main/signup.html",
-                    {"error_message": error_message, "username": username},
-                )
+                            request,
+                            "main/signup.html",
+                            {"error_message": error_message, "username": username},
+                        )
 
         elif action == "login":
             username = request.POST.get("username")

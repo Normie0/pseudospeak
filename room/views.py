@@ -21,6 +21,7 @@ def rooms(request,name):
             rooms = Room.objects.exclude(users=request.user).annotate(user_count=models.Count('users')).order_by('-user_count')[:5]
     else:
         category=Category.objects.get(name=name)
+        print(category.name)
         rooms = Room.objects.filter(~Q(users=user) & Q(category=category))
         print(name)
 
@@ -38,3 +39,39 @@ def room(request, slug):
     room=Room.objects.get(slug=slug)
     messages=Message.objects.filter(room=room)
     return render(request, 'room/room.html', {'room': room, 'messages': messages})
+
+def create_room(request):
+    if request.method=="POST":
+        try:
+            name=request.POST.get("group-name")
+            category_name=request.POST.get("cars")
+            file=request.FILES.get("group-avatar")
+            error_message=None
+            print(name)
+            print(category_name)
+            if file is None:
+                error_message=f"Group image is required to create group"
+            elif file.size > 1024 * 1024:
+                error_message="File size should be less than 2MB"
+            try:
+                existing_group=Room.objects.get(name=name)
+            except:
+                existing_group=None
+            slug_with_space=name.lower()
+            slug=slug_with_space.replace(" ","")
+            print(slug)
+            if name and category_name and file and existing_group is None and error_message is None:
+                category=Category.objects.get(name=category_name)
+                room=Room.objects.create(name=name,slug=slug,room_img=file,category=category)
+                room.users.add(request.user)
+                if room.save():
+                    print("Success")
+                return redirect(room,slug)
+            else:
+                if existing_group is not None:
+                    error_message=f"Group with group name '{existing_group.name}' already exists"
+                return render(request,"room/create-group.html",{'error_message':error_message})
+        except Exception as e:
+            print(e)
+    return render(request,'room/create-group.html')
+
