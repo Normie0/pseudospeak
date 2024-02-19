@@ -53,25 +53,26 @@ def create_room(request):
                 error_message=f"Group image is required to create group"
             elif file.size > 1024 * 1024:
                 error_message="File size should be less than 2MB"
-            try:
-                existing_group=Room.objects.get(name=name)
-            except:
-                existing_group=None
             slug_with_space=name.lower()
             slug=slug_with_space.replace(" ","")
+            try:
+                existing_group=Room.objects.get(slug=slug)
+            except:
+                existing_group=None
             print(slug)
             if name and category_name and file and existing_group is None and error_message is None:
                 category=Category.objects.get(name=category_name)
-                room=Room.objects.create(name=name,slug=slug,room_img=file,category=category)
-                room.users.add(request.user)
-                if room.save():
+                createroom=Room.objects.create(name=name,slug=slug,room_img=file,category=category)
+                createroom.users.add(request.user)
+                if createroom.save():
                     print("Success")
                 return redirect(room,slug)
             else:
                 if existing_group is not None:
                     error_message=f"Group with group name '{existing_group.name}' already exists"
                 return render(request,"room/create-group.html",{'error_message':error_message})
-        except Exception as e:
-            print(e)
+        except ValueError as e:
+            error_message=e
+            return render(request,"room/create-group.html",{'error_message':error_message})
     return render(request,'room/create-group.html')
 

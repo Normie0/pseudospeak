@@ -436,6 +436,8 @@
 
     <script>
 
+      const username=document.getElementById("json-username").textContent;
+
 function validateForm() {
         // Get form elements
         var groupName = document.getElementById('group-name').value;
@@ -475,6 +477,18 @@ function validateForm() {
     const username = JSON.parse(
         document.getElementById("json-username").textContent
     );
+
+    document.querySelector('#profile_img_navbar').onclick = function () {
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        console.log(userName);
+
+        if (userName) {
+            var redirectURL = '/dashboard/' + userName + '/';
+            window.location.href = redirectURL;
+        } else {
+            console.error('Username not found.');
+        }
+    }
 
     listItems.forEach(function (item) {
         item.addEventListener("click", function () {
