@@ -627,9 +627,21 @@ document.querySelector("#editButton").onclick = function(){
       "changedName": changedName,
       "username": username
     }));
-    loggedusername=changedName;
-    var redirectURL = '/dashboard/' + loggedusername + '/';
-    window.location.href = redirectURL;
+    socket.onmessage=function(e){
+      data=JSON.parse(e.data);
+      const error_message=data["error_message"];
+      console.log(error_message)
+      if (error_message !== null) {
+            alert(error_message);
+            var redirectURL = '/dashboard/' + loggedusername + '/';
+            window.location.href = redirectURL;
+            return;  // Stop further execution
+      }
+        console.log("Event triggered")
+        loggedusername=changedName;
+        var redirectURL = '/dashboard/' + loggedusername + '/';
+        window.location.href = redirectURL;
+    }
   }
 })
     }}
