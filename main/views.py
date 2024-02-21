@@ -1,8 +1,11 @@
+from io import BytesIO
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from faker import Faker
+import urllib3
 from .forms import *
 import random
 from django.contrib.auth.password_validation import validate_password
@@ -10,7 +13,7 @@ from django.core.exceptions import ValidationError
 from .models import Profile, TrendingMessage, Hashtag
 from django.db.models import Sum, OuterRef
 from conversation.models import Conversation, ConversationMessage
-
+import base64
 
 def generate_unique_username():
     fake = Faker()
@@ -242,6 +245,8 @@ def conversation(request, conversation_id):
     )
 
 from django.contrib.auth import update_session_auth_hash
+import requests
+from PIL import Image
 
 @login_required(login_url="login_or_signup_view")
 def settings(request):
@@ -266,15 +271,19 @@ def settings(request):
         current_pass=request.POST.get("current-password")
         new_password=request.POST.get("new-password")
         confirm_password=request.POST.get("confirm-password")
+
+        
         if loggedusername==request.user.username and current_pass and new_password and confirm_password:
             try:
-                user=User.objects.get(username=loggedusername)
+                user=User.objects.get(username=request.user.username)
                 if user and authenticate(username=loggedusername,password=current_pass):
-                    print(user.username)
                     if confirm_password==new_password:
-                        request.user.set_password(new_password)
-                        request.user.save()
-                        update_session_auth_hash(request, request.user)
+                        image_url_without=image_url.replace("/media","")
+                        user.profile.profile_img=image_url_without
+                        user.profile.save()
+                        user.set_password(new_password)
+                        user.save()
+                        update_session_auth_hash(request, user)
                         return redirect(dashboard,profileId=loggedusername)
                     else:
                         error_message="Passwords do not match!"

@@ -503,7 +503,7 @@
             <div class="card-body">
               <div class="Change-avatar">
                 <div class="change-profile-pic">
-                  <img src="{{request.user.profile.profile_img.url}}" alt="err">
+                  <img src="{{request.user.profile.profile_img.url}}" alt="err" id="profile-avatar">
                 </div>
                 <div class="change-pic">
                   <p id="editBtn">Edit avatar</p>
@@ -517,11 +517,11 @@
                     <h4>Select Avatar</h4>
                     <form method="post" onsubmit="validateForm()">
                       {% csrf_token %}
-                      <input type="hidden" name="image_path" value="{{request.user.profile.profile_img.url}}">
+                      <input type="hidden" name="image_path" value="{{request.user.profile.profile_img.url}}" id="img-value">
                     <div class="avatar-row-1">
                       {% for image_path in images %}
                       <div class="modal-content-img">
-                        <img src="{{image_path}}" alt="err">
+                        <img src="{{image_path}}" alt="err" data-img-url="{{image_path}}">
                       </div>
                       {% endfor %}
                     </div>
@@ -562,9 +562,6 @@
               </div>
             </form>
 
-
-
-  
             </div>
           </div>
 
@@ -593,6 +590,19 @@ const username=document.getElementById("json-username").textContent;
       
 document.addEventListener('DOMContentLoaded', function() {
   
+  const img_container=document.querySelectorAll(".modal-content-img");
+  const profile_avatar=document.querySelector("#profile-avatar");
+  const img_value=document.querySelector("#img-value");
+  img_container.forEach(element => {
+    element.addEventListener("click",function(){
+      const imgElement=element.querySelector("img");
+      const dataurl=imgElement.getAttribute("data-img-url");
+      profile_avatar.src=dataurl;
+      img_value.value=dataurl;
+      console.log(img_value)
+      console.log(dataurl);
+    })
+  });
 
   const editBtn = document.getElementById('editBtn');
   const editModal = document.getElementById('editModal');
