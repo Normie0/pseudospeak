@@ -11,6 +11,7 @@ urlpatterns=[
     path("authenticate/signup/",views.login_or_signup_view,name="login_or_signup_view"),
     path("authenticate/logout/",views.logoutuser,name="logout"),
     path("messenger/",views.messenger,name='messenger'),
+    path("settings/",views.settings,name='settings'),
     path("messenger/<int:conversation_id>/",views.conversation,name='conversation')
 ]
 

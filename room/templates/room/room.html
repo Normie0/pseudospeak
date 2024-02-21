@@ -231,9 +231,72 @@
       .content-1a li a:hover {
         text-decoration: underline;
       }
+      .center-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Use the full height of the viewport */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+}
+
+.center-container > div {
+  background-color: white; /* Set the background color of the inner div */
+  padding: 20px; /* Add padding for better visibility */
+  text-align: center; /* Center the text within the inner div */
+}
+
+
+.center-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Use the full height of the viewport */
+  position: fixed;
+  top: 40%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent; /* Semi-transparent black background */
+}
+
+.center-container.show {
+  background-color: black;
+}
+
+.center-container > div {
+  margin: 0 auto;
+  background-color: #121213; /* Set the background color of the inner div */
+  padding: 20px; /* Add padding for better visibility */
+  text-align: center; /* Center the text within the inner div */
+  max-width: 400px; /* Set a maximum width for the inner div */
+  transition: transform 10s ease;
+}
+
+.center-container.show > div {
+  transform: scale(1); /* Add scaling effect when the container is shown */
+}
     </style>
   </head>
   <body>
+
+    <div class="center-container" style="display: none;">
+      <div>
+        <p>Do you want to leave {{room.name}} ?</p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" name="confirmation" value="no">No</button>
+          <button name="confirmation" type="submit" value="yes">Yes</button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="wrapper">
     <nav class="navbar navbar-expand bg-body-tertiary">
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
@@ -294,7 +357,7 @@
             <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
             <li>
               <i class="fa-solid fa-gear"></i
-              ><a href="{% url 'logout' %}">Settings</a>
+              ><a href="{% url 'settings' %}">Settings</a>
             </li>
           </ul>
         </div>
@@ -302,8 +365,7 @@
         <div class="col-9 chat-container">
           <div class="group-name">
             <h1>Group Name-{{ room.name }}</h1>
-            <form method="post" style="margin-top: -2vw">
-              {% csrf_token %}
+            <div style="margin-top: -2vw">
               <button
                 id="exit"
                 style="
@@ -315,7 +377,7 @@
               >
                 <i class="fa-solid fa-right-from-bracket"></i>
               </button>
-            </form>
+            </div>
             <p style="display: none;background-color: #1f1f2038" id="exitInfo">Exit</p>
           </div>
           <div class="lg:w-2/4 mx-4 lg:mx-auto p-4 rounded-xl">
@@ -348,7 +410,7 @@
         </div>
       </div>
     </div>
-
+  </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
@@ -362,6 +424,16 @@
     {{ room.slug|json_script:"json-roomname" }}
     {{request.user.username|json_script:"json-username" }}
     <script>
+      const btnExit=document.getElementById("exit");
+
+      btnExit.addEventListener("click",function(){
+        const wrapper=document.querySelector(".wrapper")
+        const centerContainer=document.querySelector(".center-container")
+
+        wrapper.style.display="none";
+        centerContainer.style.display="block";
+      })
+
       const roomName = JSON.parse(
         document.getElementById("json-roomname").textContent
       );

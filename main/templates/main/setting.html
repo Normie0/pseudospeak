@@ -13,6 +13,7 @@
     <link
     rel="stylesheet"
     href="https://site-assets.fontawesome.com/releases/v6.5.1/css/all.css">
+
     <style>
       body {
         background-color: #1f1f20;
@@ -137,109 +138,6 @@
         text-decoration: underline;
       }
 
-      .group-img {
-        width: 5vw;
-        height: 9vh;
-        overflow: hidden;
-        border-radius: 50%;
-      }
-      .group-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .group-con2 {
-        display: flex;
-        margin: 10px 0;
-      }
-      .group-m {
-        margin: 2px 20px;
-        text-align: center;
-      }
-      .group-m:hover {
-        cursor: pointer;
-      }
-      .group-name {
-        padding-top: 10px;
-      }
-      .Ygroup {
-        margin: 18px 5px;
-      }
-      .group-recom {
-        overflow-x: auto;
-        white-space: nowrap;
-        border-top: 1px solid hsla(0, 0%, 53%, 0.07);
-        border-bottom: 1px solid hsla(0, 0%, 53%, 0.07);
-      }
-      .group-recom::-webkit-scrollbar {
-        width: 0em;
-      }
-      .group-recom ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .group-recom li {
-        display: inline-block;
-        padding: 5px 60px;
-      }
-      .group-recom a {
-        text-decoration: none;
-        color: rgba(233, 11, 233, 0.973);
-        font-weight: bold;
-        font-size: 16px;
-      }
-      .group-recom li:hover {
-        background-color: hsla(0, 0%, 53%, 0.07);
-      }
-      .active2 {
-        background-color: hsla(0, 0%, 53%, 0.07);
-      }
-      .group-container-3 {
-        display: flex;
-        align-items: center;
-        margin-top: 15px;
-        border-radius: 15px;
-        height: 11vh;
-        background: hsla(0, 0%, 53%, 0.02);
-        justify-content: space-between;
-        padding: 0px 24px;
-      }
-      .group-container-3:hover {
-        background: hsla(0, 0%, 53%, 0.07);
-      }
-      .group-con-name {
-        display: flex;
-        align-items: center;
-      }
-      .group-container-img {
-        width: 6vw;
-        height: 8vh;
-        overflow: hidden;
-        border-radius: 10%;
-      }
-      .group-container-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .group-container-name {
-        margin-left: 14px;
-      }
-      .joinbtn {
-        background-color: #e90ccb;
-        width: 90px;
-        color: rgb(5, 5, 5);
-        border-radius: 15px;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        font-weight: bold;
-      }
-      .joinbtn:hover {
-        background-color: #050100;
-        color: rgb(236, 22, 208);
-      }
-
       .button-i {
         display: none;
         visibility: hidden;
@@ -335,19 +233,188 @@
         }
       }
 
-      .create-logo{
+      
+
+      
+      .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        border-bottom: 0 !important;
+        background:#901a9b;
         height:9vh;
         display:flex;
         align-items:center;
-        justify-content:center;
       }
-      .add-group{
+      
+      .msg_head {
+        position: relative;
+      }
+      
+      .card {
+        width: 70vw;
+        background-color: hsla(0, 0%, 53%, 0.07);
+        height: 80vh;
+        border-radius: 15px;
+        color:white;
+      }
+
+      .change-profile-pic{
+        width: 7vw;
+        height: 14vh;
+        margin: 20px;
+        overflow: hidden;
+        border-radius: 50%;
+        }  
+      
+      .change-profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .Change-avatar{
+        display:flex;
+        align-items:center;
+        flex-direction:column;
+      }
+      .change-pic p{
+        cursor:pointer;
+        color:blue;
+      }
+
+      
+      .modal-1 {
+        display:none;
+        position: fixed;
+        z-index: 9999;
+        left: 140px;
+        top: 10px;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+      }
+
+      .modal-content-1 {
+        margin: 20% auto;
+        padding: 20px;
+        width: 80%;
+        max-width: 37vw;
+        position: relative;
+        background-color: #1f1f20;
+        color: white;
+        outline: none;
+        border: none;
+      }
+      .modal-content-img{
+        width: 5vw;
+        height: 10vh;
+        margin: 20px;
+        overflow: hidden;
+        border-radius: 50%;
+      }
+      .modal-content-img img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         cursor:pointer;
       }
-    
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .avatar-row-1, .avatar-row-2{
+        display:flex;
+      }
+      .change-username{
+        margin: 12px 10px;
+      }
+      .change-username h5{
+        display:inline-block;
+      }
+      .change-username input{
+        margin-left: 90px;
+        background: hsla(0, 0%, 53%, 0.09);
+        outline: none;
+        border: none;
+        color: white;
+        height: 5vh;
+        border-radius: 5px;
+        padding-left:15px;
+        width:20vw;
+      }
+      .change-password{
+        margin: 12px 10px;
+      }
+      .change-password h5{
+        display:inline-block;
+      }
+      .change-password input{
+        margin-left: 20px;
+        background: hsla(0, 0%, 53%, 0.09);
+        outline: none;
+        border: none;
+        color: white;
+        height: 5vh;
+        border-radius: 5px;
+        padding-left:15px;
+        width:20vw;
+      }
+      .card-body-2{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+      }
+      .m-p1 input{
+        margin-left:49px;
+      }
+      .m-p2 input{
+        margin-left:12px;
+      }
+
+      .change-btn{
+        display:flex;
+        justify-content:end;
+      }
+      .changes-btn{
+        display:flex; 
+        margin: 20px 0;
+        justify-content: center;
+      }
+      .save-btn{
+        background-color:white;
+        color:#901a9b;
+        border-radius: 10px;
+        width:10vw;
+        font-weight:800;
+      }
+      .save-btn:hover{
+        background-color:rgba(233, 11, 233, 0.973);
+        color: white;
+      }
+      .delete-btn{
+        background-color:white;
+        color:red;
+        font-weight:800;
+        border-radius: 10px;
+        margin-right:35px;
+      }
+      .delete-btn:hover{
+        background-color:red;
+        color:white;
+      }
     </style>
   </head>
   <body>
+
     <label class="button-res">
       <input type="checkbox" class="button-i" id="checkbox-i" />
       <div class="toggle2">
@@ -356,6 +423,15 @@
         <span class="bottom-line common"></span>
       </div>
     </label>
+
+    {% if error_message %}
+  <div class="container-fluid" style="padding: 0;">
+    <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{error_message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  {% endif %}
 
     <nav class="navbar navbar-expand bg-body-tertiary">
       <div class="container-fluid">
@@ -422,77 +498,76 @@
           </ul>
         </div>
 
-        <div class="col-9 group-con">
-          <div class="search-container">
-            <input
-              id="data2"
-              class="search-input-2"
-              type="text"
-              placeholder="Search Groups..."
-            />
-          </div>
-          <div class="your-groups">
-            <h2 class="Ygroup">Your Groups</h2>
-            <div class="group-con2">
-              {% for room in joinedRooms %}
-              <div class="group-m">
-                <div class="group-img">
-                  <img
-                    src="{{room.room_img.url}}"
-                    alt=""
-                    onclick="groupPage('{{room.slug}}')"
-                  />
+        <div class="col-9">
+          <div class="card">
+            <div class="card-body">
+              <div class="Change-avatar">
+                <div class="change-profile-pic">
+                  <img src="{{request.user.profile.profile_img.url}}" alt="err">
                 </div>
-                <div class="group-name">
-                  <h6>{{room.name}}</h6>
+                <div class="change-pic">
+                  <p id="editBtn">Edit avatar</p>
                 </div>
               </div>
-              {% endfor %}
-              <div class="add-group">
-                  <div class="create-logo">
-                    <i class="fa-light fa-circle-plus fa-4x"></i>
-                  </div>
-                  <div class="group-name">
-                    <h6>Create group</h6>
-                  </div>
+              
+              
+              <div id="editModal" class="modal-1">
+                <div class="modal-content-1">
+                    <span class="close">&times;</span>
+                    <h4>Select Avatar</h4>
+                    <form method="post" onsubmit="validateForm()">
+                      {% csrf_token %}
+                      <input type="hidden" name="image_path" value="{{request.user.profile.profile_img.url}}">
+                    <div class="avatar-row-1">
+                      {% for image_path in images %}
+                      <div class="modal-content-img">
+                        <img src="{{image_path}}" alt="err">
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <div class="avatar-row-2">
+                    {% for image_path in images %}
+                      <div class="modal-content-img">
+                        <img src="{{image_path}}" alt="err">
+                      </div>
+                      {% endfor %}
+                    </div>
+                    
+                </div>
+              </div>
 
-              </div>
-            </div>
-          </div>
-          <div class="group-recom">
-            <ul>
-              <li>
-                <a href="{% url 'rooms' name='recommended' %}">Recommended</a>
-              </li>
-              {% for cat in categories %}
-              <li>
-                <a href="{% url 'rooms' name=cat.name %}">{{ cat.name }}</a>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div id="grouplist">
-            {% for room in rooms %}
-            <div class="group-container-3">
-              <div class="group-con-name">
-                <div class="group-container-img">
-                  <img src="{{room.room_img.url}}" alt="" />
+              <div class="card-body-2">
+                <div class="change-username">
+                  <h5>Username:</h5>
+                  <input type="text" placeholder="Existing-username"  value="{{request.user.username}}" name="username">
                 </div>
-                <div class="group-container-name">
-                  <h4>{{room.name}}</h4>
+                <div class="change-password">
+                  <h5>Current password:</h5>
+                  <input type="password" placeholder="Password" name="current-password">
+                </div>
+                <div class="change-password m-p1">
+                  <h5>New password:</h5>
+                  <input type="password" placeholder="New-password" name="new-password"> 
+                </div>
+                <div class="change-password m-p2">
+                  <h5>Re-enter password:</h5>
+                  <input type="password" placeholder="Re-enter new-password" name="confirm-password">
                 </div>
               </div>
-              <div class="join-button">
-                <a
-                  href="#"
-                  class="joinbtn btn btn-success"
-                  data-message-id="{{room.pk}}"
-                  >Join</a
-                >
+              
+              <div class="changes-btn">
+                <button class="delete-btn btn">Delete Account</button>
+                <button type="submit" class="save-btn btn" name="save-changes" value="save_chanages">Save Changes</button>
+                
               </div>
+            </form>
+
+
+
+  
             </div>
-            {% endfor %}
           </div>
+
         </div>
       </div>
     </div>
@@ -508,126 +583,32 @@
     ></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    {{ request.user.username|json_script:"json-username"}}
 
-    <script>
 
-      document.querySelector(".create-logo").onclick=function(){
-        var redirectURL="/room/new/create_group/";
-        console.log(redirectURL);
-        window.location.href=redirectURL;
-      }
+{{request.user.username|json_script:"json-username"}}
+      
+<script>
 
-      document.getElementById("data2").focus()
+const username=document.getElementById("json-username").textContent;
+      
+document.addEventListener('DOMContentLoaded', function() {
+  
 
-      function groupPage(roomSlug) {
-        console.log(roomSlug);
-        const url = "/room/" + "categories/" + roomSlug;
-        window.location.pathname = url;
-      }
+  const editBtn = document.getElementById('editBtn');
+  const editModal = document.getElementById('editModal');
+  const closeModal = document.querySelector('.close');
 
-      document.addEventListener("DOMContentLoaded", function () {
-    var listItems = document.querySelectorAll(".group-recom li");
-    const username = JSON.parse(
-        document.getElementById("json-username").textContent
-    );
+  editBtn.addEventListener('click', function() {
+      editModal.style.display = 'block';
+      document.body.style.overflow = 'auto'; // Disable scrolling on the main page
+  });
 
-    listItems.forEach(function (item) {
-        item.addEventListener("click", function () {
-            // Remove "active2" class from all list items
-            listItems.forEach(function (listItem) {
-                listItem.classList.remove("active2");
-            });
+  closeModal.addEventListener('click', function() {
+      editModal.style.display = 'none';
+      document.body.style.overflow = 'auto'; // Enable scrolling on the main page
+  });
 
-            // Add "active2" class to the clicked list item
-            item.classList.add("active2");
-        });
-    });
-
-    const socket = new WebSocket(
-        "ws://" + window.location.host + "/ws/room/"
-    );
-
-    socket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-
-        if (Array.isArray(data["searchRooms"])) {
-            const template = document.getElementById("grouplist");
-            template.innerHTML = "";
-            data["searchRooms"].forEach(function (item) {
-                console.log(item);
-                console.log(item.pk);
-                template.innerHTML += `
-                    <div class="group-container-3">
-                        <div class="group-con-name">
-                            <div class="group-container-img">
-                                <img src="${item.room_img_url}" alt="" />
-                            </div>
-                            <div class="group-container-name">
-                                <h4>${item.name}</h4>
-                            </div>
-                        </div>
-                        <div class="join-button">
-                            <a
-                                href="#"
-                                class="joinbtn btn btn-success"
-                                data-message-id="${item.pk}"
-                            >Join</a>
-                        </div>
-                    </div>`;
-            });
-
-            // Attach event listeners after updating the DOM
-            attachJoinBtnListeners();
-        }
-    };
-
-    socket.onopen = function () {
-        document
-            .getElementById("data2")
-            .addEventListener("input", function (event) {
-                
-                    event.preventDefault();
-                    const searchTxt = document.getElementById("data2").value;
-                    if (searchTxt) {
-                        socket.send(
-                            JSON.stringify({
-                                username: username,
-                                searchRoom: searchTxt,
-                            })
-                        );
-                    }
-                    if (searchTxt === "") {
-                    location.reload();
-                }
-                
-            });
-
-        // Attach event listeners after the WebSocket connection is open
-        attachJoinBtnListeners();
-    };
-
-    function attachJoinBtnListeners() {
-        document.querySelectorAll(".joinbtn").forEach(function (joinButton) {
-            joinButton.addEventListener("click", function () {
-                const id = this.getAttribute("data-message-id");
-                console.log(id);
-                console.log("clicked");
-                socket.send(
-                    JSON.stringify({
-                        id: id,
-                        username: username,
-                    })
-                );
-                // Note: It's generally not recommended to use location.reload(true)
-                // as it forces a hard refresh. Consider using a more appropriate approach.
-                window.location.reload(true);
-            });
-        });
-    }
-});
-
-document.querySelector('#profile_img_navbar').onclick = function () {
+  document.querySelector('#profile_img_navbar').onclick = function () {
         const userName = JSON.parse(document.getElementById('json-username').textContent);
         console.log(userName);
 
@@ -639,6 +620,17 @@ document.querySelector('#profile_img_navbar').onclick = function () {
         }
     }
 
+  window.addEventListener('click', function(event) {
+      if (event.target === editModal) {
+          editModal.style.display = 'none';
+          document.body.style.overflow = 'auto'; // Enable scrolling on the main page
+      }
+  });
+});
+
+
+
     </script>
+
   </body>
 </html>

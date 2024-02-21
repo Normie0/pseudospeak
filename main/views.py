@@ -65,26 +65,26 @@ def login_or_signup_view(request):
         print(action)
 
         if action == "signup":
-            error_message=None
+            error_message = None
             print("This method is working")
             username = request.POST.get("username")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
             try:
-                if confirm_password!=password:
+                if confirm_password != password:
                     raise ValueError("Passwords do not match!")
                 for char in password:
                     if char.isupper():
                         break
-                    elif password.index(char)==len(password)-1:
+                    elif password.index(char) == len(password) - 1:
                         continue
                     raise ValidationError("Atleast one uppercase character is required")
-                validate_password(password=password,password_validators=None)
+                validate_password(password=password, password_validators=None)
             except ValueError as v:
-                error_message=v
+                error_message = v
             except ValidationError as e:
-                error_message=e.messages[:1]
-                error_message=" ".join(error_message)
+                error_message = e.messages[:1]
+                error_message = " ".join(error_message)
             try:
                 existing_user = User.objects.get(username=username)
             except User.DoesNotExist:
@@ -92,7 +92,7 @@ def login_or_signup_view(request):
 
             if existing_user is None and error_message is None:
                 try:
-                    
+
                     if confirm_password == password and existing_user is None:
                         # Create the user first
                         create_user = User.objects.create_user(
@@ -102,7 +102,9 @@ def login_or_signup_view(request):
 
                         # Create the user's profile with the random image
                         profile = Profile(
-                            user=create_user, profile_img=random_image_path, bio="New User"
+                            user=create_user,
+                            profile_img=random_image_path,
+                            bio="New User",
                         )
                         print("completed registering user")
                         profile.save()
@@ -110,21 +112,21 @@ def login_or_signup_view(request):
                         return redirect("index")
 
                 except ValidationError as e:
-                    error_message=e.messages[:1]
-                    error_message=" ".join(error_message)
+                    error_message = e.messages[:1]
+                    error_message = " ".join(error_message)
                     return render(
-                            request,
-                            "main/signup.html",
-                            {"error_message": error_message, "username": username},
-                        )
+                        request,
+                        "main/signup.html",
+                        {"error_message": error_message, "username": username},
+                    )
             else:
                 if existing_user is not None:
-                    error_message=f'user with username {username} already exists! try using different username'
+                    error_message = f"user with username {username} already exists! try using different username"
                 return render(
-                            request,
-                            "main/signup.html",
-                            {"error_message": error_message, "username": username},
-                        )
+                    request,
+                    "main/signup.html",
+                    {"error_message": error_message, "username": username},
+                )
 
         elif action == "login":
             username = request.POST.get("username")
@@ -151,6 +153,7 @@ def login_or_signup_view(request):
 def logoutuser(request):
     logout(request)
     return redirect("login_or_signup_view")
+
 
 @login_required(login_url="login_or_signup_view")
 def dashboard(request, profileId):
@@ -189,6 +192,7 @@ def dashboard(request, profileId):
         },
     )
 
+
 @login_required(login_url="login_or_signup_view")
 def view_message(request, message_id):
     if request.method == "POST":
@@ -208,6 +212,7 @@ def view_message(request, message_id):
     return render(
         request, "main/view_message.html", {"message": message, "replies": replies}
     )
+
 
 @login_required(login_url="login_or_signup_view")
 def messenger(request):
@@ -234,4 +239,58 @@ def conversation(request, conversation_id):
         request,
         "conversation/conversation.html",
         {"conversation": conversation, "conversation_messages": conversation_message},
+    )
+
+from django.contrib.auth import update_session_auth_hash
+
+@login_required(login_url="login_or_signup_view")
+def settings(request):
+    images = [
+        "/media/images/girl.jpg",
+        "/media/images/ninja.jpg",
+        "/media/images/fire.jpg",
+        "/media/images/panda.jpg",
+    ]
+
+    if request.method=='POST':
+        print("Post request!")
+        image_url=request.POST.get("image_path")
+        loggedusername=request.POST.get("username")
+        current_pass=request.POST.get("current-password")
+        new_password=request.POST.get("new-password")
+        confirm_password=request.POST.get("confirm-password")
+        print(loggedusername)
+        print(current_pass)
+        print(new_password)
+        print(confirm_password)
+        print(image_url)
+        if loggedusername==request.user.username and current_pass and new_password and confirm_password:
+            try:
+                user=User.objects.get(username=loggedusername)
+                if user and authenticate(username=loggedusername,password=current_pass):
+                    print(user.username)
+                    if confirm_password==new_password:
+                        request.user.set_password(new_password)
+                        request.user.save()
+                        update_session_auth_hash(request, request.user)
+                        print("Success")
+                        return redirect(dashboard,profileId=loggedusername)
+                    else:
+                        error_message="Passwords do not match!"
+                else:
+                    error_message="Plzz check your password"
+            except:
+                error_message="Invalid username or password"
+                print(error_message)
+
+        else:
+            error_message="Invalid Username!"
+        return render(
+        request,
+        "main/setting.html",{"error_message":error_message,"images":images},
+    )
+
+    return render(
+        request,
+        "main/setting.html",{"images":images},
     )

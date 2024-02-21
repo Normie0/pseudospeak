@@ -478,7 +478,7 @@
             <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
             <li>
               <i class="fa-solid fa-gear"></i
-              ><a href="{% url 'logout' %}">Settings</a>
+              ><a href="{% url 'settings' %}">Settings</a>
             </li>
           </ul>
         </div>
@@ -491,7 +491,9 @@
             <div class="card-header msg_head">
               <div class="d-flex bd-highlight">
                 <div class="img_cont">
+                  <a href="{% url 'dashboard' profileId=m.username %}">
                   <img src="{{m.profile.profile_img.url}}" style="width: 40px" />
+                </a>
                 </div>
                 <div class="user_info">
                   <span>{{m.username}}</span>

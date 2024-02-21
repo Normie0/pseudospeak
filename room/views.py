@@ -32,10 +32,13 @@ def rooms(request,name):
 def room(request, slug):
     if request.method=='POST':
         user=request.user
-        room=Room.objects.get(slug=slug)
-        room.users.remove(user)
-        room.save()
-        return redirect(rooms,name="recommended")
+        btnvalue=request.POST.get("confirmation")
+        # print(btnvalue)
+        if btnvalue=="yes":
+            room=Room.objects.get(slug=slug)
+            room.users.remove(user)
+            room.save()
+            return redirect(rooms,name="recommended")
     room=Room.objects.get(slug=slug)
     messages=Message.objects.filter(room=room)
     return render(request, 'room/room.html', {'room': room, 'messages': messages})
