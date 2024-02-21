@@ -265,20 +265,21 @@
 }
 
 .center-container.show {
-  background-color: black;
+  background-color: transparent;
 }
 
 .center-container > div {
   margin: 0 auto;
-  background-color: #121213; /* Set the background color of the inner div */
-  padding: 20px; /* Add padding for better visibility */
-  text-align: center; /* Center the text within the inner div */
-  max-width: 400px; /* Set a maximum width for the inner div */
-  transition: transform 10s ease;
+  background-color: #121213;
+  padding: 20px;
+  text-align: center;
+  max-width: 400px;
+  transform: scale(0); /* Start with scale set to 0 */
+  transition: transform 0.5s ease; /* Add transition for the transform property */
 }
 
 .center-container.show > div {
-  transform: scale(1); /* Add scaling effect when the container is shown */
+  transform: scale(1);
 }
     </style>
   </head>
@@ -431,6 +432,7 @@
         const centerContainer=document.querySelector(".center-container")
 
         wrapper.style.display="none";
+        centerContainer.classList.add("show");
         centerContainer.style.display="block";
       })
 

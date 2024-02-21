@@ -16,7 +16,7 @@ body {
   /* background: linear-gradient(0deg, rgba(22, 1, 22, 1) 1%, rgba(61, 5, 5, 1) 100%); */
   /* background: #387aa1;
    */
-   background-image: url("/media/images/bg1.jpg");
+   background-image: url(https://media3.giphy.com/media/gHKJHyoi9F5cihSLrW/giphy.gif?cid=ecf05e47yuuqf07khe6uk0a5pzl6txz6uf1lj7j9zbutu1m3&ep=v1_gifs_related&rid=giphy.gif&ct=g);
 }
 
 ::selection {

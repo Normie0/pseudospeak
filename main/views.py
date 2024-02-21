@@ -76,7 +76,7 @@ def login_or_signup_view(request):
                 for char in password:
                     if char.isupper():
                         break
-                    elif password.index(char) == len(password) - 1:
+                    elif password.index(char) != len(password) - 1:
                         continue
                     raise ValidationError("Atleast one uppercase character is required")
                 validate_password(password=password, password_validators=None)
@@ -254,16 +254,18 @@ def settings(request):
 
     if request.method=='POST':
         print("Post request!")
+        delete_acc=request.POST.get("delete-acc")
+        print(delete_acc)
+        if delete_acc:
+            user=User.objects.get(username=request.user.username)
+            user.delete()
+            
+            return redirect("login_or_signup_view")
         image_url=request.POST.get("image_path")
         loggedusername=request.POST.get("username")
         current_pass=request.POST.get("current-password")
         new_password=request.POST.get("new-password")
         confirm_password=request.POST.get("confirm-password")
-        print(loggedusername)
-        print(current_pass)
-        print(new_password)
-        print(confirm_password)
-        print(image_url)
         if loggedusername==request.user.username and current_pass and new_password and confirm_password:
             try:
                 user=User.objects.get(username=loggedusername)
@@ -273,7 +275,6 @@ def settings(request):
                         request.user.set_password(new_password)
                         request.user.save()
                         update_session_auth_hash(request, request.user)
-                        print("Success")
                         return redirect(dashboard,profileId=loggedusername)
                     else:
                         error_message="Passwords do not match!"
@@ -284,7 +285,7 @@ def settings(request):
                 print(error_message)
 
         else:
-            error_message="Invalid Username!"
+            error_message="Check the data you have entered"
         return render(
         request,
         "main/setting.html",{"error_message":error_message,"images":images},
