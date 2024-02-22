@@ -520,15 +520,15 @@
                       <input type="hidden" name="image_path" value="{{request.user.profile.profile_img.url}}" id="img-value">
                     <div class="avatar-row-1">
                       {% for image_path in images %}
-                      <div class="modal-content-img">
+                      <div class="modal-content-img row-1">
                         <img src="{{image_path}}" alt="err" data-img-url="{{image_path}}">
                       </div>
                       {% endfor %}
                     </div>
                     <div class="avatar-row-2">
                     {% for image_path in images %}
-                      <div class="modal-content-img">
-                        <img src="{{image_path}}" alt="err">
+                      <div class="modal-content-img row-2">
+                        <img src="{{image_path}}" alt="err" data-img-url="{{image_path}}">
                       </div>
                       {% endfor %}
                     </div>
@@ -590,10 +590,23 @@ const username=document.getElementById("json-username").textContent;
       
 document.addEventListener('DOMContentLoaded', function() {
   
-  const img_container=document.querySelectorAll(".modal-content-img");
+  const img_container1=document.querySelectorAll(".row-1");
+  const img_container2=document.querySelectorAll(".row-2");
   const profile_avatar=document.querySelector("#profile-avatar");
   const img_value=document.querySelector("#img-value");
-  img_container.forEach(element => {
+  img_container1.forEach(element => {
+    element.addEventListener("click",function(){
+      const imgElement=element.querySelector("img");
+      const dataurl=imgElement.getAttribute("data-img-url");
+      profile_avatar.src=dataurl;
+      img_value.value=dataurl;
+      console.log(img_value)
+      console.log(dataurl);
+    })
+  });
+
+  img_container2.forEach(element => {
+    console.log(element)
     element.addEventListener("click",function(){
       const imgElement=element.querySelector("img");
       const dataurl=imgElement.getAttribute("data-img-url");

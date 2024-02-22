@@ -198,22 +198,13 @@ def dashboard(request, profileId):
 
 @login_required(login_url="login_or_signup_view")
 def view_message(request, message_id):
-    if request.method == "POST":
-        content = request.POST.get("replied_content")
-        print(content)
-        parent_message = get_object_or_404(TrendingMessage, id=message_id)
-        user = request.user
-        if user:
-            replied_message = TrendingMessage(
-                user=user, content=content, parent_message=parent_message
-            )
-            replied_message.save()
-            return redirect(reverse("view_message", args=[message_id]))
+    
 
     message = get_object_or_404(TrendingMessage, id=message_id)
-    replies = message.replies.all().order_by("date_added")
+    hashtags = Hashtag.objects.all()[:3]
+    replies = message.replies.all().order_by("-likes")
     return render(
-        request, "main/view_message.html", {"message": message, "replies": replies}
+        request, "main/view_message.html", {"message": message, "replies": replies,"hashtags":hashtags}
     )
 
 
@@ -245,8 +236,7 @@ def conversation(request, conversation_id):
     )
 
 from django.contrib.auth import update_session_auth_hash
-import requests
-from PIL import Image
+
 
 @login_required(login_url="login_or_signup_view")
 def settings(request):
@@ -260,20 +250,39 @@ def settings(request):
     if request.method=='POST':
         print("Post request!")
         delete_acc=request.POST.get("delete-acc")
-        print(delete_acc)
-        if delete_acc:
-            user=User.objects.get(username=request.user.username)
-            user.delete()
-            
-            return redirect("login_or_signup_view")
         image_url=request.POST.get("image_path")
         loggedusername=request.POST.get("username")
         current_pass=request.POST.get("current-password")
         new_password=request.POST.get("new-password")
         confirm_password=request.POST.get("confirm-password")
+        print(delete_acc)
+        if delete_acc and current_pass:
+            try:
+                user=User.objects.get(username=request.user.username)
+                if authenticate(username=request.user.username,password=current_pass):
+                    user=User.objects.get(username=request.user.username)
+                    user.delete()
+                    return redirect("login_or_signup_view")
+                else:
+                    error_message="Invalid username or password"
+                    return render(
+                    request,
+                    "main/setting.html",{"error_message":error_message},
+                    )
+            except:
+                error_message="Invalid username or password"
+                return render(
+                request,
+                "main/setting.html",{"error_message":error_message},
+                )
+        elif delete_acc and not current_pass:
+            error_message="Plzz enter the password"
+            return render(
+                request,
+                "main/setting.html",{"error_message":error_message},
+                )
 
-        
-        if loggedusername==request.user.username and current_pass and new_password and confirm_password:
+        elif loggedusername==request.user.username and current_pass and new_password and confirm_password:
             try:
                 user=User.objects.get(username=request.user.username)
                 if user and authenticate(username=loggedusername,password=current_pass):
@@ -304,3 +313,11 @@ def settings(request):
         request,
         "main/setting.html",{"images":images},
     )
+
+
+def inviteview(request):
+    current_url = reverse('index')
+    # Now 'current_url' contains the absolute URL of the current page
+    # ...
+
+    return render(request, 'main/invite.html', {'current_url': current_url})

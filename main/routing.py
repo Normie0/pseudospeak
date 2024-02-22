@@ -5,5 +5,6 @@ websocket_urlpatterns=[
     path("ws/",consumers.IndexConsumer.as_asgi()),
     path("ws/dashboard/<str:username>/",consumers.DashboardConsumer.as_asgi()),
     path("ws/messenger/",consumers.MessengerConsumer.as_asgi()),
+    path("ws/message/<int:messageId>/",consumers.ReplyConsumer.as_asgi()),
     path("ws/messenger/conversation/<int:id>/",consumers.ConversationConsumer.as_asgi()),
 ]

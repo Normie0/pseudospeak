@@ -22,6 +22,8 @@
         height: 80vh;
         overflow-y: auto;
         border-radius: 26px;
+        position: fixed;
+        right: 1vw;
       }
       .chat-container::-webkit-scrollbar {
         width: 0em;
@@ -511,11 +513,11 @@
                 <div class="img_cont_msg">
                   <img src="{{ message.created_by.profile.profile_img.url }}" />
                 </div>
-                <div class="msg_cotainer">{{ message.content }}</div>
+                <div class="msg_cotainer">{{ message.decrypt_message }}</div>
               </div>
               {% else %}
               <div class="d-flex justify-content-end mb-4">
-                <div class="msg_cotainer_send">{{ message.content }}</div>
+                <div class="msg_cotainer_send">{{ message.decrypt_message }}</div>
                 <div class="img_cont_msg">
                   <img
                     src="{{ message.created_by.profile.profile_img.url }}"

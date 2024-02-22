@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+from cryptography.fernet import Fernet
+
+f=Fernet(settings.ENCRYPT_KEY)
+
 # Create your models here.
 class Conversation(models.Model):
     members = models.ManyToManyField(User, related_name='conversations')
@@ -23,6 +28,15 @@ class ConversationMessage(models.Model):
 
     class Meta:
         ordering = ('created_at',)
+
+    def decrypt_message(self):  # Replace with your actual secret key
+        try:
+            message_decrypted=f.decrypt(self.content)
+            message_decoded=message_decrypted.decode('utf-8')
+            return message_decoded
+        except Exception as e:
+            print(f"InvalidToken exception: {e.__cause__}")
+            return "Invalid decryption token"
 
     def __str__(self) :
         return f'[{self.conversation}-{self.created_by}->{self.content}'

@@ -541,6 +541,7 @@ object-fit: cover;
         </div>
 
         <div class="user-post">
+          {% if trendingmessages %}
         {% for message in trendingmessages %}
         <div class="msg-post">
           <div class="msg-post-img">
@@ -563,9 +564,13 @@ object-fit: cover;
           </div>
         </div>
         {% endfor %}
+        {% else %}
+        <h4>No messages posted by the user</h4>
+        {% endif %}
       </div>
 
         <div class="user-followers">
+          {% if followUsers %}
           {% for follower in followUsers %}
           <div class="followers">
             <div class="follower-img">
@@ -576,8 +581,12 @@ object-fit: cover;
             </div>
           </div>
           {% endfor %}
+          {% else %}
+          <h4>No users to display</h4>
+          {% endif %}
         </div>
         <div class="user-followings">
+          {% if followingUsers %}
           {% for follower in followingUsers %}
           <div class="followings">
             <div class="following-img">
@@ -588,6 +597,9 @@ object-fit: cover;
             </div>
           </div>
           {% endfor %}
+          {% else %}
+          <h4>No users to display</h4>
+          {% endif %}
         </div>
       </div>
     </div>

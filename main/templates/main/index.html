@@ -1,5 +1,15 @@
 {% extends 'main/base.html' %}
 
+{% block style %}
+<style>
+  .msg-output-details p, .reply-output-details p{
+  max-width:41vw;
+  word-wrap: break-word; 
+  box-sizing: border-box;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <!--Msgbox-->
@@ -45,7 +55,11 @@
         <div class="msg-output-icons">
           <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
           <i class="fa-solid fa-reply"></i>
+          {% if request.user not in m.userLiked.all %}
           <i class="far fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
+          {% else %}
+          <i class="far fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
+          {% endif %}
           <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
         </div>
       </div>
@@ -299,13 +313,28 @@
     if (e.target && e.target.id == 'likes') {
       const messageID = e.target.getAttribute('data-likes-id');
       const userName = JSON.parse(document.getElementById('json-username').textContent);
-      console.log(messageID);
+      console.log("Message id "+messageID);
 
       socket.send(JSON.stringify({
         'likeId': messageID,
         'username': userName
       }));
-      e.target.classList.toggle('liked');
+
+      const isLiked = e.target.classList.contains('fa-solid');
+      console.log(isLiked)
+        // Use the result in your logic
+        if (isLiked===true) {
+            // The element has the 'liked' class
+            // Perform actions for unliking
+            e.target.classList.remove('fa-solid');
+            e.target.style.color="#fff";
+        } else {
+            // The element does not have the 'liked' class
+            // Perform actions for liking
+            e.target.classList.add('fa-solid');
+            e.target.style.color="rgba(233, 11, 233, 0.973)";
+        }
+      
     }
   });
 

@@ -469,3 +469,9 @@ a {
   position: absolute;
   display: none;
 }
+
+.msg-output-details p, .reply-output-details p{
+  max-width:41vw;
+  word-wrap: break-word; 
+  box-sizing: border-box;
+}

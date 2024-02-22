@@ -415,8 +415,126 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         user=User.objects.get(username=username)
         img_url=user.profile.profile_img.url
         conversation=Conversation.objects.get(pk=data['id'])
-        conversation_message=ConversationMessage.objects.create(conversation=conversation,content=data['content'],created_by=user,)
+        message_bytes=data['content'].encode('utf-8')
+        encrypt_message= f.encrypt(message_bytes)
+        print(encrypt_message)
+        message_decoded=encrypt_message.decode('utf-8')
+        conversation_message=ConversationMessage.objects.create(conversation=conversation,content=message_decoded,created_by=user,)
         conversation.modified_at=datetime.now
         conversation.save()
         
         return username,img_url
+
+
+class ReplyConsumer(AsyncWebsocketConsumer):
+    
+    async def connect(self):
+        await self.accept()
+
+    async def disconnect(self, code):
+        pass
+
+    async def receive(self, text_data=None, bytes_data=None):
+
+        data=json.loads(text_data)
+        print(data)
+
+        if 'likeId' in data:
+            print("success")
+            likecount=await self.like_message(data)
+            await self.send_likes(
+                likecount,data['likeId']
+            )
+
+        else:
+            img_url,username,messageId=await self.save_reply(data)
+            await self.send_group_message(
+                username,img_url,data['content'],messageId,
+            )
+
+    @sync_to_async
+    def like_message(self,data):
+        username=data['username'].replace('"','')
+        user=User.objects.get(username=username)
+        message=TrendingMessage.objects.get(pk=data['likeId'])
+        if user in message.userLiked.all():
+            message.likes -= 1
+            message.userLiked.remove(user)
+            message.save()
+        else:
+            message.likes += 1
+            message.userLiked.add(user)
+            message.save()
+        return message.likes
+        
+    
+    async def send_likes(
+            self,likecount,messageId
+    ):
+        await self.channel_layer.group_add("index_group", self.channel_name)
+        await self.channel_layer.group_send(
+            "index_group",
+            {
+                "type":"broadcast_likes",
+                "likecount":likecount,
+                "messageId":messageId
+            }
+        )
+
+    async def broadcast_likes(self,event):
+        likecount=event['likecount']
+        messageId=event['messageId']
+        await self.send(
+            text_data=json.dumps({
+                "likecount":likecount,
+                "likeId":messageId
+            })
+        )
+
+
+    async def send_group_message(
+        self, username, img_url, content,messageId
+    ):
+        await self.channel_layer.group_add("index_group", self.channel_name)
+        await self.channel_layer.group_send(
+            "index_group",
+            {
+                "type": "broadcast_message",
+                "username": username,
+                "content": content,
+                "profile_img": img_url,
+                "messageId":messageId
+            },
+        )
+
+    # Receive broadcasted message and send it to the WebSocket
+    async def broadcast_message(self, event):
+        username = event["username"]
+        content = event["content"]
+        profile_img = event["profile_img"]
+        messageId=event["messageId"]
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "username": username,
+                    "content": content,
+                    "profile_img": profile_img,
+                    "messageId":messageId
+                }
+            )
+        )
+
+
+    @sync_to_async
+    def save_reply(self,data):
+        username=data['username'].replace('"','')
+        user=User.objects.get(username=username)
+        message=TrendingMessage.objects.get(pk=data['messageId'])
+        message_bytes=data['content'].encode('utf-8')
+        encrypt_message= f.encrypt(message_bytes)
+        print(encrypt_message)
+        message_decoded=encrypt_message.decode('utf-8')
+        reply_message=TrendingMessage.objects.create(user=user,parent_message=message,content=message_decoded)
+        print(reply_message.decrypt_message())
+        return user.profile.profile_img.url,username,reply_message.pk
+        
