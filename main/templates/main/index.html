@@ -1,18 +1,150 @@
-{% extends 'main/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static 'main/css/index.css' %}" />
+    <style>
+      .msg-output-details p, .reply-output-details p{
+      max-width:41vw;
+      word-wrap: break-word; 
+      box-sizing: border-box;
+    }
+    .dropdown {
+                position: relative;
+                display: inline-block;
+                left: 35vw;
+                background-color: transparent;
+            }
+    
+            .dropdown-content {
+              display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                left: -160px;
+            }
+    
+            .dropdown-content .contents {
+                cursor: pointer;
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                border: none;
+            }
+    
+            .dropdown:click .dropdown-content {
+                display: block;
+            }
+            .popular-user h4{
+            font-weight: bolder;
+            margin: 16px 0;
+          }
+          .pop-pro-img {
+            width: 3vw;
+            height: 6vh;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 3px solid #fff;
+          }
+          .pop-pro-img img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          .popular-username{
+            display:flex;
+          }
+          .pop-pro-users{
+            display:flex;
+            flex-direction:column;
+            padding-left:13px;
+          }
+          .pop-pro-users h5{
+            margin:0;
+          }
+          .pop-pro-users p{
+            font-size:small;
+            background-color:black;
+            width: 7vw;
+            text-align: center;
+            border-radius: 20px;
+          }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <!-- <img src="/img/logo2.png" alt=""> -->
+        <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
+          >PseudoSpeak</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          {% if user.is_authenticated %}
+          <img
+            id="profile_img_navbar"
+            src="{{ request.user.profile.profile_img.url }}"
+            alt=""
+            style="
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              margin-right: 10px;
+            "
+          />
+          <a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
 
-{% block style %}
-<style>
-  .msg-output-details p, .reply-output-details p{
-  max-width:41vw;
-  word-wrap: break-word; 
-  box-sizing: border-box;
-}
-</style>
-{% endblock %}
-
-{% block content %}
-
-<!--Msgbox-->
+    <div class="container-fluid">
+      <div class="row content-1">
+        <div class="col-3 content-1a res2 sidebar" id="sidebar">
+          <ul>
+            <li class="active">
+              <i class="fa-solid fa-house"></i
+              ><a href="{% url 'index' %}">Feed</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-user-group"></i
+              ><a href="{% url 'rooms' name='recommended' %}">Groups</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-comments"></i
+              ><a href="{% url 'messenger' %}">Messenger</a>
+            </li>
+            <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
+            <li>
+              <i class="fa-solid fa-gear"></i
+              ><a href="{% url 'logout' %}">Settings</a>
+            </li>
+          </ul>
+        </div>
+        <!--Msgbox-->
 <div class="col-6 content-1b content-scroll">
   <div class="msgbox">
     <form>
@@ -45,7 +177,17 @@
             <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture" id="profile-img" data-img-id="{{m.user.username}}">
           </div>
           <div class="msg-output-details">
-            <h5>{{m.user.username}}</h5>
+            <h5 style="display: inline;">{{m.user.username}}</h5>
+            <div class="dropdown">
+              <button onclick="toggleDropdown('{{ m.pk }}')"
+              style="background: transparent;
+                color: white;
+                border: none;">
+                <i class="fa-solid fa-ellipsis-vertical"></i></button>
+              <div class="dropdown-content" id="myDropdown-{{ m.pk }}">
+                  <div class="contents" id="report" data-user-username="{{m.user.username}}">Report</div>
+              </div>
+          </div>
             <p>{{m.decrypt_message}}</p>
             {% if m.image %}
             <img src="{{m.image.url}}" alt="">
@@ -56,9 +198,9 @@
           <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
           <i class="fa-solid fa-reply"></i>
           {% if request.user not in m.userLiked.all %}
-          <i class="far fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
+          <i class="far fa-sharp fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
           {% else %}
-          <i class="far fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
+          <i class="fa-sharp fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
           {% endif %}
           <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
         </div>
@@ -68,7 +210,8 @@
       <!-- endd -->
 
     </form>
-  </div>
+    </div>
+
   <!-- search box -->
 </div>
 <div class="col-3 content-1a">
@@ -87,16 +230,31 @@
         <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}">{{ tag.tag}}</a>
       </div>
       {% endfor %}
-
     </div>
   </div>
+  <div class="popular-user">
+    <h4>Popular Users</h4>
+    <div class="popular-profiles">
+      <div class="popular-username">
+        <div class="pop-pro-img">
+          <img src="https://user-avatar-profile.s3.ap-south-1.amazonaws.com/DPs/37.png">
+        </div>
+        <div class="pop-pro-users">
+          <h5>Popular-user1</h5>
+          <p>Followers : 30</p>
+        </div>
+      </div>
+   </div>
 </div>
+</div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 <script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
 
-
+{{ request.user.username|json_script:"json-username"}}
 <script>
 
   // This is correct
@@ -109,6 +267,24 @@
               }));
   }
 }, 30000); 
+
+function toggleDropdown(messageId) {
+  var dropdown = document.getElementById("myDropdown-" + messageId);
+  dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+}
+
+document.querySelector('#profile_img_navbar').onclick = function () {
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        console.log(userName);
+
+        if (userName) {
+            var redirectURL = '/dashboard/' + userName + '/';
+            window.location.href = redirectURL;
+        } else {
+            console.error('Username not found.');
+        }
+    }
+
 
   let check = false; // Define check at the top level so it's accessible everywhere
 
@@ -354,6 +530,19 @@
     }
 });
 
+document.body.addEventListener('click', function(e) {
+  e.preventDefault();
+    if (e.target && e.target.id == 'report') {
+        const contentContainer=document.querySelector(".msgbox");
+        const reportUser = e.target.getAttribute('data-user-username');
+        console.log(reportUser);
+        contentContainer.style.display="none";
+        const hello=document.querySelector(".testing");
+        const testingusername=document.querySelector('#testing-username');
+        hello.style.display="block";
+    }
+});
+
 
   // onhover function
   function hover(element) {
@@ -405,13 +594,8 @@ emojiPicker.addEventListener('emoji-click', (event) => {
   emojiPicker.style.display = 'none';
 });
 
-document.addEventListener('click', (event) => {
-  if (!event.target.closest('#emoji-button') && !event.target.closest('#emoji-picker')) {
-    emojiPicker.style.display = 'none';
-  }
-});
+
 
 
 
 </script>
-{% endblock %}
