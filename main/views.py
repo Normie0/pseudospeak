@@ -33,16 +33,18 @@ def get_random_image():
     ]
     return random.choice(images)
 
-
+from django.db.models import Count
 @login_required(login_url="login_or_signup_view")
 # Create your views here.
 def index(request):
     messages = TrendingMessage.objects.filter(parent_message=None).order_by(
         "-custom_ordering"
     )
+    popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
+    
     hashtags = Hashtag.objects.all()[:3]
     return render(
-        request, "main/index.html", {"messages": messages, "hashtags": hashtags}
+        request, "main/index.html", {"messages": messages, "hashtags": hashtags,"popular_users":popular_users}
     )
 
 

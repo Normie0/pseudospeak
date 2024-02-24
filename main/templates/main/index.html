@@ -44,7 +44,7 @@
                 border: none;
             }
     
-            .dropdown:click .dropdown-content {
+            .dropdown:hover .dropdown-content {
                 display: block;
             }
             .popular-user h4{
@@ -235,15 +235,19 @@
   <div class="popular-user">
     <h4>Popular Users</h4>
     <div class="popular-profiles">
+      {% for p in popular_users %}
       <div class="popular-username">
         <div class="pop-pro-img">
-          <img src="https://user-avatar-profile.s3.ap-south-1.amazonaws.com/DPs/37.png">
+          <a href="{% url 'dashboard' profileId=p.username %}">
+            <img src="{{p.profile.profile_img.url}}">
+          </a>
         </div>
         <div class="pop-pro-users">
-          <h5>Popular-user1</h5>
-          <p>Followers : 30</p>
+          <h5>{{p.username}}</h5>
+          <p>Followers : {{p.profile.follow.count}}</p>
         </div>
       </div>
+      {% endfor %}
    </div>
 </div>
 </div>
@@ -531,8 +535,9 @@ document.querySelector('#profile_img_navbar').onclick = function () {
 });
 
 document.body.addEventListener('click', function(e) {
-  e.preventDefault();
+  
     if (e.target && e.target.id == 'report') {
+      e.preventDefault();
         const contentContainer=document.querySelector(".msgbox");
         const reportUser = e.target.getAttribute('data-user-username');
         console.log(reportUser);
