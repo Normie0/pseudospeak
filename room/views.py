@@ -32,13 +32,18 @@ def rooms(request,name):
 def room(request, slug):
     if request.method=='POST':
         user=request.user
+        action=request.POST.get("delorexit")
         btnvalue=request.POST.get("confirmation")
-        # print(btnvalue)
-        if btnvalue=="yes":
+        if action=="delete" and btnvalue=="yes":
             room=Room.objects.get(slug=slug)
-            room.users.remove(user)
-            room.save()
+            room.delete()
             return redirect(rooms,name="recommended")
+        elif action is None:
+            # print(btnvalue)
+            if btnvalue=="yes":
+                room.users.remove(user)
+                room.save()
+                return redirect(rooms,name="recommended")
     room=Room.objects.get(slug=slug)
     messages=Message.objects.filter(room=room)
     return render(request, 'room/room.html', {'room': room, 'messages': messages})
@@ -65,7 +70,7 @@ def create_room(request):
             print(slug)
             if name and category_name and file and existing_group is None and error_message is None:
                 category=Category.objects.get(name=category_name)
-                createroom=Room.objects.create(name=name,slug=slug,room_img=file,category=category)
+                createroom=Room.objects.create(name=name,owner=request.user,slug=slug,room_img=file,category=category)
                 createroom.users.add(request.user)
                 if createroom.save():
                     print("Success")

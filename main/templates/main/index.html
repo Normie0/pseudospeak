@@ -84,6 +84,15 @@
     </style>
   </head>
   <body>
+    {% if error_message %}
+  <div class="container-fluid" style="padding: 0;">
+    <div id="errorMessage" class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+      {{error_message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  {% endif %}
+
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
@@ -140,12 +149,39 @@
             <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
             <li>
               <i class="fa-solid fa-gear"></i
-              ><a href="{% url 'logout' %}">Settings</a>
+              ><a href="{% url 'settings' %}">Settings</a>
             </li>
           </ul>
         </div>
         <!--Msgbox-->
 <div class="col-6 content-1b content-scroll">
+  <form method="post" class="report-form" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="userToReport" id="userToReport">
+    <h5>Report User</h5>
+    <label for="reason">Reason for Report:</label>
+    <div>
+      <input type="radio" id="reason1" name="reason" value="harassment" required>
+      <label for="reason1">Harassment</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Spam</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Abusive</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Inappropraite content</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Other</label>
+  </div>
+
+        <label for="additionalInfo">Additional Information:</label><br>
+        <textarea id="additionalInfo" name="additionalInfo" rows="4"></textarea>
+
+        <br><button type="submit">Submit Report</button>
+  </form>
   <div class="msgbox">
     <form>
       <div class="msgbox-input">
@@ -179,7 +215,7 @@
           <div class="msg-output-details">
             <h5 style="display: inline;">{{m.user.username}}</h5>
             <div class="dropdown">
-              <button onclick="toggleDropdown('{{ m.pk }}')"
+              <button id="dropdownButton" onclick="toggleDropdown(event,'{{ m.pk }}')"
               style="background: transparent;
                 color: white;
                 border: none;">
@@ -198,9 +234,9 @@
           <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
           <i class="fa-solid fa-reply"></i>
           {% if request.user not in m.userLiked.all %}
-          <i class="far fa-sharp fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
+          <i class="far fa-regular fa-sharp fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
           {% else %}
-          <i class="fa-sharp fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
+          <i class="far fa-sharp fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
           {% endif %}
           <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
         </div>
@@ -272,7 +308,8 @@
   }
 }, 30000); 
 
-function toggleDropdown(messageId) {
+function toggleDropdown(event,messageId) {
+  event.preventDefault();
   var dropdown = document.getElementById("myDropdown-" + messageId);
   dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
 }
@@ -501,16 +538,10 @@ document.querySelector('#profile_img_navbar').onclick = function () {
       }));
 
       const isLiked = e.target.classList.contains('fa-solid');
-      console.log(isLiked)
-        // Use the result in your logic
         if (isLiked===true) {
-            // The element has the 'liked' class
-            // Perform actions for unliking
             e.target.classList.remove('fa-solid');
             e.target.style.color="#fff";
         } else {
-            // The element does not have the 'liked' class
-            // Perform actions for liking
             e.target.classList.add('fa-solid');
             e.target.style.color="rgba(233, 11, 233, 0.973)";
         }
@@ -540,11 +571,13 @@ document.body.addEventListener('click', function(e) {
       e.preventDefault();
         const contentContainer=document.querySelector(".msgbox");
         const reportUser = e.target.getAttribute('data-user-username');
+        const reportForm=document.querySelector(".report-form");
+        const userToReport=document.querySelector("#userToReport");
+
         console.log(reportUser);
         contentContainer.style.display="none";
-        const hello=document.querySelector(".testing");
-        const testingusername=document.querySelector('#testing-username');
-        hello.style.display="block";
+        reportForm.style.display="block";
+        userToReport.value=reportUser;
     }
 });
 

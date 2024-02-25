@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from cryptography.fernet import Fernet
 from django.conf import settings
 
-f=Fernet(settings.ENCRYPT_KEY)
+
 
 # Create your models here.
 
@@ -19,6 +19,7 @@ class Category(models.Model):
 
 class Room(models.Model):
     users=models.ManyToManyField(User,related_name='joined_user')
+    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE) 
     name=models.CharField(unique=True,max_length=255)
     slug=models.SlugField(unique=True)
     room_img=models.ImageField(null=True)
@@ -39,6 +40,7 @@ class Message(models.Model):
 
     def decrypt_message(self):  # Replace with your actual secret key
         try:
+            f=Fernet(settings.ENCRYPT_KEY)
             message_decrypted=f.decrypt(self.content)
             message_decoded=message_decrypted.decode('utf-8')
             return message_decoded

@@ -10,7 +10,7 @@ from .forms import *
 import random
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import Profile, TrendingMessage, Hashtag
+from .models import Profile, TrendingMessage, Hashtag,ReportUser
 from django.db.models import Sum, OuterRef
 from conversation.models import Conversation, ConversationMessage
 import base64
@@ -43,6 +43,20 @@ def index(request):
     popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
     
     hashtags = Hashtag.objects.all()[:3]
+    if request.method=='POST':
+        reason=request.POST.get("reason")
+        username=request.POST.get("userToReport")
+        additionalInfo=request.POST.get("additionalInfo")
+        print(username,reason,additionalInfo)
+        if username and reason:
+            user=User.objects.get(username=username)
+            reportUser=ReportUser.objects.create(user=user,reason=reason,additionalInfo=additionalInfo)
+            reportUser.save()
+            error_message="User Reported Successfully"
+            return render(
+        request, "main/index.html", {"messages": messages,"error_message": error_message,"category":"success","hashtags": hashtags,"popular_users":popular_users}
+    )
+        
     return render(
         request, "main/index.html", {"messages": messages, "hashtags": hashtags,"popular_users":popular_users}
     )
@@ -269,19 +283,19 @@ def settings(request):
                     error_message="Invalid username or password"
                     return render(
                     request,
-                    "main/setting.html",{"error_message":error_message},
+                    "main/setting.html",{"error_message":error_message,"images":images},
                     )
             except:
                 error_message="Invalid username or password"
                 return render(
                 request,
-                "main/setting.html",{"error_message":error_message},
+                "main/setting.html",{"error_message":error_message,"images":images},
                 )
         elif delete_acc and not current_pass:
             error_message="Plzz enter the password"
             return render(
                 request,
-                "main/setting.html",{"error_message":error_message},
+                "main/setting.html",{"error_message":error_message,"images":images},
                 )
 
         elif loggedusername==request.user.username and current_pass and new_password and confirm_password:
