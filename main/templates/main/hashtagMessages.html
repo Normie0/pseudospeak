@@ -1,9 +1,187 @@
-{% extends 'main/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static 'main/css/index.css' %}" />
+    <style>
+      .msg-output-details p, .reply-output-details p{
+      max-width:41vw;
+      word-wrap: break-word; 
+      box-sizing: border-box;
+    }
+    .dropdown {
+                position: relative;
+                display: inline-block;
+                left: 35vw;
+                background-color: transparent;
+            }
+    
+            .dropdown-content {
+              display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                left: -160px;
+            }
+    
+            .dropdown-content .contents {
+                cursor: pointer;
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                border: none;
+            }
+    
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+            .popular-user h4{
+            font-weight: bolder;
+            margin: 16px 0;
+          }
+          .pop-pro-img {
+            width: 3vw;
+            height: 6vh;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 3px solid #fff;
+          }
+          .pop-pro-img img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          .popular-username{
+            display:flex;
+          }
+          .pop-pro-users{
+            display:flex;
+            flex-direction:column;
+            padding-left:13px;
+          }
+          .pop-pro-users h5{
+            margin:0;
+          }
+          .pop-pro-users p{
+            font-size:small;
+            background-color:black;
+            width: 7vw;
+            text-align: center;
+            border-radius: 20px;
+          }
+    </style>
+  </head>
+  <body>
+    {% if error_message %}
+  <div class="container-fluid" style="padding: 0;">
+    <div id="errorMessage" class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+      {{error_message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  {% endif %}
 
-{% block content %}
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <!-- <img src="/img/logo2.png" alt=""> -->
+        <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
+          >PseudoSpeak</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          {% if user.is_authenticated %}
+          <img
+            id="profile_img_navbar"
+            src="{{ request.user.profile.profile_img.url }}"
+            alt=""
+            style="
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              margin-right: 10px;
+            "
+          />
+          <a href="{% url 'logout' %}" class="btn signbtn me-4">Logout</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
 
-<!--Msgbox-->
+    <div class="container-fluid">
+      <div class="row content-1">
+        <div class="col-3 content-1a res2 sidebar" id="sidebar">
+          <ul>
+            <li class="active">
+              <i class="fa-solid fa-house"></i
+              ><a href="{% url 'index' %}">Feed</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-user-group"></i
+              ><a href="{% url 'rooms' name='recommended' %}">Groups</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-comments"></i
+              ><a href="{% url 'messenger' %}">Messenger</a>
+            </li>
+            <li><i class="fa-solid fa-user-plus"></i>Invite Friends</li>
+            <li>
+              <i class="fa-solid fa-gear"></i
+              ><a href="{% url 'settings' %}">Settings</a>
+            </li>
+          </ul>
+        </div>
+        <!--Msgbox-->
 <div class="col-6 content-1b content-scroll">
+  <form method="post" class="report-form" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="userToReport" id="userToReport">
+    <h5>Report User</h5>
+    <label for="reason">Reason for Report:</label>
+    <div>
+      <input type="radio" id="reason1" name="reason" value="harassment" required>
+      <label for="reason1">Harassment</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Spam</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Abusive</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Inappropraite content</label>
+
+      <input type="radio" id="reason2" name="reason" value="spam">
+      <label for="reason2">Other</label>
+  </div>
+
+        <label for="additionalInfo">Additional Information:</label><br>
+        <textarea id="additionalInfo" name="additionalInfo" rows="4"></textarea>
+
+        <br><button type="submit">Submit Report</button>
+  </form>
   <div class="msgbox">
     <form>
       <div class="msgbox-input">
@@ -35,7 +213,17 @@
             <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture" id="profile-img" data-img-id="{{m.user.username}}">
           </div>
           <div class="msg-output-details">
-            <h5>{{m.user.username}}</h5>
+            <h5 style="display: inline;">{{m.user.username}}</h5>
+            <div class="dropdown">
+              <button id="dropdownButton" onclick="toggleDropdown(event,'{{ m.pk }}')"
+              style="background: transparent;
+                color: white;
+                border: none;">
+                <i class="fa-solid fa-ellipsis-vertical"></i></button>
+              <div class="dropdown-content" id="myDropdown-{{ m.pk }}">
+                  <div class="contents" id="report" data-user-username="{{m.user.username}}">Report</div>
+              </div>
+          </div>
             <p>{{m.decrypt_message}}</p>
             {% if m.image %}
             <img src="{{m.image.url}}" alt="">
@@ -45,7 +233,11 @@
         <div class="msg-output-icons">
           <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
           <i class="fa-solid fa-reply"></i>
-          <i class="far fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
+          {% if request.user not in m.userLiked.all %}
+          <i class="far fa-regular fa-sharp fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
+          {% else %}
+          <i class="far fa-sharp fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
+          {% endif %}
           <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
         </div>
       </div>
@@ -54,7 +246,8 @@
       <!-- endd -->
 
     </form>
-  </div>
+    </div>
+
   <!-- search box -->
 </div>
 <div class="col-3 content-1a">
@@ -73,12 +266,29 @@
         <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}">{{ tag.tag}}</a>
       </div>
       {% endfor %}
-
     </div>
   </div>
+  <div class="popular-user">
+    <h4>Popular Users</h4>
+    <div class="popular-profiles">
+      {% for p in popular_users %}
+      <div class="popular-username">
+        <div class="pop-pro-img">
+          <a href="{% url 'dashboard' profileId=p.username %}">
+            <img src="{{p.profile.profile_img.url}}">
+          </a>
+        </div>
+        <div class="pop-pro-users">
+          <h5>{{p.username}}</h5>
+          <p>Followers : {{p.profile.follow.count}}</p>
+        </div>
+      </div>
+      {% endfor %}
+   </div>
 </div>
 </div>
-</div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
@@ -89,6 +299,33 @@
 
   // This is correct
   const socket = new WebSocket('ws://' + window.location.host + '/ws/');
+
+  setInterval(() => {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+                ping:"ping"
+              }));
+  }
+}, 30000); 
+
+function toggleDropdown(event,messageId) {
+  event.preventDefault();
+  var dropdown = document.getElementById("myDropdown-" + messageId);
+  dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+}
+
+document.querySelector('#profile_img_navbar').onclick = function () {
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        console.log(userName);
+
+        if (userName) {
+            var redirectURL = '/dashboard/' + userName + '/';
+            window.location.href = redirectURL;
+        } else {
+            console.error('Username not found.');
+        }
+    }
+
 
   let check = false; // Define check at the top level so it's accessible everywhere
 
@@ -121,6 +358,7 @@
     const post = document.querySelector('#post-msg');
     post.onclick = function (e) {
       e.preventDefault();
+      
       const data = document.querySelector('#data1');
       const inputdata = data.value;
 
@@ -157,6 +395,7 @@
           // Clear the input field
           data.value = "";
         }
+      
       }
     };
   };
@@ -192,12 +431,12 @@
             </div>
             <div class="msg-output">
                 <div class="msg-output-img">
-                  <img src="${data.profile_img}" alt="Profile Picture" id="profile-img" data-img-id="${data.username}">
+                    <img src="${data.profile_img}" alt="Profile Picture" id="profile-img" data-img-id="${data.username}">
                 </div>
                 <div class="msg-output-details">
                     <h5>${data.username}</h5>
                     <p>${data.content}</p>
-                    ${data.image ? `<img src="${data.image}" style="width:250px;height:250px">` : ''}
+                    ${data.image ? `<img src="${data.image}" style="width:100%;height:100%">` : ''}
                 </div>
             </div>
             <div class="msg-output-icons">
@@ -273,8 +512,7 @@
 
 
   // search bar
-  document.getElementById("search-input").addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
+  document.getElementById("search-input").addEventListener("input", function (event) {
       event.preventDefault();
       const searchTxt = document.getElementById("search-input").value;
       if (searchTxt) {
@@ -283,7 +521,7 @@
           'hashtag': searchTxt,
         }));
       }
-    }
+    
   });
 
 
@@ -292,30 +530,54 @@
     if (e.target && e.target.id == 'likes') {
       const messageID = e.target.getAttribute('data-likes-id');
       const userName = JSON.parse(document.getElementById('json-username').textContent);
-      console.log(messageID);
+      console.log("Message id "+messageID);
 
       socket.send(JSON.stringify({
         'likeId': messageID,
         'username': userName
       }));
+
+      const isLiked = e.target.classList.contains('fa-solid');
+        if (isLiked===true) {
+            e.target.classList.remove('fa-solid');
+            e.target.style.color="#fff";
+        } else {
+            e.target.classList.add('fa-solid');
+            e.target.style.color="rgba(233, 11, 233, 0.973)";
+        }
+      
     }
   });
 
 
   // dashboard
 
-  document.querySelector('#profile_img_navbar').onclick = function () {
-    const userName=JSON.parse(document.getElementById('json-username').textContent);
-    var redirectURL = '/dashboard/' + userName + '/';
-    window.location.href = redirecturl;
-  }
+  
 
   document.body.addEventListener('click', function(e) {
     if (e.target && e.target.id == 'profile-img') {
         const profileId = e.target.getAttribute('data-img-id');
+        console.log(profileId);
         const userName = JSON.parse(document.getElementById('json-username').textContent);
         var redirectURL = '/dashboard/' + profileId + '/';
+        console.log(redirectURL);
         window.location.href = redirectURL;
+    }
+});
+
+document.body.addEventListener('click', function(e) {
+  
+    if (e.target && e.target.id == 'report') {
+      e.preventDefault();
+        const contentContainer=document.querySelector(".msgbox");
+        const reportUser = e.target.getAttribute('data-user-username');
+        const reportForm=document.querySelector(".report-form");
+        const userToReport=document.querySelector("#userToReport");
+
+        console.log(reportUser);
+        contentContainer.style.display="none";
+        reportForm.style.display="block";
+        userToReport.value=reportUser;
     }
 });
 
@@ -370,13 +632,8 @@ emojiPicker.addEventListener('emoji-click', (event) => {
   emojiPicker.style.display = 'none';
 });
 
-document.addEventListener('click', (event) => {
-  if (!event.target.closest('#emoji-button') && !event.target.closest('#emoji-picker')) {
-    emojiPicker.style.display = 'none';
-  }
-});
+
 
 
 
 </script>
-{% endblock %}
