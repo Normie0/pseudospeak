@@ -222,6 +222,9 @@
                 <i class="fa-solid fa-ellipsis-vertical"></i></button>
               <div class="dropdown-content" id="myDropdown-{{ m.pk }}">
                   <div class="contents" id="report" data-user-username="{{m.user.username}}">Report</div>
+                  {% if m.user != request.user %}
+                  <div class="contents" id="block" data-user-username="{{m.user.username}}">Block User</div>
+                  {% endif %}
               </div>
           </div>
             <p>{{m.decrypt_message}}</p>
@@ -578,6 +581,18 @@ document.body.addEventListener('click', function(e) {
         contentContainer.style.display="none";
         reportForm.style.display="block";
         userToReport.value=reportUser;
+    }
+    else if (e.target && e.target.id=='block'){
+      e.preventDefault();
+      const blockuser = e.target.getAttribute('data-user-username');
+      console.log(blockuser);
+      const userName = JSON.parse(document.getElementById('json-username').textContent);
+      socket.send(JSON.stringify({
+        'username':userName,
+        'blockuser':blockuser,
+      }))
+      var url="";
+      window.location.href=url;
     }
 });
 

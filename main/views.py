@@ -37,9 +37,12 @@ from django.db.models import Count
 @login_required(login_url="login_or_signup_view")
 # Create your views here.
 def index(request):
-    messages = TrendingMessage.objects.filter(parent_message=None).order_by(
-        "-custom_ordering"
-    )
+    blocked_users = request.user.profile.blocked_user.all()
+    messages = TrendingMessage.objects.filter(
+    parent_message=None
+).exclude(
+    user__in=blocked_users
+).order_by("-custom_ordering")
     popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
     
     hashtags = Hashtag.objects.all()[:3]

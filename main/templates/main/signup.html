@@ -2,42 +2,46 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <title> Login &amp; Signup Form</title>
-  <link
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login &amp; Signup Form</title>
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
-  <link rel="stylesheet" href="{% static 'main/css/style2.css' %}">
-  <style>
-    *{
+    <link rel="stylesheet" href="{% static 'main/css/style2.css' %}" />
+    <style>
+      * {
         margin: 0;
         padding: 0;
-    }
+      }
 
-    /* Add your loading animation styles here */
-    .loading-container {
+      /* Add your loading animation styles here */
+      .loading-container {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background: #1f1f1f /* Semi-transparent white background */
-    }
-    .quote-box {
+        position: fixed;
+        top: 0; /* Set top to 0 to center the container vertically */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        visibility: hidden;
+      }
+      .quote-box {
         background: white;
         padding: 20px;
         border-radius: 8px;
         text-align: center;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-    .quote-box p{
+      }
+      .quote-box p {
         font-weight: bold;
-    }
-    .loading-spinner {
+      }
+      .loading-spinner {
         /* Add your spinner styles here */
         border: 4px solid #f3f3f3;
         border-radius: 50%;
@@ -46,108 +50,179 @@
         height: 40px;
         margin: 10px auto;
         animation: spin 2s linear infinite;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
-</head>
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
 
-<body>
-  
-  {% if error_message %}
-  <div class="container-fluid" style="padding: 0;">
-    <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
-      {{error_message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  </div>
-  {% endif %}
+      .loading-container.active{
+        visibility: visible;
+      }
+    </style>
+  </head>
 
-  <!-- partial:index.partial.html -->
-  <div class="wrapper">
-    <div class="title-text">
-      <div class="title login">Login Form</div>
-      <div class="title signup">Signup Form</div>
-    </div>
-    <div class="form-container">
-      <div class="slide-controls">
-        <input type="radio" name="slide" id="login" checked>
-        <input type="radio" name="slide" id="signup">
-        <label for="login" class="slide login">Login</label>
-        <label for="signup" class="slide signup">Signup</label>
-        <div class="slider-tab"></div>
-      </div>
-      <div class="form-inner">
-        <form action="{% url 'login_or_signup_view' %}" class="login" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="login">
-          <div class="field">
-            <input type="text" placeholder="Username" required name="username">
-          </div>
-          <div class="field">
-            <input type="password" placeholder="Password" required name="password">
-          </div>
-          <!-- <div class="pass-link"><a href="#">Forgot password?</a></div> -->
-          <div class="field btn">
-            <div class="btn-layer"></div>
-            <input type="submit" value="Login" id="login-btn">
-          </div>
-          <div class="signup-link">Not a member? <a href="#">Signup now</a></div>
-        </form>
-
-        <form action="{% url 'login_or_signup_view' %}" class="signup" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="signup">
-          <div class="field">
-            {% if username %}
-            <input type="text" placeholder="Username" value="{{username}}" required name="username">
-            {% endif %}
-          </div>
-          <div class="field">
-            <input type="password" placeholder="Password" required name="password">
-          </div>
-          <div class="field">
-            <input type="password" placeholder="Confirm password" required name="confirm_password">
-          </div>
-          <div class="field btn">
-            <div class="btn-layer"></div>
-            <input type="submit" value="Signup" id="signin-btn">
-          </div>
-        </form>
+  <body>
+    {% if error_message %}
+    <div class="container-fluid" style="padding: 0">
+      <div
+        id="errorMessage"
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+      >
+        {{error_message}}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
     </div>
-  </div>
+    {% endif %}
 
-  <div class="loading-container" style="display: none;">
-    <div class="quote-box" style="background-color: #1f1f20; color:white; border: 1px solid #1f1f20; border-radius: 20px;">
-        <p style="color: rgba(233, 11, 233, 0.973);">"Your privacy matters the most"</p>
+    <!-- partial:index.partial.html -->
+    <div class="wrapper">
+      <div class="title-text">
+        <div class="title login">Login Form</div>
+        <div class="title signup">Signup Form</div>
+      </div>
+      <div class="form-container">
+        <div class="slide-controls">
+          <input type="radio" name="slide" id="login" checked />
+          <input type="radio" name="slide" id="signup" />
+          <label for="login" class="slide login">Login</label>
+          <label for="signup" class="slide signup">Signup</label>
+          <div class="slider-tab"></div>
+        </div>
+        <div class="form-inner">
+          <form
+            action="{% url 'login_or_signup_view' %}"
+            class="login"
+            method="post"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="action" value="login" />
+            <div class="field">
+              <input
+                type="text"
+                placeholder="Username"
+                required
+                name="username"
+              />
+            </div>
+            <div class="field">
+              <input
+                type="password"
+                placeholder="Password"
+                required
+                name="password"
+              />
+            </div>
+            <!-- <div class="pass-link"><a href="#">Forgot password?</a></div> -->
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <input type="submit" value="Login" id="login-btn" />
+            </div>
+            <div class="signup-link">
+              Not a member? <a href="#">Signup now</a>
+            </div>
+          </form>
+
+          <form
+            action="{% url 'login_or_signup_view' %}"
+            class="signup"
+            method="post"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="action" value="signup" />
+            <div class="field">
+              {% if username %}
+              <input
+                type="text"
+                placeholder="Username"
+                value="{{username}}"
+                required
+                name="username"
+              />
+              {% endif %}
+            </div>
+            <div class="field">
+              <input
+                type="password"
+                placeholder="Password"
+                required
+                name="password"
+              />
+            </div>
+            <div class="field">
+              <input
+                type="password"
+                placeholder="Confirm password"
+                required
+                name="confirm_password"
+              />
+            </div>
+            <div class="field btn">
+              <div class="btn-layer"></div>
+              <input type="submit" value="Signup" id="signin-btn" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container">
+      <div
+        class="quote-box"
+        style="
+          background-color: #1f1f20;
+          color: white;
+          border: 1px solid #1f1f20;
+          border-radius: 20px;
+        "
+      >
+        <p style="color: rgba(233, 11, 233, 0.973)">
+          "Your privacy matters the most"
+        </p>
         <div class="loading-spinner"></div>
+      </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
-<script>
-    
-    document.querySelector("#login-btn").addEventListener('click',function(){
-      let loadingContainer=document.querySelector(".loading-container");
-      let wrapper=document.querySelector(".wrapper");
-      wrapper.style.display="none";
-      loadingContainer.style.display="flex";
-    })
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/76b0e8fe7d.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document
+        .querySelector("#login-btn")
+        .addEventListener("click", function () {
+          let loadingContainer = document.querySelector(".loading-container");
+          let wrapper = document.querySelector(".wrapper");
+          wrapper.style.filter = "blur(20px)";
+          loadingContainer.classList.add("active");
+          console.log(Array.from(loadingContainer.classList));
+        });
 
-    document.querySelector("#signin-btn").addEventListener('click',function(){
-      let loadingContainer=document.querySelector(".loading-container");
-      let wrapper=document.querySelector(".wrapper");
-      wrapper.style.display="none";
-      loadingContainer.style.display="flex";
-    })
-
-</script>
-  <!-- partial -->
-  <script src="{% static 'main/js/script.js' %}"></script>
-</body>
-
+      document
+        .querySelector("#signin-btn")
+        .addEventListener("click", function () {
+          let loadingContainer = document.querySelector(".loading-container");
+          let wrapper = document.querySelector(".wrapper");
+          wrapper.style.filter = "blur(20px)";
+          loadingContainer.classList.add("active");
+          console.log(Array.from(loadingContainer.classList));
+        });
+    </script>
+    <!-- partial -->
+    <script src="{% static 'main/js/script.js' %}"></script>
+  </body>
 </html>

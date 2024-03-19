@@ -83,6 +83,10 @@ class IndexConsumer(AsyncWebsocketConsumer):
             hashtag_list = await self.get_hashtags(hashtag)
             await self.send(text_data=json.dumps({"hashtags": hashtag_list}))
 
+        elif "blockuser" in data:
+            print(data)
+            await self.block_user(data)
+
         elif "likeId" in data:
             print(data["likeId"])
             likeId = data["likeId"]
@@ -118,6 +122,14 @@ class IndexConsumer(AsyncWebsocketConsumer):
             await self.send_group_message(
                 username, content, contentId, profile_img_url, hashtag, image
             )
+
+    @sync_to_async
+    def block_user(self,data):
+        user_to_block=User.objects.get(username=data['blockuser'])
+        user=User.objects.get(username=data['username'])
+        user.profile.blocked_user.add(user_to_block)
+        user.profile.follow.remove(user_to_block)
+        user.profile.following.remove(user_to_block)
 
     @sync_to_async
     def get_profile_img(self, username):
