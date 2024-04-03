@@ -73,10 +73,11 @@ def hashtagMessages(request, hashtag):
         hashtag = None
     messages = TrendingMessage.objects.filter(parent_message=None, hashtags=hashtag)
     hashtags = Hashtag.objects.all()[:3]
+    popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
     return render(
         request,
         "main/hashtagMessages.html",
-        {"hashtag": hashtag, "messages": messages, "hashtags": hashtags},
+        {"hashtag": hashtag, "messages": messages, "hashtags": hashtags,"popular_users":popular_users},
     )
 
 

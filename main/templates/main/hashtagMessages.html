@@ -81,6 +81,13 @@
             text-align: center;
             border-radius: 20px;
           }
+          #imageUpload{
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            border-radius: 5%;
+            margin-left: 5vw;
+          }
     </style>
   </head>
   <body>
@@ -202,6 +209,11 @@
       <input type="file" id="imageInput" accept="image/*" style="display: none;">
       <emoji-picker id="emoji-picker"></emoji-picker>
 
+
+      <div id="imageToUpload" style="display: none;">
+        <img src="" alt="" id="imageUpload">
+      </div>
+
       <!-- sd -->
       {% for m in messages %}
       <div id="message-output" class="msg-output-main row">
@@ -300,6 +312,9 @@
   // This is correct
   const socket = new WebSocket('ws://' + window.location.host + '/ws/');
 
+  const imageUploadDiv=document.querySelector("#imageToUpload");
+  const imageUpload=document.querySelector("#imageUpload");
+
   setInterval(() => {
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({
@@ -335,7 +350,10 @@ document.querySelector('#profile_img_navbar').onclick = function () {
 
   function handleFile(event) {
     const file = event.target.files[0];
-    console.log(file.Array)
+    imageUploadDiv.style.display="block"
+    const src=URL.createObjectURL(file);
+    console.log(src);
+    imageUpload.src=src;
     if (file) {
       const reader = new FileReader();
       reader.onload = function (e) {
@@ -358,6 +376,9 @@ document.querySelector('#profile_img_navbar').onclick = function () {
     const post = document.querySelector('#post-msg');
     post.onclick = function (e) {
       e.preventDefault();
+
+      imageUpload.src="";
+      imageUploadDiv.style.display="none";
       
       const data = document.querySelector('#data1');
       const inputdata = data.value;

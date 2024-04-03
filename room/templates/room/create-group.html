@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -293,6 +294,7 @@
         margin: 39px 0px;
       }
     </style>
+    <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
   </head>
   <body>
 
@@ -407,7 +409,7 @@
                 </div>
                 <div class="group-img-1">
                     <h4>Group Avatar</h4>
-                    <input type="image" class="input-tag-css2" name="group-avatar" id="group-avatar" type="image/*">
+                    <input type="file" accept="image/*" class="input-tag-css2" name="group-avatar" id="group-avatar">
                     <span id="avatarError" style="color: red;"></span>
                 </div>
                 <div class="btn-class">

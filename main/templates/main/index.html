@@ -12,86 +12,160 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="{% static 'main/css/index.css' %}" />
+
     <style>
-      .msg-output-details p, .reply-output-details p{
-      max-width:41vw;
-      word-wrap: break-word; 
-      box-sizing: border-box;
-    }
-    .dropdown {
-                position: relative;
-                display: inline-block;
-                left: 35vw;
-                background-color: transparent;
-            }
-    
-            .dropdown-content {
-              display: none;
-                position: absolute;
-                background-color: white;
-                min-width: 160px;
-                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                z-index: 1;
-                left: -160px;
-            }
-    
-            .dropdown-content .contents {
-                cursor: pointer;
-                color: black;
-                padding: 12px 16px;
-                text-decoration: none;
-                display: block;
-                border: none;
-            }
-    
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
-            .popular-user h4{
-            font-weight: bolder;
-            margin: 16px 0;
-          }
-          .pop-pro-img {
-            width: 3vw;
-            height: 6vh;
-            overflow: hidden;
-            border-radius: 50%;
-            border: 3px solid #fff;
-          }
-          .pop-pro-img img{
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-          .popular-username{
-            display:flex;
-          }
-          .pop-pro-users{
-            display:flex;
-            flex-direction:column;
-            padding-left:13px;
-          }
-          .pop-pro-users h5{
-            margin:0;
-          }
-          .pop-pro-users p{
-            font-size:small;
-            background-color:black;
-            width: 7vw;
-            text-align: center;
-            border-radius: 20px;
-          }
+      .msg-output-details p,
+      .reply-output-details p {
+        max-width: 41vw;
+        word-wrap: break-word;
+        box-sizing: border-box;
+      }
+
+      .usernameDropdown {
+        display: flex;
+        justify-content: space-between;
+        width: 8vw;
+      }
+      .dropdown {
+        position: relative;
+        display: inline-block;
+        left: 35vw;
+        background-color: transparent;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        left: -160px;
+      }
+
+      .dropdown-content .contents {
+        cursor: pointer;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        border: none;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      .popular-user h4 {
+        font-weight: bolder;
+        margin: 16px 0;
+      }
+      .pop-pro-img {
+        width: 3vw;
+        height: 6vh;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 3px solid #fff;
+      }
+      .pop-pro-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .popular-username {
+        display: flex;
+      }
+      .progress-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .pop-pro-users {
+        display: flex;
+        flex-direction: column;
+        padding-left: 13px;
+      }
+      .pop-pro-users h5 {
+        margin: 0;
+      }
+      .pop-pro-users p {
+        font-size: small;
+        background-color: black;
+        width: 7vw;
+        text-align: center;
+        border-radius: 20px;
+      }
+      #imageUpload {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        border-radius: 5%;
+        margin-left: 5vw;
+      }
+      #poll {
+        width: 41vw;
+        margin-left: 5vw;
+      }
+      #poll input {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        background-color: #c6c6bb;
+        padding: 5px 20px;
+        border-radius: 2vw;
+        outline: none;
+        border: none;
+      }
+
+      .choices {
+        background-color: transparent;
+        color: white;
+        border: 1px solid white;
+        margin: 10px 0;
+        width: 41vw;
+        border-radius: 2vw;
+        padding: 10px;
+      }
+
+      .choices:hover {
+        cursor: pointer;
+      }
+
+      .progress-bar-container {
+        background: #2f7ebe;
+        color: black;
+        border-radius: 2vw;
+        padding: 1vw;
+        margin: 10px 0;
+        animation: fillAnimation 2s ease forwards;
+      }
+      @keyframes fillAnimation {
+        0% {
+          width: 0%; /* Start with 0% width */
+        }
+        100% {
+          width: var(--progress-width); /* End with 100% width */
+        }
+      }
     </style>
   </head>
   <body>
     {% if error_message %}
-  <div class="container-fluid" style="padding: 0;">
-    <div id="errorMessage" class="alert alert-{{category}} alert-dismissible fade show" role="alert">
-      {{error_message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="container-fluid" style="padding: 0">
+      <div
+        id="errorMessage"
+        class="alert alert-{{category}} alert-dismissible fade show"
+        role="alert"
+      >
+        {{error_message}}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
     </div>
-  </div>
-  {% endif %}
+    {% endif %}
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
@@ -154,501 +228,936 @@
           </ul>
         </div>
         <!--Msgbox-->
-<div class="col-6 content-1b content-scroll">
-  <form method="post" class="report-form" style="display: none;">
-    {% csrf_token %}
-    <input type="hidden" name="userToReport" id="userToReport">
-    <h5>Report User</h5>
-    <label for="reason">Reason for Report:</label>
-    <div>
-      <input type="radio" id="reason1" name="reason" value="harassment" required>
-      <label for="reason1">Harassment</label>
+        <div class="col-6 content-1b content-scroll">
+          <form method="post" class="report-form" style="display: none">
+            {% csrf_token %}
+            <input type="hidden" name="userToReport" id="userToReport" />
+            <h5>Report User</h5>
+            <label for="reason">Reason for Report:</label>
+            <div>
+              <input
+                type="radio"
+                id="reason1"
+                name="reason"
+                value="harassment"
+                required
+              />
+              <label for="reason1">Harassment</label>
 
-      <input type="radio" id="reason2" name="reason" value="spam">
-      <label for="reason2">Spam</label>
+              <input type="radio" id="reason2" name="reason" value="spam" />
+              <label for="reason2">Spam</label>
 
-      <input type="radio" id="reason2" name="reason" value="spam">
-      <label for="reason2">Abusive</label>
+              <input type="radio" id="reason2" name="reason" value="spam" />
+              <label for="reason2">Abusive</label>
 
-      <input type="radio" id="reason2" name="reason" value="spam">
-      <label for="reason2">Inappropraite content</label>
+              <input type="radio" id="reason2" name="reason" value="spam" />
+              <label for="reason2">Inappropraite content</label>
 
-      <input type="radio" id="reason2" name="reason" value="spam">
-      <label for="reason2">Other</label>
-  </div>
+              <input type="radio" id="reason2" name="reason" value="spam" />
+              <label for="reason2">Other</label>
+            </div>
 
-        <label for="additionalInfo">Additional Information:</label><br>
-        <textarea id="additionalInfo" name="additionalInfo" rows="4"></textarea>
+            <label for="additionalInfo">Additional Information:</label><br />
+            <textarea
+              id="additionalInfo"
+              name="additionalInfo"
+              rows="4"
+            ></textarea>
 
-        <br><button type="submit">Submit Report</button>
-  </form>
-  <div class="msgbox">
-    <form>
-      <div class="msgbox-input">
-        <div class="msgbox-img ">
-          <img src="{{user.profile.profile_img.url}}" alt="">
-        </div>
-        <input id="data1" type="text" placeholder="Write fearlessly...">
-      </div>
-      <div class="msg-con row">
-
-        <button type="button" id="uploadButton" class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-image"
-            onclick="uploadImage()"></i></button>
-        <button class="msgbox-btn2 col-2 align-self-center"><i class="fa-solid fa-list"></i></button>
-        <button class="msgbox-btn2 col-2 align-self-center" id="emoji-button"><i class="fa-solid fa-face-smile"></i></button>
-        <button class="msgbox-btn btn align-self-center" id="post-msg">Post</button>
-      </div>
-      <!-- Create a hidden file input for image upload -->
-      <input type="file" id="imageInput" accept="image/*" style="display: none;">
-      <emoji-picker id="emoji-picker"></emoji-picker>
-
-      <!-- sd -->
-      {% for m in messages %}
-      <div id="message-output" class="msg-output-main row">
-        <div class="msgbox-trendings">
-          <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
-        </div>
-        <div class="msg-output">
-          <div class="msg-output-img">
-            <img src="{{m.user.profile.profile_img.url}}" alt="Profile Picture" id="profile-img" data-img-id="{{m.user.username}}">
-          </div>
-          <div class="msg-output-details">
-            <h5 style="display: inline;">{{m.user.username}}</h5>
-            <div class="dropdown">
-              <button id="dropdownButton" onclick="toggleDropdown(event,'{{ m.pk }}')"
-              style="background: transparent;
-                color: white;
-                border: none;">
-                <i class="fa-solid fa-ellipsis-vertical"></i></button>
-              <div class="dropdown-content" id="myDropdown-{{ m.pk }}">
-                  <div class="contents" id="report" data-user-username="{{m.user.username}}">Report</div>
-                  {% if m.user != request.user %}
-                  <div class="contents" id="block" data-user-username="{{m.user.username}}">Block User</div>
-                  {% endif %}
+            <br /><button type="submit">Submit Report</button>
+          </form>
+          <div class="msgbox">
+            <form>
+              <div class="msgbox-input">
+                <div class="msgbox-img">
+                  <img src="{{user.profile.profile_img.url}}" alt="" />
+                </div>
+                <input
+                  id="data1"
+                  type="text"
+                  placeholder="Write fearlessly..."
+                />
               </div>
+              <div class="msg-con row">
+                <button
+                  type="button"
+                  id="uploadButton"
+                  class="msgbox-btn2 col-2 align-self-center"
+                >
+                  <i class="fa-solid fa-image" onclick="uploadImage()"></i>
+                </button>
+                <button
+                  class="msgbox-btn2 col-2 align-self-center"
+                  id="createPoll"
+                >
+                  <i class="fa-solid fa-list"></i>
+                </button>
+                <button
+                  class="msgbox-btn2 col-2 align-self-center"
+                  id="emoji-button"
+                >
+                  <i class="fa-solid fa-face-smile"></i>
+                </button>
+                <button class="msgbox-btn btn align-self-center" id="post-msg">
+                  Post
+                </button>
+              </div>
+              <!-- Create a hidden file input for image upload -->
+              <input
+                type="file"
+                id="imageInput"
+                accept="image/*"
+                style="display: none"
+              />
+              <emoji-picker id="emoji-picker"></emoji-picker>
+
+              <div id="imageToUpload" style="display: none">
+                <img src="" alt="" id="imageUpload" />
+              </div>
+
+              <div id="poll" style="display: none">
+                <input type="hidden" id="confirmPoll" value="none" />
+                <input
+                  type="text"
+                  name="option1"
+                  id="option1"
+                  placeholder="Option 1"
+                />
+                <input
+                  type="text"
+                  name="option2"
+                  id="option2"
+                  placeholder="Option 2"
+                />
+              </div>
+
+              <!-- sd -->
+              {% for m in messages %}
+              <div id="message-output" class="msg-output-main row">
+                <div class="msgbox-trendings">
+                  <span
+                    ><i class="fa-solid fa-arrow-trend-up"></i>Trending</span
+                  >
+                </div>
+                <div class="msg-output">
+                  <div class="msg-output-img">
+                    <img
+                      src="{{m.user.profile.profile_img.url}}"
+                      alt="Profile Picture"
+                      id="profile-img"
+                      data-img-id="{{m.user.username}}"
+                    />
+                  </div>
+                  <div class="msg-output-details">
+                    <div class="usernameDropdown">
+                      <h5 style="display: inline">{{m.user.username}}</h5>
+                      <div class="dropdown">
+                        <button
+                          id="dropdownButton"
+                          onclick="toggleDropdown(event,'{{ m.pk }}')"
+                          style="
+                            background: transparent;
+                            color: white;
+                            border: none;
+                          "
+                        >
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div
+                          class="dropdown-content"
+                          id="myDropdown-{{ m.pk }}"
+                        >
+                          <div
+                            class="contents"
+                            id="report"
+                            data-user-username="{{m.user.username}}"
+                          >
+                            Report
+                          </div>
+                          {% if m.user != request.user %}
+                          <div
+                            class="contents"
+                            id="block"
+                            data-user-username="{{m.user.username}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModalCenter"
+                          >
+                            Block User
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                    <p>{{m.decrypt_message}}</p>
+                    {% if m.image %}
+                    <img src="{{m.image.url}}" alt="" />
+                    {% endif %}{% if m.option1 %} 
+                    {% if not request.user in m.voted.all %}
+                    <div class="option-wrapper" id="{{ m.pk }}">
+                      <div class="option-container">
+                        <div
+                          class="choices"
+                          onclick="vote('{{m.pk}}','{{m.decrypt_message}}','{{m.option1}}')"
+                        >
+                          {{ m.option1 }}
+                        </div>
+                        <div
+                          class="choices"
+                          onclick="vote('{{m.pk}}','{{m.decrypt_message}}','{{m.option2}}')"
+                        >
+                          {{ m.option2 }}
+                        </div>
+                      </div>
+                    </div>
+                    {% else %}
+                    <div class="wrapper">
+                      <div class="progress-wrapper">
+                        <div
+                          class="progress-bar-container"
+                          style="--progress-width: {{ m.option1_count }}%;"
+                        >
+                          <div class="option">{{ m.option1 }}</div>
+                        </div>
+                        <div class="option-percent">{{ m.option1_count }}%</div>
+                      </div>
+                      <div class="progress-wrapper">
+                        <div
+                          class="progress-bar-container"
+                          style="--progress-width: {{ m.option2_count }}%;"
+                        >
+                          <div class="option">{{ m.option2 }}</div>
+                        </div>
+                        <div class="option-percent">{{ m.option2_count }}%</div>
+                      </div>
+                    </div>
+                    {% endif %} {% endif %}
+                  </div>
+                </div>
+                <div class="msg-output-icons">
+                  <i
+                    class="far fa-comment"
+                    id="comment"
+                    data-message-id="{{m.pk}}"
+                  ></i>
+                  <i class="fa-solid fa-reply"></i>
+                  {% if request.user not in m.userLiked.all %}
+                  <i
+                    class="far fa-regular fa-sharp fa-thumbs-up"
+                    id="likes"
+                    data-likes-id="{{m.pk}}"
+                    >{{m.likes}}</i
+                  >
+                  {% else %}
+                  <i
+                    class="far fa-sharp fa-solid fa-thumbs-up"
+                    id="likes"
+                    data-likes-id="{{m.pk}}"
+                    style="color: #1f9bf0"
+                    >{{m.likes}}</i
+                  >
+                  {% endif %}
+                  <i
+                    class="fa-regular fa-eye"
+                    id="views"
+                    data-views-id="{{m.pk}}"
+                    >{{m.view_count}}</i
+                  >
+                </div>
+              </div>
+              {% endfor %}
+
+              <!-- endd -->
+            </form>
           </div>
-            <p>{{m.decrypt_message}}</p>
-            {% if m.image %}
-            <img src="{{m.image.url}}" alt="">
-            {% endif %}
+
+          <!-- search box -->
+        </div>
+        <div class="col-3 content-1a">
+          <div class="search-container">
+            <input
+              type="text"
+              name="search-input"
+              class="search-input"
+              id="search-input"
+              placeholder="Search here..."
+            />
+            <i class="fas fa-search search-icon" id="search-icon"></i>
+          </div>
+
+          <div class="trending">
+            <h4 class="trending-heading">Trending on PseudoSpeak</h4>
+            <div class="trending-topics">
+              {% for tag in hashtags %}
+              <div class="t1">
+                <span><i class="fa-solid fa-arrow-trend-up"></i></span>
+                <input type="hidden" name="tag" value="{{ tag.tag }}" />
+                <a
+                  href="#"
+                  class="trends"
+                  style="cursor: pointer"
+                  data-tag="{{tag.tag}}"
+                  >{{ tag.tag}}</a
+                >
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="popular-user">
+            <h4>Popular Users</h4>
+            <div class="popular-profiles">
+              {% for p in popular_users %}
+              <div class="popular-username">
+                <div class="pop-pro-img">
+                  <a href="{% url 'dashboard' profileId=p.username %}">
+                    <img src="{{p.profile.profile_img.url}}" />
+                  </a>
+                </div>
+                <div class="pop-pro-users">
+                  <h5>{{p.username}}</h5>
+                  <p>Followers : {{p.profile.follow.count}}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
           </div>
         </div>
-        <div class="msg-output-icons">
-          <i class="far fa-comment" id="comment" data-message-id="{{m.pk}}"></i>
-          <i class="fa-solid fa-reply"></i>
-          {% if request.user not in m.userLiked.all %}
-          <i class="far fa-regular fa-sharp fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}">{{m.likes}}</i>
-          {% else %}
-          <i class="far fa-sharp fa-solid fa-thumbs-up" id="likes" data-likes-id="{{m.pk}}" style="color:rgba(233, 11, 233, 0.973);">{{m.likes}}</i>
-          {% endif %}
-          <i class="fa-regular fa-eye" id="views" data-views-id="{{m.pk}}">{{m.view_count}}</i>
-        </div>
       </div>
-      {% endfor %}
-
-      <!-- endd -->
-
-    </form>
     </div>
 
-  <!-- search box -->
-</div>
-<div class="col-3 content-1a">
-  <div class="search-container">
-    <input type="text" name="search-input" class="search-input" id="search-input" placeholder="Search here...">
-    <i class="fas fa-search search-icon" id="search-icon"></i>
-  </div>
+    //block user modal
 
-  <div class="trending">
-    <h4 class="trending-heading">Trending on PseudoSpeak</h4>
-    <div class="trending-topics">
-      {% for tag in hashtags %}
-      <div class="t1">
-        <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-        <input type="hidden" name="tag" value="{{ tag.tag }}">
-        <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}">{{ tag.tag}}</a>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  <div class="popular-user">
-    <h4>Popular Users</h4>
-    <div class="popular-profiles">
-      {% for p in popular_users %}
-      <div class="popular-username">
-        <div class="pop-pro-img">
-          <a href="{% url 'dashboard' profileId=p.username %}">
-            <img src="{{p.profile.profile_img.url}}">
-          </a>
+    <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: linear-gradient(to bottom, #100007, #4c0827);">
+          <div class="modal-header">
+            <h5
+              class="modal-title"
+              id="exampleModalLongTitle"
+            >
+              Block User
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Modal content goes here -->
+            Do you want to block this user?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              value="no"
+            >
+              No
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              value="yes"
+            >
+              Yes
+            </button>
+            <!-- Add additional buttons if needed -->
+          </div>
         </div>
-        <div class="pop-pro-users">
-          <h5>{{p.username}}</h5>
-          <p>Followers : {{p.profile.follow.count}}</p>
-        </div>
       </div>
-      {% endfor %}
-   </div>
-</div>
-</div>
     </div>
-  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/76b0e8fe7d.js" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/76b0e8fe7d.js"
+      crossorigin="anonymous"
+    ></script>
 
-{{ request.user.username|json_script:"json-username"}}
-<script>
+    {{ request.user.username|json_script:"json-username"}}
+    <script>
+      // This is correct
+      const socket = new WebSocket("ws://" + window.location.host + "/ws/");
 
-  // This is correct
-  const socket = new WebSocket('ws://' + window.location.host + '/ws/');
+      const imageUploadDiv = document.querySelector("#imageToUpload");
+      const imageUpload = document.querySelector("#imageUpload");
 
-  setInterval(() => {
-  if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({
-                ping:"ping"
-              }));
-  }
-}, 30000); 
+      const createPoll = document.querySelector("#createPoll");
 
-function toggleDropdown(event,messageId) {
-  event.preventDefault();
-  var dropdown = document.getElementById("myDropdown-" + messageId);
-  dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
-}
+      const confirmPoll = document.querySelector("#confirmPoll");
 
-document.querySelector('#profile_img_navbar').onclick = function () {
-        const userName = JSON.parse(document.getElementById('json-username').textContent);
+      setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(
+            JSON.stringify({
+              ping: "ping",
+            })
+          );
+        }
+      }, 30000);
+
+      function toggleDropdown(event, messageId) {
+        event.preventDefault();
+        var dropdown = document.getElementById("myDropdown-" + messageId);
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+      }
+
+      document.querySelector("#profile_img_navbar").onclick = function () {
+        const userName = JSON.parse(
+          document.getElementById("json-username").textContent
+        );
         console.log(userName);
 
         if (userName) {
-            var redirectURL = '/dashboard/' + userName + '/';
-            window.location.href = redirectURL;
+          var redirectURL = "/dashboard/" + userName + "/";
+          window.location.href = redirectURL;
         } else {
-            console.error('Username not found.');
+          console.error("Username not found.");
         }
-    }
+      };
 
+      let check = false; // Define check at the top level so it's accessible everywhere
 
-  let check = false; // Define check at the top level so it's accessible everywhere
-
-  function uploadImage() {
-    document.getElementById('imageInput').click();
-  }
-
-  function handleFile(event) {
-    const file = event.target.files[0];
-    console.log(file.Array)
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        console.log(img.src);
-        check = true; // Set check to true when a file is loaded
+      function uploadImage() {
+        document.getElementById("imageInput").click();
       }
-      reader.readAsDataURL(file);
-    }
-  }
 
-  document.getElementById('imageInput').addEventListener('change', handleFile);
+      function handleFile(event) {
+        const file = event.target.files[0];
+        poll.style.display = "none";
+        imageUploadDiv.style.display = "block";
+        const src = URL.createObjectURL(file);
+        imageUpload.src = src;
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            console.log(img.src);
+            check = true; // Set check to true when a file is loaded
+          };
+          reader.readAsDataURL(file);
+        }
+      }
 
-  socket.onopen = function () {
-    console.log('WebSocket URL:', 'ws://' + window.location.host + '/ws/');
-    console.log("WebSocket connection established.");
+      document
+        .getElementById("imageInput")
+        .addEventListener("change", handleFile);
 
-    const username = JSON.parse(document.getElementById("json-username").textContent);
-    const post = document.querySelector('#post-msg');
-    post.onclick = function (e) {
-      e.preventDefault();
-      
-      const data = document.querySelector('#data1');
-      const inputdata = data.value;
+      //poll
+      createPoll.addEventListener("click", function (e) {
+        e.preventDefault();
+        var poll = document.querySelector("#poll");
+        confirmPoll.value = "poll";
+        if (window.getComputedStyle(poll).display === "block") {
+          // Block of code to be executed if the 'poll' element is displayed as a block
+          poll.style.display = "none";
+          document.querySelector("#option1").value = null;
+          document.querySelector("#option2").value = null;
+          confirmPoll.value = "";
+        } else {
+          poll.style.display = "block";
+        }
+      });
 
-      if (inputdata.trim() !== "") {
-        if (check) {
-          // Get the file from the file input
-          const file = document.getElementById('imageInput').files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              const imgBase64 = e.target.result;
+      function vote(messageId, content, optionSelected) {
+        const messsageContent = content;
+        const userName = JSON.parse(
+          document.getElementById("json-username").textContent
+        );
 
-              // Send the image and the inputdata together
-              socket.send(JSON.stringify({
-                'content': inputdata,
-                'username': username,
-                'image': imgBase64
-              }));
+        socket.send(
+          JSON.stringify({
+            username: userName,
+            content: messsageContent,
+            messageId: messageId,
+            selected: optionSelected,
+          })
+        );
+      }
 
-              // Clear the input field and image container
+      socket.onopen = function () {
+        console.log("WebSocket URL:", "ws://" + window.location.host + "/ws/");
+        console.log("WebSocket connection established.");
+
+        const username = JSON.parse(
+          document.getElementById("json-username").textContent
+        );
+
+        const post = document.querySelector("#post-msg");
+        post.onclick = function (e) {
+          e.preventDefault();
+
+          imageUploadDiv.style.display = "none";
+          imageUpload.src = "";
+
+          poll.style.display = "none";
+
+          const data = document.querySelector("#data1");
+          const inputdata = data.value;
+          const option1 = document.querySelector("#option1").value;
+          const option2 = document.querySelector("#option2").value;
+          if (inputdata.trim() !== "" && confirmPoll.value === "poll") {
+            socket.send(
+              JSON.stringify({
+                question: inputdata,
+                username: username,
+                option1: option1,
+                option2: option2,
+              })
+            );
+            // Clear the input field and image container
+            data.value = "";
+            document.querySelector("#option1").value = "";
+            document.querySelector("#option2").value = "";
+            confirmPoll.value = "";
+          } else if (inputdata.trim() !== "") {
+            console.log(check);
+            if (check) {
+              // Get the file from the file input
+              const file = document.getElementById("imageInput").files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                  const imgBase64 = e.target.result;
+                  console.log(inputdata, username, imgBase64);
+                  // Send the image and the inputdata together
+                  socket.send(
+                    JSON.stringify({
+                      content: inputdata,
+                      username: username,
+                      image: imgBase64,
+                    })
+                  );
+
+                  // Clear the input field and image container
+                  data.value = "";
+                  check = false; // Reset check to false after sending the image
+                };
+                reader.readAsDataURL(file);
+              }
+            } else {
+              // If there is no image, send only the inputdata
+              socket.send(
+                JSON.stringify({
+                  content: inputdata,
+                  username: username,
+                  image: null,
+                })
+              );
+
+              // Clear the input field
               data.value = "";
-              check = false; // Reset check to false after sending the image
             }
-            reader.readAsDataURL(file);
           }
-        } else {
-          // If there is no image, send only the inputdata
-          socket.send(JSON.stringify({
-            'content': inputdata,
-            'username': username,
-            'image': null
-          }));
+        };
+      };
 
-          // Clear the input field
-          data.value = "";
-        }
-      
-      }
-    };
-  };
-
-  socket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    const targetId = data['likeId'];  // Replace with your target id
-    const newLikesCount = data['likes'];
-    console.log(data['content']);
-    console.log(data['username']);
-    console.log(data['profile_img']);
-    console.log(data['image']);
-    console.log(data['likeId']);
-    console.log(data['likes']);
-    console.log(data['views']);
-    console.log(data['contentId']);
-    if (Array.isArray(data['hashtags'])) {
-      const trending = document.querySelector('.trending-topics');
-      trending.innerHTML = "";
-      data['hashtags'].forEach(function (item) {
-        console.log(item);
-        trending.innerHTML += `
+      socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const targetId = data["likeId"]; // Replace with your target id
+        const newLikesCount = data["likes"];
+        const option1_count = data["option1_count"];
+        const option2_count = data["option2_count"];
+        const mId = data["mId"];
+        const choice1 = data["option1"];
+        const choice2 = data["option2"];
+        if (Array.isArray(data["hashtags"])) {
+          const trending = document.querySelector(".trending-topics");
+          trending.innerHTML = "";
+          data["hashtags"].forEach(function (item) {
+            console.log(item);
+            trending.innerHTML += `
             <span><i class="fa-solid fa-arrow-trend-up"></i></span>
             <a class="trends" style="font-weight: bold; text-decoration: none; color: rgb(29, 155, 240);" onmouseover="hover(this)" onmouseout="unhover(this)" data-tag="${item}">${item}</a><br>`; //checking hashtags
-      });
-    }
+          });
+        } else if (data["option1_count"] || data["option2_count"]) {
+          console.log(option1_count);
+          console.log(option2_count);
+          console.log(mId);
+          const optionContainer = document.getElementById(mId);
+          if (optionContainer) {
+            console.log("Option clicked");
+            optionContainer.innerHTML = `
+        <div class="wrapper">
+                      <div class="progress-wrapper">
+                        <div class="progress-bar-container" style="--progress-width: ${data.option1_count}%;">
+                            <div class="option">${data.option1}</div>
+                        </div>
+                        <div class="option-percent">${data.option1_count}%</div>
+                      </div>
+                      <div class="progress-wrapper">
+                        <div class="progress-bar-container" style="--progress-width: ${data.option2_count}%;">
+                            <div class="option">${data.option2}</div>
+                        </div>
+                        <div class="option-percent">${data.option2_count}%</div>
+                      </div>
+                    </div>
+    `;
+          } else {
+            console.log("Error");
+          }
+        } else if (data["choice1"] && data["choice2"]) {
+          console.log("Poll event");
+          const template1 = `
+    <div class="msg-output-main row">
+        <div class="msgbox-trendings">
+            <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
+        </div>
+        <div class="msg-output">
+            <div class="msg-output-img">
+                <img src="${
+                  data.profile_img
+                }" alt="Profile Picture" id="profile-img" data-img-id="${
+            data.username
+          }">
+            </div>
+            <div class="msg-output-details">
+                <h5>${data.username}</h5>
+                <p>${data.content}</p>
+                ${
+                  data.image
+                    ? `<img src="${data.image}" style="width:100%;height:100%">`
+                    : ""
+                }
+            </div>
+        </div>
+    
+    <div class="option-wrapper" id="${data.contentId}">
+        <div class="option-container" style="margin-left:3vw">
+            <div class="choices" onclick="vote('${data.contentId}','${
+            data.content
+          }','${data.choice1}')">
+                ${data.choice1}
+            </div>
+            <div class="choices" onclick="vote('${data.contentId}','${
+            data.content
+          }','${data.choice2}')">
+                ${data.choice2}
+            </div>
+        </div>
+    </div> 
+    <div class="msg-output-icons">
+            <i class="far fa-comment" id="comment" data-message-id="${
+              data.contentId
+            }"></i>
+            <i class="fa-solid fa-reply"></i>
+            <i class="far fa-thumbs-up" id="likes" data-likes-id="${
+              data.contentId
+            }"></i>
+            <i class="fa-regular fa-eye" id="views" data-views-id="${
+              data.contentId
+            }"></i>
+        </div>
+        </div>
+`;
 
-    // Create an HTML template string for the new message
-    const template = `
+          const msgOutputMain = document.querySelector(".msg-output-main");
+          msgOutputMain.insertAdjacentHTML("afterbegin", template1);
+
+          const newMessage = msgOutputMain.children[0];
+
+          // Find the hashtags within the new message and update their HTML
+          const newMessageHashtags = newMessage.querySelectorAll(
+            ".msg-output-details p"
+          );
+          newMessageHashtags.forEach((hashtag) => {
+            hashtag.innerHTML = hashtag.innerText.replace(
+              /#\w+/g,
+              (match) =>
+                `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`
+            );
+          });
+        }
+
+        // Get the message container and insert the new message at the beginning
+        else if (!data["confirm"] && data["content"]) {
+          console.log("Content event");
+          const template = `
         <div class="msg-output-main row">
             <div class="msgbox-trendings">
                 <span><i class="fa-solid fa-arrow-trend-up"></i>Trending</span>
             </div>
             <div class="msg-output">
                 <div class="msg-output-img">
-                    <img src="${data.profile_img}" alt="Profile Picture" id="profile-img" data-img-id="${data.username}">
+                    <img src="${
+                      data.profile_img
+                    }" alt="Profile Picture" id="profile-img" data-img-id="${
+            data.username
+          }">
                 </div>
                 <div class="msg-output-details">
                     <h5>${data.username}</h5>
                     <p>${data.content}</p>
-                    ${data.image ? `<img src="${data.image}" style="width:100%;height:100%">` : ''}
+                    ${
+                      data.image
+                        ? `<img src="${data.image}" style="width:100%;height:100%">`
+                        : ""
+                    }
                 </div>
             </div>
             <div class="msg-output-icons">
-                <i class="far fa-comment" id="comment" data-message-id="${data.contentId}"></i>
+                <i class="far fa-comment" id="comment" data-message-id="${
+                  data.contentId
+                }"></i>
                 <i class="fa-solid fa-reply"></i>
-                <i class="far fa-thumbs-up" id="likes" data-likes-id="${data.contentId}"></i>
-                <i class="fa-regular fa-eye" id="views" data-views-id="${data.contentId}"></i>
+                <i class="far fa-thumbs-up" id="likes" data-likes-id="${
+                  data.contentId
+                }"></i>
+                <i class="fa-regular fa-eye" id="views" data-views-id="${
+                  data.contentId
+                }"></i>
             </div>
         </div><br>
     `;
+          const msgOutputMain = document.querySelector(".msg-output-main");
+          msgOutputMain.insertAdjacentHTML("afterbegin", template);
 
-    // Get the message container and insert the new message at the beginning
-    if (data['content']) {
-      const msgOutputMain = document.querySelector('.msg-output-main');
-      msgOutputMain.insertAdjacentHTML('afterbegin', template);
+          const newMessage = msgOutputMain.children[0];
 
-      const newMessage = msgOutputMain.children[0];
-
-      // Find the hashtags within the new message and update their HTML
-      const newMessageHashtags = newMessage.querySelectorAll('.msg-output-details p');
-      newMessageHashtags.forEach((hashtag) => {
-        hashtag.innerHTML = hashtag.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
-      });
-    }
-
-    if (data['likeId']) {
-      const likeId = data['likeId'];
-      const likesIcon = document.querySelector(`[data-likes-id="${likeId}"]`);
-      if (likesIcon) {
-        console.log("Updating likes for message:", likeId, "new count:", data['likes']);
-        likesIcon.innerHTML = data['likes'];
-      } else {
-        console.error("No element found with id likes and data-likes-id:", likeId);
-      }
-    }
-
-
-    const msgId = data['msgId'];
-    const viewsCount = data['views'];
-    if (data['msgId'] && data['views'] !== undefined) {
-      // Find all existing view count elements with the correct data-views-id attribute
-      const viewsElement = document.querySelector(`[data-views-id="${msgId}"]`);
-
-      viewsElement.innerHTML = viewsCount;
-
-    }
-
-  };
-
-  socket.onclose = function (e) {
-    console.log("WebSocket connection closed.");
-  };
-
-  function scrollToTop() {
-    let objDiv = document.querySelector(".msgbox");
-    objDiv.scrollTop = objDiv.scrollBottom;
-  }
-
-    document.body.addEventListener('click', function (e) {
-    if (e.target && e.target.id == 'comment') {
-      const messageID = e.target.getAttribute('data-message-id');
-      const userName = JSON.parse(document.getElementById('json-username').textContent);
-      console.log(messageID);
-      socket.send(JSON.stringify({
-        'msgId': messageID,
-        'username': userName
-      }));
-      const redirectURL = `/message/${messageID}/`;
-      window.location.href = redirectURL;
-    }
-  });
-
-
-
-  // search bar
-  document.getElementById("search-input").addEventListener("input", function (event) {
-      event.preventDefault();
-      const searchTxt = document.getElementById("search-input").value;
-      if (searchTxt) {
-        console.log(searchTxt);
-        socket.send(JSON.stringify({
-          'hashtag': searchTxt,
-        }));
-      }
-    
-  });
-
-
-  // message likes
-  document.body.addEventListener('click', function (e) {
-    if (e.target && e.target.id == 'likes') {
-      const messageID = e.target.getAttribute('data-likes-id');
-      const userName = JSON.parse(document.getElementById('json-username').textContent);
-      console.log("Message id "+messageID);
-
-      socket.send(JSON.stringify({
-        'likeId': messageID,
-        'username': userName
-      }));
-
-      const isLiked = e.target.classList.contains('fa-solid');
-        if (isLiked===true) {
-            e.target.classList.remove('fa-solid');
-            e.target.style.color="#fff";
-        } else {
-            e.target.classList.add('fa-solid');
-            e.target.style.color="rgba(233, 11, 233, 0.973)";
+          // Find the hashtags within the new message and update their HTML
+          const newMessageHashtags = newMessage.querySelectorAll(
+            ".msg-output-details p"
+          );
+          newMessageHashtags.forEach((hashtag) => {
+            hashtag.innerHTML = hashtag.innerText.replace(
+              /#\w+/g,
+              (match) =>
+                `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`
+            );
+          });
         }
-      
-    }
-  });
 
+        if (data["likeId"]) {
+          const likeId = data["likeId"];
+          const likesIcon = document.querySelector(
+            `[data-likes-id="${likeId}"]`
+          );
+          if (likesIcon) {
+            console.log(
+              "Updating likes for message:",
+              likeId,
+              "new count:",
+              data["likes"]
+            );
+            likesIcon.innerHTML = data["likes"];
+          } else {
+            console.error(
+              "No element found with id likes and data-likes-id:",
+              likeId
+            );
+          }
+        }
 
-  // dashboard
+        const msgId = data["msgId"];
+        const viewsCount = data["views"];
+        if (data["msgId"] && data["views"] !== undefined) {
+          // Find all existing view count elements with the correct data-views-id attribute
+          const viewsElement = document.querySelector(
+            `[data-views-id="${msgId}"]`
+          );
 
-  
+          viewsElement.innerHTML = viewsCount;
+        }
+      };
 
-  document.body.addEventListener('click', function(e) {
-    if (e.target && e.target.id == 'profile-img') {
-        const profileId = e.target.getAttribute('data-img-id');
-        console.log(profileId);
-        const userName = JSON.parse(document.getElementById('json-username').textContent);
-        var redirectURL = '/dashboard/' + profileId + '/';
-        console.log(redirectURL);
-        window.location.href = redirectURL;
-    }
-});
+      socket.onclose = function (e) {
+        console.log("WebSocket connection closed.");
+      };
 
-document.body.addEventListener('click', function(e) {
-  
-    if (e.target && e.target.id == 'report') {
-      e.preventDefault();
-        const contentContainer=document.querySelector(".msgbox");
-        const reportUser = e.target.getAttribute('data-user-username');
-        const reportForm=document.querySelector(".report-form");
-        const userToReport=document.querySelector("#userToReport");
+      function scrollToTop() {
+        let objDiv = document.querySelector(".msgbox");
+        objDiv.scrollTop = objDiv.scrollBottom;
+      }
 
-        console.log(reportUser);
-        contentContainer.style.display="none";
-        reportForm.style.display="block";
-        userToReport.value=reportUser;
-    }
-    else if (e.target && e.target.id=='block'){
-      e.preventDefault();
-      const blockuser = e.target.getAttribute('data-user-username');
-      console.log(blockuser);
-      const userName = JSON.parse(document.getElementById('json-username').textContent);
-      socket.send(JSON.stringify({
-        'username':userName,
-        'blockuser':blockuser,
-      }))
-      var url="";
-      window.location.href=url;
-    }
-});
+      document.body.addEventListener("click", function (e) {
+        if (e.target && e.target.id == "comment") {
+          const messageID = e.target.getAttribute("data-message-id");
+          const userName = JSON.parse(
+            document.getElementById("json-username").textContent
+          );
+          console.log(messageID);
+          socket.send(
+            JSON.stringify({
+              msgId: messageID,
+              username: userName,
+            })
+          );
+          const redirectURL = `/message/${messageID}/`;
+          window.location.href = redirectURL;
+        }
+      });
 
+      // search bar
+      document
+        .getElementById("search-input")
+        .addEventListener("input", function (event) {
+          event.preventDefault();
+          const searchTxt = document.getElementById("search-input").value;
+          if (searchTxt) {
+            console.log(searchTxt);
+            socket.send(
+              JSON.stringify({
+                hashtag: searchTxt,
+              })
+            );
+          }
+        });
 
-  // onhover function
-  function hover(element) {
-    element.style.cursor = 'pointer';
-    element.style.textDecoration = 'underline';
-  }
+      // message likes
+      document.body.addEventListener("click", function (e) {
+        if (e.target && e.target.id == "likes") {
+          const messageID = e.target.getAttribute("data-likes-id");
+          const userName = JSON.parse(
+            document.getElementById("json-username").textContent
+          );
+          console.log("Message id " + messageID);
 
-  function unhover(element) {
-    element.style.textDecoration = 'none';
-  }
+          socket.send(
+            JSON.stringify({
+              likeId: messageID,
+              username: userName,
+            })
+          );
 
-  // displaying hashtags in diff color
+          const isLiked = e.target.classList.contains("fa-solid");
+          if (isLiked === true) {
+            e.target.classList.remove("fa-solid");
+            e.target.style.color = "#fff";
+          } else {
+            e.target.classList.add("fa-solid");
+            e.target.style.color = "#1d9bf0";
+          }
+        }
+      });
 
-  document.addEventListener('DOMContentLoaded', (event) => {
-    console.log('DOMContentLoaded event fired');
-    const messages = document.querySelectorAll('.msg-output-details p');
-    messages.forEach((message) => {
-      message.innerHTML = message.innerText.replace(/#\w+/g, (match) => `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`);
-    });
-  });
+      // dashboard
 
-  // Delegate the event to the document body
-  document.body.addEventListener('click', function (e) {
-    // Check if the clicked element has the class 'trends' or 'hashtag'
-    if (e.target && (e.target.classList.contains('trends') || e.target.classList.contains('hashtag'))) {
-        var tag = e.target.getAttribute('data-tag');
-        tag = tag.replace('#', ''); // Remove '#' if present
-        console.log(tag);
-        var redirectURL = '/view_hashtag/message/' + tag + '/';
-        window.location.href = redirectURL;
-    }
-});
+      document.body.addEventListener("click", function (e) {
+        if (e.target && e.target.id == "profile-img") {
+          const profileId = e.target.getAttribute("data-img-id");
+          console.log(profileId);
+          const userName = JSON.parse(
+            document.getElementById("json-username").textContent
+          );
+          var redirectURL = "/dashboard/" + profileId + "/";
+          console.log(redirectURL);
+          window.location.href = redirectURL;
+        }
+      });
 
+      document.body.addEventListener("click", function (e) {
+        if (e.target && e.target.id == "report") {
+          e.preventDefault();
+          const contentContainer = document.querySelector(".msgbox");
+          const reportUser = e.target.getAttribute("data-user-username");
+          const reportForm = document.querySelector(".report-form");
+          const userToReport = document.querySelector("#userToReport");
 
+          console.log(reportUser);
+          contentContainer.style.display = "none";
+          reportForm.style.display = "block";
+          userToReport.value = reportUser;
+        }
+      });
 
-// emoji picker
-const inputField = document.getElementById('data1');
-const emojiButton = document.getElementById('emoji-button');
-const emojiPicker = document.getElementById('emoji-picker');
+      // onhover function
+      function hover(element) {
+        element.style.cursor = "pointer";
+        element.style.textDecoration = "underline";
+      }
 
-emojiButton.addEventListener('click', () => {
-  event.preventDefault(); 
-  emojiPicker.style.display = 'block';
-});
+      function unhover(element) {
+        element.style.textDecoration = "none";
+      }
 
-emojiPicker.addEventListener('emoji-click', (event) => {
-  const { emoji } = event.detail;
-  inputField.value += emoji;
-  emojiPicker.style.display = 'none';
-});
+      // displaying hashtags in diff color
 
+      document.addEventListener("DOMContentLoaded", (event) => {
+        console.log("DOMContentLoaded event fired");
+        const messages = document.querySelectorAll(".msg-output-details p");
+        messages.forEach((message) => {
+          message.innerHTML = message.innerText.replace(
+            /#\w+/g,
+            (match) =>
+              `<a data-tag=${match} class="hashtag" style="color: rgb(29, 155, 240); text-decoration:none;" onmouseover="hover(this)" onmouseout="unhover(this)">${match}</a>`
+          );
+        });
+      });
 
+      document.querySelectorAll(".contents").forEach(function (joinButton) {
+        joinButton.addEventListener("click", function () {
+          const id = this.getAttribute("data-message-id");
+          console.log(id);
+          const blockuser = this.getAttribute("data-user-username");
+          const userName = JSON.parse(
+          document.getElementById("json-username").textContent
+        );
+          console.log("clicked");
+          const modal = document.querySelector(".modal");
 
+          // Get all buttons within the modal footer
+          var buttons = modal.querySelectorAll(".modal-footer button");
+          buttons.forEach(function (button) {
+            button.addEventListener("click", function () {
+              const value = this.getAttribute("value");
+              console.log("Button clicked:", value);
+              // You can now use the 'value' variable to perform further actions
+              if (value === "yes") {
+                socket.send(
+                  JSON.stringify({
+                    username: userName,
+                    blockuser: blockuser,
+                  })
+                );
+                
+                const modalBody=document.querySelector(".modal-body");
+                const modalFooter=document.querySelector(".modal-footer");
+                modalFooter.innerHTML="";
+                modalBody.innerHTML="User blocked <br> You will be redirected to home page soon";
+                
+                setTimeout(function() {
+                    window.location.href = "";
+                }, 5000);
 
+              }
+            });
+          });
+        });
+      });
 
-</script>
+      // Delegate the event to the document body
+      document.body.addEventListener("click", function (e) {
+        // Check if the clicked element has the class 'trends' or 'hashtag'
+        if (
+          e.target &&
+          (e.target.classList.contains("trends") ||
+            e.target.classList.contains("hashtag"))
+        ) {
+          var tag = e.target.getAttribute("data-tag");
+          tag = tag.replace("#", ""); // Remove '#' if present
+          console.log(tag);
+          var redirectURL = "/view_hashtag/message/" + tag + "/";
+          window.location.href = redirectURL;
+        }
+      });
+
+      // emoji picker
+    </script>
+  </body>
+</html>

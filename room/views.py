@@ -30,12 +30,12 @@ def rooms(request,name):
 
 
 def room(request, slug):
+    room=Room.objects.get(slug=slug)
     if request.method=='POST':
         user=request.user
         action=request.POST.get("delorexit")
         btnvalue=request.POST.get("confirmation")
         if action=="delete" and btnvalue=="yes":
-            room=Room.objects.get(slug=slug)
             room.delete()
             return redirect(rooms,name="recommended")
         elif action is None:

@@ -550,6 +550,7 @@
         }
           
     </style>
+    <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
   </head>
   <body>
 
@@ -718,8 +719,14 @@
               {% for tag in hashtags %}
               <div class="t1">
                 <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-                <input type="hidden" name="tag" value="{{ tag.tag }}">
-                <a href="#" class="trends" style="cursor: pointer;" data-tag="{{tag.tag}}">{{ tag.tag}}</a>
+                <input type="hidden" name="tag" value="{{ tag.tag }}" />
+                <a
+                  href="#"
+                  class="trends"
+                  style="cursor: pointer"
+                  data-tag="{{tag.tag}}"
+                  >{{ tag.tag}}</a
+                >
               </div>
               {% endfor %}
         
@@ -843,6 +850,21 @@
       
     }
   });
+
+  document.body.addEventListener("click", function (e) {
+        // Check if the clicked element has the class 'trends' or 'hashtag'
+        if (
+          e.target &&
+          (e.target.classList.contains("trends") ||
+            e.target.classList.contains("hashtag"))
+        ) {
+          var tag = e.target.getAttribute("data-tag");
+          tag = tag.replace("#", ""); // Remove '#' if present
+          console.log(tag);
+          var redirectURL = "/view_hashtag/message/" + tag + "/";
+          window.location.href = redirectURL;
+        }
+      });
     </script>
   </body>
 </html>

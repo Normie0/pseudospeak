@@ -1,11 +1,13 @@
 body {
-  background: #1f1f20;
+  /* Define the linear gradient */
+background: linear-gradient(to bottom, #100007, #4c0827);
+
   color: white;
   overflow: hidden;
 }
 
 .nav-logo {
-  color: rgba(233, 11, 233, 0.973);
+  color: white;
   font-size: xx-large;
   font-weight: bolder;
   font-family: serif;
@@ -21,7 +23,7 @@ body {
 }
 
 .signbtn {
-  background-color: #e90ccb;
+  background-color: red;
   color: rgb(5, 5, 5);
   border-radius: 15px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -30,9 +32,8 @@ body {
 
 .signbtn:hover {
   background-color: #050100;
-  color: rgb(236, 22, 208);
+  color:red;
 }
-
 .content-1 {
   /* border: 1px solid rgba(61, 5, 5, 1); */
   height: 90vh;
@@ -41,6 +42,7 @@ body {
 .content-1b {
   border: 1px solid #1f1f20;
   height: 100vh;
+  background: linear-gradient(to bottom, #100007, #4c0827);
   /* width: 70vh; */
 }
 
@@ -104,7 +106,7 @@ body {
 .content-1a li {
   display: flex;
   align-items: center;
-  color: rgba(233, 11, 233, 0.973);
+  color: white;
 
   background-color: transparent;
 
@@ -114,7 +116,7 @@ body {
 }
 
 .content-1a li:hover {
-  background-color: rgba(128, 0, 128, 0.123);
+  background-color: #1f1f20;
   text-decoration: underline;
 }
 
@@ -124,8 +126,7 @@ body {
 }
 
 .content-1a li a {
-  color: rgba(233, 11, 233, 0.973);
-
+  color: white;
   text-decoration: none;
 }
 
@@ -136,7 +137,7 @@ body {
 .search-container {
   display: flex;
   align-items: center;
-  border: 1px solid #901a9b;
+  border: 1px solid white;
   border-radius: 7px;
   width: 300px;
   margin-top: 5%;
@@ -160,7 +161,7 @@ body {
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #c426a9;
+  color: white;
   font-size: 18px;
 }
 
@@ -214,7 +215,7 @@ body {
 
 .msgbox-input input {
   width: 43vw;
-  background: hsla(0, 0%, 53%, 0.04);
+  background: #1f1f20;
   outline: none;
   border: none;
   color: white;
@@ -246,7 +247,7 @@ body {
 
 .msgbox-btn {
   background-color: #f1e8f1;
-  color: #901a9b;
+  color: #100007;
   border-radius: 30px;
   width: 7vw;
   height: 6vh;
@@ -256,7 +257,7 @@ body {
 }
 
 .msgbox-btn:hover {
-  background-color: #901a9b;
+  background-color: #0077cc;
   color: white;
   border-radius: 30px;
 }
@@ -398,7 +399,7 @@ body {
 
 .msg-output-icons i:hover {
   cursor: pointer;
-  color: #eb11c6;
+  color: #1d9bf0;
 }
 
 .content-scroll {
@@ -411,8 +412,7 @@ body {
 }
 
 .content-1b {
-  background-color: #1f1f20;
-
+  background-color: #100007;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

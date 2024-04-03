@@ -38,6 +38,15 @@ class TrendingMessage(models.Model):
     parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     custom_ordering = models.FloatField(default=0)
 
+    #poll
+    option1 = models.CharField(max_length=100, blank=True,null=True)
+    option2 = models.CharField(max_length=100, blank=True,null=True)
+    voted = models.ManyToManyField(User, related_name='voted', blank=True, null=True)
+
+    # Votes for poll options
+    votes_option1 = models.IntegerField(default=0,blank=True,null=True)
+    votes_option2 = models.IntegerField(default=0,blank=True,null=True)
+
     def decrypt_message(self):  # Replace with your actual secret key
         try:
             message_decrypted=f.decrypt(self.content)
@@ -46,6 +55,20 @@ class TrendingMessage(models.Model):
         except Exception as e:
             print(f"InvalidToken exception: {e.__cause__}")
             return "Invalid decryption token"
+        
+    def option1_count(self):
+        total=self.votes_option1+self.votes_option2
+        if total==0:
+            return 0;
+        option1_percent=(self.votes_option1/total)*100
+        return int(option1_percent)
+    
+    def option2_count(self):
+        total=self.votes_option1+self.votes_option2
+        if total==0:
+            return 0;
+        option2_percent=(self.votes_option2/total)*100
+        return int(option2_percent)
 
 
     def save(self, *args, **kwargs):

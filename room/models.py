@@ -20,6 +20,7 @@ class Category(models.Model):
 class Room(models.Model):
     users=models.ManyToManyField(User,related_name='joined_user')
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE) 
+    description=models.TextField(default=None,blank=True,null=True)
     name=models.CharField(unique=True,max_length=255)
     slug=models.SlugField(unique=True)
     room_img=models.ImageField(null=True)

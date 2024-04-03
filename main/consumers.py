@@ -77,7 +77,25 @@ class IndexConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
 
-        if "hashtag" in data:
+        if "question" in data:
+            messageId,profile_img_url=await self.save_poll(data)
+            await self.send_poll_message(data['username'],data['question'],messageId,profile_img_url,data['option1'],data['option2'])
+
+        elif "selected" in data:
+                # Call the function to update the option counts based on the selected option
+            option1_count, option2_count, mId,option1,option2 = await self.select_option(data)
+            # Send the updated option counts back to the client
+            print(option1_count,option2_count,mId,option1,option2)
+            await self.send(text_data=json.dumps({
+                    "option1_count": option1_count,
+                    "option2_count": option2_count,
+                    "mId":mId,
+                    "option1":option1,
+                    "option2":option2,
+                    "confirm":"pollConfirm"
+                }))
+
+        elif "hashtag" in data:
             print(data["hashtag"])
             hashtag = data["hashtag"]
             hashtag_list = await self.get_hashtags(hashtag)
@@ -124,12 +142,83 @@ class IndexConsumer(AsyncWebsocketConsumer):
             )
 
     @sync_to_async
+    def save_poll(self,data):
+        user=User.objects.get(username=data['username'])
+        message_bytes = data['question'].encode("utf-8")
+        message_encrypted = f.encrypt(message_bytes)
+        message_decoded = message_encrypted.decode("utf-8")
+        poll=TrendingMessage.objects.create(user=user,content=message_decoded,option1=data['option1'],option2=data['option2'])
+        return poll.pk,user.profile.profile_img.url
+        
+    @sync_to_async
+    def select_option(self,data):
+        user=User.objects.get(username=data["username"])
+        message=TrendingMessage.objects.get(pk=data['messageId'])
+        message.voted.add(user)
+        if (data['selected']==message.option1):
+            message.votes_option1+=1
+        elif (data['selected']==message.option2):
+            message.votes_option2+=1
+        message.view_count+=1
+        message.viewed.add(user)
+        message.save()
+        print(data['selected'])
+        option1_count=message.option1_count()
+        option2_count=message.option2_count()
+
+        return option1_count,option2_count,message.pk,message.option1,message.option2
+
+    async def send_poll_message(
+        self, username, content, contentId, profile_img_url,option1,option2,confirm="pollConfirm"
+    ):
+        await self.channel_layer.group_add("index_group", self.channel_name)
+        await self.channel_layer.group_send(
+            "index_group",
+            {
+                "type": "poll_message",
+                "username": username,
+                "content": content,
+                "profile_img": profile_img_url,
+                "contentId": contentId,
+                "choice1":option1,
+                "choice2":option2,
+                "confirm":confirm
+            },
+        )
+
+    async def poll_message(self, event):
+        username = event["username"]
+        content = event["content"]
+        profile_img = event["profile_img"]
+        contentId = event["contentId"]
+        choice1=event["choice1"]
+        choice2=event["choice2"]
+        confirm=event["confirm"]
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "username": username,
+                    "content": content,
+                    "profile_img": profile_img,
+                    "contentId": contentId,
+                    "choice1":choice1,
+                    "choice2":choice2,
+                    "confimr":confirm
+                }
+            )
+        )
+
+
+    @sync_to_async
     def block_user(self,data):
         user_to_block=User.objects.get(username=data['blockuser'])
         user=User.objects.get(username=data['username'])
         user.profile.blocked_user.add(user_to_block)
         user.profile.follow.remove(user_to_block)
         user.profile.following.remove(user_to_block)
+        user_to_block.profile.blocked_user.add(user)
+        user_to_block.save()
+        user.save()
 
     @sync_to_async
     def get_profile_img(self, username):
@@ -233,6 +322,7 @@ class IndexConsumer(AsyncWebsocketConsumer):
                 }
             )
         )
+        print("Image message")
 
     async def send_likes(self, likeId, likes):
         await self.channel_layer.group_add("index_group", self.channel_name)
