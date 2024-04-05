@@ -616,6 +616,26 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 .content-1a li a:hover {
   text-decoration: underline;
 }
+.msg-output-icons {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: 10px;
+  justify-content: space-between;
+  height: 4vh;
+  width: 60vw;
+}
+
+.msg-output-icons i {
+  margin-right: 10px;
+  font-size: 15px;
+  color: #f7f1f1f5;
+}
+
+.msg-output-icons i:hover {
+  cursor: pointer;
+  color: #1d9bf0;
+}
     </style>
   </head>
   <body>
@@ -798,6 +818,38 @@ background: linear-gradient(to bottom, #100007, #4c0827);
                 {% if message.image %}
                 <img src="{{message.image.url}}" alt="" />
                 {% endif %}
+
+                
+                <div class="msg-output-icons">
+                  <i
+                    class="far fa-comment"
+                    id="comment"
+                    data-message-id="{{m.pk}}"
+                  ></i>
+                  <i class="fa-solid fa-reply"></i>
+                  {% if request.user not in m.userLiked.all %}
+                  <i
+                    class="far fa-regular fa-sharp fa-thumbs-up"
+                    id="likes"
+                    data-likes-id="{{m.pk}}"
+                    >{{m.likes}}</i
+                  >
+                  {% else %}
+                  <i
+                    class="far fa-sharp fa-solid fa-thumbs-up"
+                    id="likes"
+                    data-likes-id="{{m.pk}}"
+                    style="color: #1f9bf0"
+                    >{{m.likes}}</i
+                  >
+                  {% endif %}
+                  <i
+                    class="fa-regular fa-eye"
+                    id="views"
+                    data-views-id="{{m.pk}}"
+                    >{{m.view_count}}</i
+                  >
+                </div>
               </div>
             </div>
             {% endfor %} {% else %}

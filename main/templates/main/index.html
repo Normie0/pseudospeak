@@ -109,7 +109,7 @@
         display: block;
         width: 100%;
         margin-top: 10px;
-        background-color: #c6c6bb;
+        background-color: aliceblue;
         padding: 5px 20px;
         border-radius: 2vw;
         outline: none;
@@ -132,7 +132,7 @@
 
       .progress-bar-container {
         background: #2f7ebe;
-        color: black;
+        color: white;
         border-radius: 2vw;
         padding: 1vw;
         margin: 10px 0;
@@ -171,7 +171,7 @@
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
         <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
-          >PseudoSpeak</a
+          ><img src="media/images/Logo" alt="" style="mix-blend-mode: darken; "></a
         >
         <button
           class="navbar-toggler"
@@ -1087,6 +1087,33 @@
       }
 
       // displaying hashtags in diff color
+      const loadingcol = document.querySelector(".col-6");
+
+// Function to store scroll position in local storage
+function storeScrollPosition() {
+    localStorage.setItem('scrollPosition', loadingcol.scrollTop);
+}
+
+// Store scroll position periodically
+setInterval(storeScrollPosition, 1000); // Adjust the interval as needed
+
+// Function to restore scroll position from local storage
+function restoreScrollPosition() {
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    console.log(scrollPosition)
+    if (scrollPosition !== null) {
+        loadingcol.scrollTo(0,parseInt(scrollPosition));
+        localStorage.removeItem('scrollPosition');
+    }
+}
+
+window.onload=restoreScrollPosition;
+
+// Clear scroll position from local storage when tab is closed
+window.addEventListener('beforeunload', function () {
+    localStorage.removeItem('scrollPosition');
+});
+
 
       document.addEventListener("DOMContentLoaded", (event) => {
         console.log("DOMContentLoaded event fired");
@@ -1140,6 +1167,10 @@
           });
         });
       });
+
+      // JavaScript for index.html
+
+
 
       // Delegate the event to the document body
       document.body.addEventListener("click", function (e) {

@@ -25,6 +25,7 @@
         border-radius: 26px;
         position: fixed;
         right: 1vw;
+        top: 80px;
       }
       .chat-container::-webkit-scrollbar {
         width: 0em;
@@ -73,8 +74,9 @@
         align-items: center;
         margin-top: 20px;
         position: fixed;
-        top: 75%;
-        left: 50%;
+        top: 77%;
+        left: 27%;
+        width: 68vw;
       }
 
       #chat-message-input {
@@ -84,6 +86,7 @@
         border-radius: 20px;
         margin-right: 10px;
         width: 80%;
+        padding-left: 18px;
       }
 
       #chat-message-submit {
@@ -115,6 +118,7 @@
       .chat-message b {
         font-weight: bold;
         color: #811472;
+        font-size:large;
       }
 
       .json-script {
@@ -158,6 +162,7 @@
       a {
         color: white;
         text-decoration: none;
+        margin-left: 7px;
       }
       #profile_img_navbar:hover {
         cursor: pointer;
@@ -231,7 +236,7 @@
       .content-1a li a:hover {
         text-decoration: underline;
       }
-      .center-container {
+.center-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -281,7 +286,30 @@
 .center-container.show > div {
   transform: scale(1);
 }
+
+.user-profile-img1{
+  width: 3vw;
+  height: 6vh;
+  overflow: hidden;
+  border-radius: 57%;
+}
+.message-input-form input{
+  outline:none;
+  padding-left:10px;
+}
+#chat-message-submit{
+  border-radius:30px;
+}
+
+.user-msg-pr{
+  display: inline-flex;
+  flex-direction: column;
+}
+.user-msg-pr1{
+  padding-left: 7px;
+}
     </style>
+    <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
   </head>
   <body>
 
@@ -365,7 +393,7 @@
 
         <div class="col-9 chat-container">
           <div class="group-name">
-            <h1>Group Name-{{ room.name }}</h1>
+            <h1>Group Name - {{ room.name }}</h1>
             <div style="margin-top: -2vw">
               <button
                 id="exit"
@@ -381,12 +409,18 @@
             </div>
             <p style="display: none;background-color: #1f1f2038" id="exitInfo">Exit</p>
           </div>
-          <div class="lg:w-2/4 mx-4 lg:mx-auto p-4 rounded-xl">
+          <div class="lg:w-2/4 lg:mx-auto p-4 rounded-xl">
             <div class="chat-messages space-y-3" id="chat-messages">
               <p style="color: slategrey; position: relative; left: 120%">{{room.owner}} created the group</p>
               {% for m in messages %}
               <div class="chat-message">
-                <a href="{% url 'dashboard' profileId=m.user.username %}"><b>{{ m.user.username }}</b></a>: {{ m.decrypt_message }}
+                <img class="user-profile-img1" src="" alt="" />
+                <div class="user-msg-pr">
+                  <span>
+                    <a href="{% url 'dashboard' profileId=m.user.username %}"><b>{{ m.user.username }} </b></a>
+                  </span>
+                  <span class="user-msg-pr1"> {{ m.decrypt_message }} </span>
+                </div>
               </div>
               {% endfor %}
             </div>
@@ -402,10 +436,10 @@
                 id="chat-message-input"
               />
               <button
-                class="msg-button1 px-5 py-3 rounded-r-lg text-white bg-teal-600 hover:bg-teal-700"
+                class="msg-button1"
                 id="chat-message-submit"
               >
-                Submit
+                Send
               </button>
             </form>
           </div>

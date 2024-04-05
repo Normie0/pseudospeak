@@ -67,11 +67,13 @@ def index(request):
 
 def hashtagMessages(request, hashtag):
     tag = f"#{hashtag}"
+    blocked_users = request.user.profile.blocked_user.all()
     try:
         hashtag = Hashtag.objects.get(tag=tag)
     except Hashtag.DoesNotExist:
         hashtag = None
-    messages = TrendingMessage.objects.filter(parent_message=None, hashtags=hashtag)
+    messages = TrendingMessage.objects.filter(parent_message=None, hashtags=hashtag).exclude(
+    user__in=blocked_users).order_by("-custom_ordering")
     hashtags = Hashtag.objects.all()[:3]
     popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
     return render(

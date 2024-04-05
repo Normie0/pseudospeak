@@ -622,10 +622,8 @@
 
         <div class="col-6 content-1b content-scroll">
 
-          <div class="post-head">
-            <a href="{% url 'index' %}">
+          <div class="post-head" onclick="previous()">
             <i class="fa-solid fa-chevron-left"></i>
-        </a>
             <h4 style="padding-left: 20px;">View Post</h4>
           </div>
 
@@ -753,6 +751,11 @@
         const messageId=parseInt(document.getElementById("json-messageId").textContent);
         const username=document.getElementById("json-username").textContent;
         const replyBtn=document.querySelector("#post-msg");
+
+
+        function previous(){
+          window.history.back();
+        }
 
         console.log(messageId);
 

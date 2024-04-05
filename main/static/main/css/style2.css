@@ -13,8 +13,8 @@ body {
   height: 100%;
   width: 100%;
   place-items: center;
-  /* background: linear-gradient(0deg, rgba(22, 1, 22, 1) 1%, rgba(61, 5, 5, 1) 100%); */
-  background: #09314857;
+  background-color: #1f1f19;
+
 }
 
 ::selection {
@@ -25,7 +25,8 @@ body {
 .wrapper {
   overflow: hidden;
   max-width: 390px;
-  background: #1f1f20;
+  background: linear-gradient(to bottom, #100007, #4c0827);
+  color: white;
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
