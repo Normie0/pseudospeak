@@ -1,6 +1,6 @@
 body {
   /* Define the linear gradient */
-background: linear-gradient(to bottom, #100007, #4c0827);
+background: linear-gradient(to bottom, #000000, #0b161e);
 
   color: white;
   overflow: hidden;
@@ -42,7 +42,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 .content-1b {
   border: 1px solid #1f1f20;
   height: 100vh;
-  background: linear-gradient(to bottom, #100007, #4c0827);
+  background:transparent;
   /* width: 70vh; */
 }
 
@@ -412,7 +412,6 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 }
 
 .content-1b {
-  background-color: #100007;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

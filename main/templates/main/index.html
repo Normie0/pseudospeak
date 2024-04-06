@@ -131,7 +131,7 @@
       }
 
       .progress-bar-container {
-        background: #2f7ebe;
+        background: #6300eb;
         color: white;
         border-radius: 2vw;
         padding: 1vw;
@@ -171,7 +171,7 @@
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
         <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
-          ><img src="media/images/Logo" alt="" style="mix-blend-mode: darken; "></a
+          ><img src="media/images/Logo" alt="" style="mix-blend-mode: darrken;width: 40%;padding-left: 20px; "></a
         >
         <button
           class="navbar-toggler"
@@ -229,43 +229,6 @@
         </div>
         <!--Msgbox-->
         <div class="col-6 content-1b content-scroll">
-          <form method="post" class="report-form" style="display: none">
-            {% csrf_token %}
-            <input type="hidden" name="userToReport" id="userToReport" />
-            <h5>Report User</h5>
-            <label for="reason">Reason for Report:</label>
-            <div>
-              <input
-                type="radio"
-                id="reason1"
-                name="reason"
-                value="harassment"
-                required
-              />
-              <label for="reason1">Harassment</label>
-
-              <input type="radio" id="reason2" name="reason" value="spam" />
-              <label for="reason2">Spam</label>
-
-              <input type="radio" id="reason2" name="reason" value="spam" />
-              <label for="reason2">Abusive</label>
-
-              <input type="radio" id="reason2" name="reason" value="spam" />
-              <label for="reason2">Inappropraite content</label>
-
-              <input type="radio" id="reason2" name="reason" value="spam" />
-              <label for="reason2">Other</label>
-            </div>
-
-            <label for="additionalInfo">Additional Information:</label><br />
-            <textarea
-              id="additionalInfo"
-              name="additionalInfo"
-              rows="4"
-            ></textarea>
-
-            <br /><button type="submit">Submit Report</button>
-          </form>
           <div class="msgbox">
             <form>
               <div class="msgbox-input">
@@ -371,6 +334,8 @@
                             class="contents"
                             id="report"
                             data-user-username="{{m.user.username}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#reportModal"
                           >
                             Report
                           </div>
@@ -572,6 +537,83 @@
             >
               Yes
             </button>
+            <!-- Add additional buttons if needed -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="reportModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: linear-gradient(to bottom, #100007, #4c0827);">
+          <div class="modal-header">
+            <h5
+              class="modal-title"
+              id="exampleModalLongTitle"
+            >
+              Block User
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Modal content goes here -->
+            <form method="post" class="report-form">
+              {% csrf_token %}
+              <input type="hidden" name="userToReport" id="userToReport" />
+              <h5>Report User</h5>
+              <label for="reason">Reason for Report:</label>
+              <div>
+                <input
+                  type="radio"
+                  id="reason1"
+                  name="reason"
+                  value="harassment"
+                  required
+                />
+                <label for="reason1">Harassment</label>
+  
+                <input type="radio" id="reason2" name="reason" value="spam" />
+                <label for="reason2">Spam</label>
+  
+                <input type="radio" id="reason2" name="reason" value="spam" />
+                <label for="reason2">Abusive</label>
+  
+                <input type="radio" id="reason2" name="reason" value="spam" />
+                <label for="reason2">Inappropraite content</label>
+  
+                <input type="radio" id="reason2" name="reason" value="spam" />
+                <label for="reason2">Other</label>
+              </div>
+  
+              <label for="additionalInfo">Additional Information:</label><br />
+              <textarea
+                id="additionalInfo"
+                name="additionalInfo"
+                rows="4"
+              ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="submit"
+              class="btn btn-success"
+              value="yes"
+            >
+              Submit Report
+            </button>
+          </form>
             <!-- Add additional buttons if needed -->
           </div>
         </div>
@@ -1061,20 +1103,6 @@
         }
       });
 
-      document.body.addEventListener("click", function (e) {
-        if (e.target && e.target.id == "report") {
-          e.preventDefault();
-          const contentContainer = document.querySelector(".msgbox");
-          const reportUser = e.target.getAttribute("data-user-username");
-          const reportForm = document.querySelector(".report-form");
-          const userToReport = document.querySelector("#userToReport");
-
-          console.log(reportUser);
-          contentContainer.style.display = "none";
-          reportForm.style.display = "block";
-          userToReport.value = reportUser;
-        }
-      });
 
       // onhover function
       function hover(element) {

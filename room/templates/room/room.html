@@ -414,7 +414,7 @@
               <p style="color: slategrey; position: relative; left: 120%">{{room.owner}} created the group</p>
               {% for m in messages %}
               <div class="chat-message">
-                <img class="user-profile-img1" src="" alt="" />
+                <img class="user-profile-img1" src="{{m.user.profile.profile_img.url}}" alt="" />
                 <div class="user-msg-pr">
                   <span>
                     <a href="{% url 'dashboard' profileId=m.user.username %}"><b>{{ m.user.username }} </b></a>
