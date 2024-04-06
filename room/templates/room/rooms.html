@@ -265,17 +265,23 @@
 
       body {
   /* Define the linear gradient */
-background: linear-gradient(to bottom, #100007, #4c0827);
+background: linear-gradient(to bottom, #000000, #0b161e);
 
   color: white;
   overflow: hidden;
 }
 
 .nav-logo {
-  color: white;
-  font-size: xx-large;
+  padding: 0;
+  margin: -5px 90px;
   font-weight: bolder;
   font-family: serif;
+}
+
+.nav-logo img{
+  width: 50%;
+  padding-left: 1vw;
+  mix-blend-mode: hard-light;
 }
 
 .nav-logo:hover {
@@ -307,7 +313,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 .content-1b {
   border: 1px solid #1f1f20;
   height: 100vh;
-  background: linear-gradient(to bottom, #100007, #4c0827);
+  background:transparent;
   /* width: 70vh; */
 }
 
@@ -444,7 +450,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
         cursor: pointer;
       }
     </style>
-    
+    <!-- <link rel="stylesheet" href="{% static 'main/css/index.css' %}"> -->
   </head>
   <body>
     <label class="button-res">
@@ -460,7 +466,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
         <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
-          >PseudoSpeak</a
+          ><img src="/media/images/pseudospeakLogo.jpg" alt=""></a
         >
         <button
           class="navbar-toggler"
