@@ -655,8 +655,10 @@
       function toggleDropdown(event, messageId) {
         event.preventDefault();
         var dropdown = document.getElementById("myDropdown-" + messageId);
+        if (dropdown){
         dropdown.style.display =
           dropdown.style.display === "block" ? "none" : "block";
+        }
       }
 
       document.querySelector("#profile_img_navbar").onclick = function () {
@@ -826,7 +828,7 @@
             console.log(item);
             trending.innerHTML += `
             <span><i class="fa-solid fa-arrow-trend-up"></i></span>
-            <a class="trends" style="font-weight: bold; text-decoration: none; color: rgb(29, 155, 240);" onmouseover="hover(this)" onmouseout="unhover(this)" data-tag="${item}">${item}</a><br>`; //checking hashtags
+            <a class="trends" style="font-weight: bold; text-decoration: none; color: #6300eb;" onmouseover="hover(this)" onmouseout="unhover(this)" data-tag="${item}">${item}</a><br>`; //checking hashtags
           });
         } else if (data["option1_count"] || data["option2_count"]) {
           console.log(option1_count);
@@ -870,7 +872,47 @@
           }">
             </div>
             <div class="msg-output-details">
-                <h5>${data.username}</h5>
+              <div class="usernameDropdown">
+                      <h5 style="display: inline">${data.username}</h5>
+                      <div class="dropdown">
+                        <button
+                          id="dropdownButton"
+                          onclick="toggleDropdown(event,'{{ m.pk }}')"
+                          style="
+                            background: transparent;
+                            color: white;
+                            border: none;
+                          "
+                        >
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div
+                          class="dropdown-content"
+                          id="myDropdown-${data.contentId}"
+                        >
+                          <div
+                            class="contents"
+                            id="report"
+                            data-user-username="${data.username}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#reportModal"
+                          >
+                            Report
+                          </div>
+                          {% if m.user != request.user %}
+                          <div
+                            class="contents"
+                            id="block"
+                            data-user-username="${data.username}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModalCenter"
+                          >
+                            Block User
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
                 <p>${data.content}</p>
                 ${
                   data.image

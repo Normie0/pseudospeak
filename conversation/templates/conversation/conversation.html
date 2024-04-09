@@ -532,13 +532,20 @@
 
             <div class="card-footer">
               <div class="input-group">
+                {% for m in conversation.members.all %} 
+                {% if m != request.user%}
+                {% if m not in request.user.prfoile.blocked_user.all %}
                   <input
                     type="text"
                     class="message-input-1"
                     placeholder="Your message..."/>
                   
                   <button class="msg-button-1"><i class="fa-solid fa-paper-plane"></i></button>
-                
+                {% else %}
+                <p style="color: white;">You can no longer send messages to {{m.username}}</p>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
               </div>
             </div>
           </div>

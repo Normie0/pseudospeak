@@ -182,6 +182,12 @@ def logoutuser(request):
 
 @login_required(login_url="login_or_signup_view")
 def dashboard(request, profileId):
+    if request.method=="POST":
+        messageId=request.POST.get("message_id")
+        print(messageId)
+        if messageId:
+            message=TrendingMessage.objects.filter(pk=messageId)
+            message.delete()
     user = User.objects.get(username=profileId)
     trendingmessages = TrendingMessage.objects.filter(
         user=user, parent_message=None
@@ -199,7 +205,6 @@ def dashboard(request, profileId):
     total_viewcount = TrendingMessage.objects.filter(user=user).aggregate(
         Sum("view_count")
     )["view_count__sum"]
-    print(total_viewcount)
     return render(
         request,
         "main/dashboard.html",

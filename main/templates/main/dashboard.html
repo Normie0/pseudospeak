@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -411,6 +412,7 @@
       .msg-username1 {
         display: flex;
         justify-content: space-between;
+        margin-right: 35vw;
       }
 
       .msg-output-details img {
@@ -636,7 +638,78 @@ background: linear-gradient(to bottom, #100007, #4c0827);
   cursor: pointer;
   color: #1d9bf0;
 }
+
+.dropdown {
+        position: relative;
+        display: inline-block;
+        left: 35vw;
+        background-color: transparent;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        left: -160px;
+      }
+
+      .dropdown-content .contents {
+        cursor: pointer;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        border: none;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }.dropdown {
+        position: relative;
+        display: inline-block;
+        left: 35vw;
+        background-color: transparent;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        left: -160px;
+      }
+
+      .dropdown-content .contents {
+        cursor: pointer;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        border: none;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .modal-content{
+        background: linear-gradient(to bottom, #000000, #0b161e);
+      }
+      .content-scroll {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.content-scroll::-webkit-scrollbar {
+  width: 0em;
+}
     </style>
+  <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
   </head>
   <body>
     <label class="button-res">
@@ -653,7 +726,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
         <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
-          >PseudoSpeak</a
+          ><img src="/media/images/pseudospeakLogo.jpg" alt=""></a
         >
         <button
           class="navbar-toggler"
@@ -776,7 +849,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
             </div>
           </div>
 
-          <div class="user-post">
+          <div class="user-post content-scroll">
             {% if trendingmessages %} {% for message in trendingmessages %}
             <div class="msg-post">
               <div class="msg-post-img">
@@ -785,9 +858,11 @@ background: linear-gradient(to bottom, #100007, #4c0827);
                   alt="Profile Picture"
                 />
               </div>
-              <div class="msg-post-details">
+              <div class="msg-post-details
+              ">
                 <div class="msg-username1">
                   <h5>{{user.username}}</h5>
+                  {% if message.user == request.user %}
                   <div class="dropdown">
                     <button
                       id="dropdownButton"
@@ -808,11 +883,36 @@ background: linear-gradient(to bottom, #100007, #4c0827);
                         class="contents"
                         id="delete"
                         data-message-id="{{message.pk}}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal-{{message.pk}}"
                       >
                         Delete
                       </div>
                     </div>
+                    <div class="modal fade" id="exampleModal-{{message.pk}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Confirm deletion</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Modal Content Goes Here -->
+                            <p>The content of this message will be deleted</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 6vw;">Close</button>
+                            <form method="post">
+                              {% csrf_token %}
+                              <input type="hidden" name="message_id" value="{{ message.pk }}">
+                              <input type="submit" class="btn btn-danger" value="Delete">
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                  {% endif %}
                 </div>
                 <p>{{message.decrypt_message}}</p>
                 {% if message.image %}
@@ -857,7 +957,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
             {% endif %}
           </div>
 
-          <div class="user-followers">
+          <div class="user-followers content-scroll">
             {% if followUsers %} {% for follower in followUsers %}
             <div class="followers">
               <div class="follower-img">
@@ -876,7 +976,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
             <h4>No users to display</h4>
             {% endif %}
           </div>
-          <div class="user-followings">
+          <div class="user-followings content-scroll">
             {% if followingUsers %} {% for follower in followingUsers %}
             <div class="followings">
               <div class="following-img">
@@ -902,6 +1002,8 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 
   <div class="confirm">
   </div>
+
+  
     {{ user.username|json_script:"json-username"}} 
     {{request.user.username|json_script:"json-loggedusername"}}
 
@@ -919,6 +1021,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
       const username = JSON.parse(
         document.getElementById("json-username").textContent
       );
+      
 
       function toggleDropdown(event, messageId) {
         event.preventDefault();
@@ -933,6 +1036,13 @@ background: linear-gradient(to bottom, #100007, #4c0827);
       const socket = new WebSocket(
         "ws://" + window.location.host + "/ws/dashboard/" + username + "/"
       );
+
+      function toggleDropdown(event, messageId) {
+        event.preventDefault();
+        var dropdown = document.getElementById("myDropdown-" + messageId);
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+      }
 
       if (document.querySelector("#editButton") !== null) {
         document.querySelector("#editButton").onclick = function () {
@@ -1006,6 +1116,9 @@ background: linear-gradient(to bottom, #100007, #4c0827);
         };
 
         var listItems = document.querySelectorAll(".group-recom li");
+        var followBtn=document.querySelector(".follow-button");
+
+        if (followBtn){
 
         document
           .querySelector(".follow-button")
@@ -1025,6 +1138,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
               })
             );
           });
+        }
 
         document.querySelector("#profile_img_navbar").onclick = function () {
           var redirectURL = "/dashboard/" + loggedusername + "/";

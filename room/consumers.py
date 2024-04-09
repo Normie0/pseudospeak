@@ -107,7 +107,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if 'searchRoom' in data:
             searchinput=data['searchRoom']
             username=data['username']
-            print(searchinput)
             results=await self.fetch_room(searchinput,username)
             await self.send(text_data=json.dumps({
                 'searchRooms':results
@@ -131,7 +130,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
     def fetch_room(self,searchinput,username):
         user=User.objects.get(username=username)
         room=Room.objects.filter(name__startswith=searchinput).exclude(Q(users=user))
-        json_data = [{'name': item.name, 'room_img_url': item.room_img.url, 'pk': item.pk} for item in room]
+        json_data = [{'name': item.name, 'room_img_url': item.room_img.url, 'pk': item.pk,'room_bio':item.description} for item in room]
 
         return json_data
         
