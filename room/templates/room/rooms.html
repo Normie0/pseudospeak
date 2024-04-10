@@ -731,12 +731,15 @@ background: linear-gradient(to bottom, #000000, #0b161e);
                             </div>
                         </div>
                         <div class="join-button">
-                            <a
-                                href="#"
-                                class="joinbtn btn btn-success"
-                                data-message-id="${item.pk}"
-                            >Join</a>
-                        </div>
+                <a
+                  href="#"
+                  class="joinbtn btn btn-success"
+                  data-message-id="${item.pk}"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModalCenter"
+                  >Join</a
+                >
+              </div>
                     </div>`;
             });
 
