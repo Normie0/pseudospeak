@@ -10,7 +10,7 @@ from .forms import *
 import random
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import Profile, TrendingMessage, Hashtag,ReportUser
+from .models import Profile, TrendingMessage, Hashtag,ReportUser,Notification
 from django.db.models import Sum, OuterRef
 from conversation.models import Conversation, ConversationMessage
 import base64
@@ -43,6 +43,9 @@ def index(request):
 ).exclude(
     user__in=blocked_users
 ).order_by("-custom_ordering")
+    
+    notifactions=Notification.objects.filter(user=request.user,seen=False)
+
     popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
     
     hashtags = Hashtag.objects.all()[:3]
@@ -58,10 +61,11 @@ def index(request):
             error_message="User Reported Successfully"
             return render(
         request, "main/index.html", {"messages": messages,"error_message": error_message,"category":"success","hashtags": hashtags,"popular_users":popular_users}
+
     )
         
     return render(
-        request, "main/index.html", {"messages": messages, "hashtags": hashtags,"popular_users":popular_users}
+        request, "main/index.html", {"messages": messages, "hashtags": hashtags,"popular_users":popular_users,"notifications":len(notifactions)}
     )
 
 
@@ -261,6 +265,10 @@ def conversation(request, conversation_id):
         "conversation/conversation.html",
         {"conversation": conversation, "conversation_messages": conversation_message},
     )
+
+def notfication(request,username):
+    notifications=Notification.objects.filter(user=request.user,seen=False)
+    return render(request,"main/notifications.html",{'notifications':notifications})
 
 from django.contrib.auth import update_session_auth_hash
 

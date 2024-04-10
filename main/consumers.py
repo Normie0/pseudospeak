@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import logging
 from django.core.files.base import ContentFile
 import base64
 import json
@@ -8,7 +9,7 @@ from django.contrib.auth.models import User
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.urls import reverse
-from .models import TrendingMessage, Hashtag
+from .models import TrendingMessage, Hashtag,Notification
 from .models import Profile
 from django.db.models import F
 import re, time
@@ -639,4 +640,62 @@ class ReplyConsumer(AsyncWebsocketConsumer):
         reply_message=TrendingMessage.objects.create(user=user,parent_message=message,content=message_decoded)
         print(reply_message.decrypt_message())
         return user.profile.profile_img.url,username,reply_message.pk
+        
+
+class NotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add("notification_group", self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, code):
+        pass
+
+    async def receive(self, text_data):
+        data=json.loads(text_data)
+        touser=await self.save_notification(data)
+        notification_message = f"You received a new message from {data['username']}"
+        await self.broadcast_notification(touser.username, notification_message)
+        
+        
+
+    async def broadcast_notification(self, touser, message):
+    # Add the consumer's channel to the group
+
+        # Broadcast the message to all consumers in the group
+        await self.channel_layer.group_send(
+            "notification_group",
+            {
+                "type": "send_notification",
+                "touser": touser,
+                "message": message,
+            },
+
+        )
+
+    async def send_notification(self, event):
+        touser = event["touser"]
+        message = event["message"]
+
+        # Send the notification to the consumer
+        await self.send(text_data=json.dumps({
+            "touser": touser,
+            "message": message,
+        }))
+
+        print("Success")
+
+
+    @sync_to_async
+    def save_notification(self,data):
+        username=data['username'].replace('"','')
+        content=data['content']
+        user=User.objects.get(username=username)
+        conversation=Conversation.objects.get(pk=data['id'])
+        for m in conversation.members.all():
+            if m!=user:
+                touser=m
+                notification=Notification.objects.create(user=m,content=data['content'])
+                notification.save()
+        return touser
+        
         

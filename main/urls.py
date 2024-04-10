@@ -13,7 +13,8 @@ urlpatterns=[
     path("messenger/",views.messenger,name='messenger'),
     path("settings/",views.settings,name='settings'),
     path("invite/",views.inviteview,name='inviteview'),
-    path("messenger/<int:conversation_id>/",views.conversation,name='conversation')
+    path("messenger/<int:conversation_id>/",views.conversation,name='conversation'),
+    path("notifications/<str:username>/",views.notfication,name="notification"),
 ]
 
 if settings.DEBUG:

@@ -14,7 +14,8 @@
     />
     <style>
       .chat-container {
-        width: 73%;
+        width: 70%;
+        margin-left: 1%;
         background-color: hsla(0, 0%, 53%, 0.07);
         padding-top: 20px;
         display: flex;
@@ -289,6 +290,10 @@
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
             </li>
+            <li>
+              <i class="fa-solid fa-bell"></i
+              ><a href="">Notifications</a>
+            </li>
           </ul>
         </div>
 
@@ -371,6 +376,12 @@ const socket = new WebSocket(
     window.location.host +
     "/ws/messenger/"
 )
+
+const socket2=new WebSocket("ws://"+window.location.host+"/ws/notification/messages/"+username+"/");
+    socket2.onopen=function(){
+        console.log("Socket2 connected");
+      }
+
 
 socket.onopen = function () {
     console.log("Connection Established")

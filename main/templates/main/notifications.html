@@ -146,11 +146,6 @@
           width: var(--progress-width); /* End with 100% width */
         }
       }
-      .icon-badge{
-        position: relative;
-        top: -10px;
-        color: white;
-      }
     </style>
   </head>
   <body>
@@ -176,7 +171,7 @@
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
         <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
-          ><img src="media/images/Logo" alt=""></a
+          ><img src="/media/images/Logo" alt=""></a
         >
         <button
           class="navbar-toggler"
@@ -232,220 +227,15 @@
             </li>
             <li>
               <i class="fa-solid fa-bell"></i
-              ><a href="{% url 'notification' username=request.user.username %}">
-                Notifications
-                <span class="icon-badge">{{notifications}}</span>
-              </a>
+              ><a href="">Notifications</a>
             </li>
           </ul>
         </div>
         <!--Msgbox-->
         <div class="col-6 content-1b content-scroll">
-          <div class="msgbox">
-            <form>
-              <div class="msgbox-input">
-                <div class="msgbox-img">
-                  <img src="{{user.profile.profile_img.url}}" alt="" />
-                </div>
-                <input
-                  id="data1"
-                  type="text"
-                  placeholder="Write fearlessly..."
-                />
-              </div>
-              <div class="msg-con row">
-                <button
-                  type="button"
-                  id="uploadButton"
-                  class="msgbox-btn2 col-2 align-self-center"
-                >
-                  <i class="fa-solid fa-image" onclick="uploadImage()"></i>
-                </button>
-                <button
-                  class="msgbox-btn2 col-2 align-self-center"
-                  id="createPoll"
-                >
-                  <i class="fa-solid fa-list"></i>
-                </button>
-                <button
-                  class="msgbox-btn2 col-2 align-self-center"
-                  id="emoji-button"
-                >
-                  <i class="fa-solid fa-face-smile"></i>
-                </button>
-                <button class="msgbox-btn btn align-self-center" id="post-msg">
-                  Post
-                </button>
-              </div>
-              <!-- Create a hidden file input for image upload -->
-              <input
-                type="file"
-                id="imageInput"
-                accept="image/*"
-                style="display: none"
-              />
-              <emoji-picker id="emoji-picker"></emoji-picker>
-
-              <div id="imageToUpload" style="display: none">
-                <img src="" alt="" id="imageUpload" />
-              </div>
-
-              <div id="poll" style="display: none">
-                <input type="hidden" id="confirmPoll" value="none" />
-                <input
-                  type="text"
-                  name="option1"
-                  id="option1"
-                  placeholder="Option 1"
-                />
-                <input
-                  type="text"
-                  name="option2"
-                  id="option2"
-                  placeholder="Option 2"
-                />
-              </div>
-
-              <!-- sd -->
-              {% for m in messages %}
-              <div id="message-output" class="msg-output-main row">
-                <div class="msgbox-trendings">
-                  <span
-                    ><i class="fa-solid fa-arrow-trend-up"></i>Trending</span
-                  >
-                </div>
-                <div class="msg-output">
-                  <div class="msg-output-img">
-                    <img
-                      src="{{m.user.profile.profile_img.url}}"
-                      alt="Profile Picture"
-                      id="profile-img"
-                      data-img-id="{{m.user.username}}"
-                    />
-                  </div>
-                  <div class="msg-output-details">
-                    <div class="usernameDropdown">
-                      <h5 style="display: inline">{{m.user.username}}</h5>
-                      <div class="dropdown">
-                        <button
-                          id="dropdownButton"
-                          onclick="toggleDropdown(event,'{{ m.pk }}')"
-                          style="
-                            background: transparent;
-                            color: white;
-                            border: none;
-                          "
-                        >
-                          <i class="fa-solid fa-ellipsis-vertical"></i>
-                        </button>
-                        <div
-                          class="dropdown-content"
-                          id="myDropdown-{{ m.pk }}"
-                        >
-                          <div
-                            class="contents"
-                            id="report"
-                            data-user-username="{{m.user.username}}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#reportModal"
-                          >
-                            Report
-                          </div>
-                          {% if m.user != request.user %}
-                          <div
-                            class="contents"
-                            id="block"
-                            data-user-username="{{m.user.username}}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModalCenter"
-                          >
-                            Block User
-                          </div>
-                          {% endif %}
-                        </div>
-                      </div>
-                    </div>
-                    <p>{{m.decrypt_message}}</p>
-                    {% if m.image %}
-                    <img src="{{m.image.url}}" alt="" />
-                    {% endif %}{% if m.option1 %} 
-                    {% if not request.user in m.voted.all %}
-                    <div class="option-wrapper" id="{{ m.pk }}">
-                      <div class="option-container">
-                        <div
-                          class="choices"
-                          onclick="vote('{{m.pk}}','{{m.decrypt_message}}','{{m.option1}}')"
-                        >
-                          {{ m.option1 }}
-                        </div>
-                        <div
-                          class="choices"
-                          onclick="vote('{{m.pk}}','{{m.decrypt_message}}','{{m.option2}}')"
-                        >
-                          {{ m.option2 }}
-                        </div>
-                      </div>
-                    </div>
-                    {% else %}
-                    <div class="wrapper">
-                      <div class="progress-wrapper">
-                        <div
-                          class="progress-bar-container"
-                          style="--progress-width: {{ m.option1_count }}%;"
-                        >
-                          <div class="option">{{ m.option1 }}</div>
-                        </div>
-                        <div class="option-percent">{{ m.option1_count }}%</div>
-                      </div>
-                      <div class="progress-wrapper">
-                        <div
-                          class="progress-bar-container"
-                          style="--progress-width: {{ m.option2_count }}%;"
-                        >
-                          <div class="option">{{ m.option2 }}</div>
-                        </div>
-                        <div class="option-percent">{{ m.option2_count }}%</div>
-                      </div>
-                    </div>
-                    {% endif %} {% endif %}
-                  </div>
-                </div>
-                <div class="msg-output-icons">
-                  <i
-                    class="far fa-comment"
-                    id="comment"
-                    data-message-id="{{m.pk}}"
-                  ></i>
-                  <i class="fa-solid fa-reply"></i>
-                  {% if request.user not in m.userLiked.all %}
-                  <i
-                    class="far fa-regular fa-sharp fa-thumbs-up"
-                    id="likes"
-                    data-likes-id="{{m.pk}}"
-                    >{{m.likes}}</i
-                  >
-                  {% else %}
-                  <i
-                    class="far fa-sharp fa-solid fa-thumbs-up"
-                    id="likes"
-                    data-likes-id="{{m.pk}}"
-                    style="color: #1f9bf0"
-                    >{{m.likes}}</i
-                  >
-                  {% endif %}
-                  <i
-                    class="fa-regular fa-eye"
-                    id="views"
-                    data-views-id="{{m.pk}}"
-                    >{{m.view_count}}</i
-                  >
-                </div>
-              </div>
-              {% endfor %}
-
-              <!-- endd -->
-            </form>
-          </div>
+          {% for notification in notifications %}
+          <h5>{{notification.user}}-{{notification.content}}</h5>
+          {% endfor %}
 
           <!-- search box -->
         </div>
@@ -653,14 +443,24 @@
       socket2.onopen=function(){
         console.log("Socket2 connected");
       }
-      socket
 
-      const imageUploadDiv = document.querySelector("#imageToUpload");
-      const imageUpload = document.querySelector("#imageUpload");
+      socket2.onmessage=function(e){
+        const data=JSON.parse(e.data);
+        if (data["touser"]===username){
+          const content=document.querySelector(".content-1b");
+          const newHeading = document.createElement('h5');
 
-      const createPoll = document.querySelector("#createPoll");
+// Set the inner HTML of the new <h5> element using template literals
+newHeading.innerHTML = `${data.message}`;
 
-      const confirmPoll = document.querySelector("#confirmPoll");
+// Insert the new <h5> element before the first child of 'content'
+content.insertBefore(newHeading, content.firstChild);
+
+          content.insertBefore(newHeading,content.firstChild);
+        }
+
+      }
+      
 
       setInterval(() => {
         if (socket.readyState === WebSocket.OPEN) {
@@ -672,14 +472,6 @@
         }
       }, 30000);
 
-      function toggleDropdown(event, messageId) {
-        event.preventDefault();
-        var dropdown = document.getElementById("myDropdown-" + messageId);
-        if (dropdown){
-        dropdown.style.display =
-          dropdown.style.display === "block" ? "none" : "block";
-        }
-      }
 
       document.querySelector("#profile_img_navbar").onclick = function () {
         const userName = JSON.parse(
@@ -695,138 +487,13 @@
         }
       };
 
-      let check = false; // Define check at the top level so it's accessible everywhere
-
-      function uploadImage() {
-        document.getElementById("imageInput").click();
-      }
-
-      function handleFile(event) {
-        const file = event.target.files[0];
-        poll.style.display = "none";
-        imageUploadDiv.style.display = "block";
-        const src = URL.createObjectURL(file);
-        imageUpload.src = src;
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            console.log(img.src);
-            check = true; // Set check to true when a file is loaded
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-
-      document
-        .getElementById("imageInput")
-        .addEventListener("change", handleFile);
-
-      //poll
-      createPoll.addEventListener("click", function (e) {
-        e.preventDefault();
-        var poll = document.querySelector("#poll");
-        confirmPoll.value = "poll";
-        if (window.getComputedStyle(poll).display === "block") {
-          // Block of code to be executed if the 'poll' element is displayed as a block
-          poll.style.display = "none";
-          document.querySelector("#option1").value = null;
-          document.querySelector("#option2").value = null;
-          confirmPoll.value = "";
-        } else {
-          poll.style.display = "block";
-        }
-      });
-
-      function vote(messageId, content, optionSelected) {
-        const messsageContent = content;
-        const userName = JSON.parse(
-          document.getElementById("json-username").textContent
-        );
-
-        socket.send(
-          JSON.stringify({
-            username: userName,
-            content: messsageContent,
-            messageId: messageId,
-            selected: optionSelected,
-          })
-        );
-      }
 
       socket.onopen = function () {
         console.log("WebSocket URL:", "ws://" + window.location.host + "/ws/");
         console.log("WebSocket connection established.");
 
         const post = document.querySelector("#post-msg");
-        post.onclick = function (e) {
-          e.preventDefault();
-
-          imageUploadDiv.style.display = "none";
-          imageUpload.src = "";
-
-          poll.style.display = "none";
-
-          const data = document.querySelector("#data1");
-          const inputdata = data.value;
-          const option1 = document.querySelector("#option1").value;
-          const option2 = document.querySelector("#option2").value;
-          if (inputdata.trim() !== "" && confirmPoll.value === "poll") {
-            socket.send(
-              JSON.stringify({
-                question: inputdata,
-                username: username,
-                option1: option1,
-                option2: option2,
-              })
-            );
-            // Clear the input field and image container
-            data.value = "";
-            document.querySelector("#option1").value = "";
-            document.querySelector("#option2").value = "";
-            confirmPoll.value = "";
-          } else if (inputdata.trim() !== "") {
-            console.log(check);
-            if (check) {
-              // Get the file from the file input
-              const file = document.getElementById("imageInput").files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                  const imgBase64 = e.target.result;
-                  console.log(inputdata, username, imgBase64);
-                  // Send the image and the inputdata together
-                  socket.send(
-                    JSON.stringify({
-                      content: inputdata,
-                      username: username,
-                      image: imgBase64,
-                    })
-                  );
-
-                  // Clear the input field and image container
-                  data.value = "";
-                  check = false; // Reset check to false after sending the image
-                };
-                reader.readAsDataURL(file);
-              }
-            } else {
-              // If there is no image, send only the inputdata
-              socket.send(
-                JSON.stringify({
-                  content: inputdata,
-                  username: username,
-                  image: null,
-                })
-              );
-
-              // Clear the input field
-              data.value = "";
-            }
-          }
-        };
-      };
+        
 
       socket.onmessage = function (e) {
         const data = JSON.parse(e.data);
@@ -1076,15 +743,6 @@
         }
       };
 
-      socket2.onmessage=function(e){
-        const data=JSON.parse(e.data);
-        if (data['touser']===username){
-        const iconBadge=document.querySelector(".icon-badge");
-        var counter=parseInt(iconBadge.innerHTML);
-        iconBadge.innerHTML=++counter;
-        }
-      }
-
       socket.onclose = function (e) {
         console.log("WebSocket connection closed.");
       };
@@ -1094,23 +752,6 @@
         objDiv.scrollTop = objDiv.scrollBottom;
       }
 
-      document.body.addEventListener("click", function (e) {
-        if (e.target && e.target.id == "comment") {
-          const messageID = e.target.getAttribute("data-message-id");
-          const userName = JSON.parse(
-            document.getElementById("json-username").textContent
-          );
-          console.log(messageID);
-          socket.send(
-            JSON.stringify({
-              msgId: messageID,
-              username: userName,
-            })
-          );
-          const redirectURL = `/message/${messageID}/`;
-          window.location.href = redirectURL;
-        }
-      });
 
       // search bar
       document
@@ -1129,31 +770,7 @@
         });
 
       // message likes
-      document.body.addEventListener("click", function (e) {
-        if (e.target && e.target.id == "likes") {
-          const messageID = e.target.getAttribute("data-likes-id");
-          const userName = JSON.parse(
-            document.getElementById("json-username").textContent
-          );
-          console.log("Message id " + messageID);
-
-          socket.send(
-            JSON.stringify({
-              likeId: messageID,
-              username: userName,
-            })
-          );
-
-          const isLiked = e.target.classList.contains("fa-solid");
-          if (isLiked === true) {
-            e.target.classList.remove("fa-solid");
-            e.target.style.color = "#fff";
-          } else {
-            e.target.classList.add("fa-solid");
-            e.target.style.color = "#1d9bf0";
-          }
-        }
-      });
+      
 
       // dashboard
 
@@ -1282,7 +899,7 @@ window.addEventListener('beforeunload', function () {
           window.location.href = redirectURL;
         }
       });
-
+    }
       // emoji picker
     </script>
   </body>

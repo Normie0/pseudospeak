@@ -101,3 +101,12 @@ class ReportUser(models.Model):
 
     def __str__(self) -> str:
         return f'Reported user={self.user.username} , reason={self.reason} , info-{self.additionalInfo}'
+
+
+class Notification(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    content=models.TextField()
+    seen=models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f'{self.user}-{self.content}'

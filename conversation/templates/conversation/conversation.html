@@ -532,18 +532,18 @@
 
             <div class="card-footer">
               <div class="input-group">
-                {% for m in conversation.members.all %} 
-                {% if m != request.user%}
-                {% if m not in request.user.prfoile.blocked_user.all %}
+                {% for m in conversation.members.all %}
+                {% if m != request.user %}
+                {% if m in request.user.profile.blocked_user.all %}
+                <p style="color: white; margin: 10px auto;">You can no longer send messages to {{m.username}}</p>
+                {% else %}
                   <input
                     type="text"
                     class="message-input-1"
                     placeholder="Your message..."/>
                   
                   <button class="msg-button-1"><i class="fa-solid fa-paper-plane"></i></button>
-                {% else %}
-                <p style="color: white;">You can no longer send messages to {{m.username}}</p>
-                {% endif %}
+                  {% endif %}
                 {% endif %}
                 {% endfor %}
               </div>
@@ -584,6 +584,10 @@
       const socket = new WebSocket(
         "ws://" + window.location.host + "/ws/messenger/conversation/" + id + "/"
       );
+      const socket2=new WebSocket("ws://"+window.location.host+"/ws/notification/messages/"+username+"/");
+    socket2.onopen=function(){
+        console.log("Socket2 connected");
+      }
 
       socket.onopen = function (e) {
         console.log("Connection Established");
@@ -609,6 +613,13 @@
             id: id,
           })
         );
+        socket2.send(
+          JSON.stringify({
+            content: message,
+            username: username,
+            id: id,
+          })
+        )
         }
         messageInputDom.value = "";
         return false;
@@ -658,6 +669,11 @@
             console.error('Username not found.');
         }
     }
+
+    socket2.onmessage=function(e){
+        const data=JSON.parse(e.data);
+        console.log(data);
+      }
 
     </script>
   </body>
