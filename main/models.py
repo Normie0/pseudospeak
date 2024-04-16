@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from django.conf import settings
 from cryptography.fernet import Fernet
+from conversation.models import Conversation
 
 f=Fernet(settings.ENCRYPT_KEY)
 
@@ -105,6 +106,7 @@ class ReportUser(models.Model):
 
 class Notification(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+    conversation=models.ForeignKey(Conversation,blank=True,null=True,on_delete=models.CASCADE)
     content=models.TextField()
     seen=models.BooleanField(default=False)
     

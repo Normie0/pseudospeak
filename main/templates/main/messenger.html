@@ -292,7 +292,10 @@
             </li>
             <li>
               <i class="fa-solid fa-bell"></i
-              ><a href="">Notifications</a>
+              ><a href="http://127.0.0.1:8000/notifications/{{request.user.username}}/">
+                Notifications
+                <span class="icon-badge">{{notifications}}</span>
+              </a>
             </li>
           </ul>
         </div>

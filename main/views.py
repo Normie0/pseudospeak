@@ -192,11 +192,12 @@ def dashboard(request, profileId):
         if messageId:
             message=TrendingMessage.objects.filter(pk=messageId)
             message.delete()
+    
     user = User.objects.get(username=profileId)
     trendingmessages = TrendingMessage.objects.filter(
         user=user, parent_message=None
     ).order_by("-date_added")
-
+    popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
     trendingmessagescount = len(trendingmessages)
     followers = user.profile.follow.all()
     following = user.profile.following.all()
@@ -223,6 +224,7 @@ def dashboard(request, profileId):
             "followingUsers": following,
             "followUsers": followers,
             "total_viewcount": total_viewcount,
+            "popular_users":popular_users,
         },
     )
 
@@ -268,7 +270,10 @@ def conversation(request, conversation_id):
 
 def notfication(request,username):
     notifications=Notification.objects.filter(user=request.user,seen=False)
-    return render(request,"main/notifications.html",{'notifications':notifications})
+    popular_users = User.objects.annotate(follow_count=Count('following')).order_by('-follow_count')[:3]
+    hashtags = Hashtag.objects.all()[:3]
+    return render(request,"main/notifications.html",{'notifications':notifications,'popular_users':popular_users,'hashtags':hashtags})
+
 
 from django.contrib.auth import update_session_auth_hash
 

@@ -409,8 +409,9 @@ background: linear-gradient(to bottom, #000000, #0b161e);
 }
 
 .content-scroll {
-  height: 100vh;
+  height: auto;
   overflow-y: auto;
+  max-height: 80vh;
 }
 
 .content-scroll::-webkit-scrollbar {

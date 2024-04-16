@@ -652,13 +652,17 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data=json.loads(text_data)
-        touser=await self.save_notification(data)
-        notification_message = f"You received a new message from {data['username']}"
-        await self.broadcast_notification(touser.username, notification_message)
+        if 'notification_id' in data:
+            print(data)
+            await self.modify_notification(data['notification_id'])
+        elif 'username' in data:
+            touser=await self.save_notification(data)
+            notification_message = f"You received a new message from {data['username']}"
+            await self.broadcast_notification(touser.username, notification_message,data['id'])
         
         
 
-    async def broadcast_notification(self, touser, message):
+    async def broadcast_notification(self, touser, message,id):
     # Add the consumer's channel to the group
 
         # Broadcast the message to all consumers in the group
@@ -668,6 +672,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "type": "send_notification",
                 "touser": touser,
                 "message": message,
+                "id":id,
             },
 
         )
@@ -675,11 +680,13 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def send_notification(self, event):
         touser = event["touser"]
         message = event["message"]
+        id=event["id"]
 
         # Send the notification to the consumer
         await self.send(text_data=json.dumps({
             "touser": touser,
             "message": message,
+            "id":id,
         }))
 
         print("Success")
@@ -687,15 +694,22 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def save_notification(self,data):
-        username=data['username'].replace('"','')
-        content=data['content']
-        user=User.objects.get(username=username)
+        username = data.get('username', '')  # Get the value of 'username' or default to an empty string if key is not found
+        # Remove unwanted characters (e.g., double quotes) from the 'username' value
+        sanitized_username = username.replace('"', '')
+        user=User.objects.get(username=sanitized_username)
         conversation=Conversation.objects.get(pk=data['id'])
         for m in conversation.members.all():
             if m!=user:
                 touser=m
-                notification=Notification.objects.create(user=m,content=data['content'])
+                notification=Notification.objects.create(user=m,conversation=conversation,content=f"You received a new message from {sanitized_username}")
                 notification.save()
         return touser
+    
+    @sync_to_async
+    def modify_notification(self,id):
+        notification=Notification.objects.get(pk=id)
+        notification.seen=True
+        notification.save()
         
         

@@ -454,6 +454,14 @@ background: linear-gradient(to bottom, #000000, #0b161e);
       .add-group {
         cursor: pointer;
       }
+      #grouplist{
+        overflow: auto;
+        margin-bottom: 40px;
+        max-height: 200px;
+      }
+      #grouplist::-webkit-scrollbar{
+        width: 0em;
+      }
     </style>
     <!-- <link rel="stylesheet" href="{% static 'main/css/index.css' %}"> -->
   </head>
@@ -528,6 +536,13 @@ background: linear-gradient(to bottom, #000000, #0b161e);
             <li>
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-bell"></i
+              ><a href="{% url 'notification' username=request.user.username %}">
+                Notifications
+                <span class="icon-badge">{{notifications}}</span>
+              </a>
             </li>
           </ul>
         </div>

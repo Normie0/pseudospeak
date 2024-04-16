@@ -268,7 +268,7 @@
       .profile-data {
         display: flex;
         justify-content: space-around;
-        margin-top: 25px;
+        margin-top: 5px;
         border: 1px solid hsla(0, 0%, 53%, 0.07);
       }
 
@@ -281,7 +281,7 @@
         justify-content: space-between;
       }
       .follow-button {
-        padding: 48px 60px;
+        padding: 48px 6px;
       }
 
       #editButton {
@@ -620,12 +620,13 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 }
 .msg-output-icons {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  margin-top: 10px;
-  justify-content: space-between;
-  height: 4vh;
-  width: 60vw;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 10px;
+    justify-content: space-around;
+    height: 4vh;
+    position: relative;
+    left: -10%;
 }
 
 .msg-output-icons i {
@@ -642,7 +643,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
 .dropdown {
         position: relative;
         display: inline-block;
-        left: 35vw;
+        left: 20vw;
         background-color: transparent;
       }
 
@@ -700,16 +701,74 @@ background: linear-gradient(to bottom, #100007, #4c0827);
       .modal-content{
         background: linear-gradient(to bottom, #000000, #0b161e);
       }
-      .content-scroll {
-  height: 100vh;
-  overflow-y: auto;
-}
 
-.content-scroll::-webkit-scrollbar {
-  width: 0em;
+
+.popular-profiles{
+  margin: 14px 0px;
+}
+.popular-user h4 {
+  font-weight: bolder;
+  margin: 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #1F1F20;
+}
+.pop-pro-img {
+  width: 3vw;
+  height: 6vh;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+.pop-pro-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.popular-username {
+  display: flex;
+}
+.progress-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pop-pro-users {
+  display: flex;
+  flex-direction: column;
+  padding-left: 13px;
+}
+.pop-pro-users h5 {
+  margin: 0;
+}
+.pop-pro-users p {
+  font-size: small;
+  background-color: black;
+  width: 7vw;
+  text-align: center;
+  border-radius: 20px;
+  justify-content: center;
+  font-size: small;
+  background-color: black;
+  width: 7vw;
+  text-align: center;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
 }
     </style>
   <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
+  <style>
+      .content-scroll {
+        height: 100vh;
+        overflow-y: auto;
+        max-height: 150px;
+      }
+
+      .content-scroll::-webkit-scrollbar {
+        width: 0em;
+      }
+  </style>
   </head>
   <body>
     <label class="button-res">
@@ -784,9 +843,16 @@ background: linear-gradient(to bottom, #100007, #4c0827);
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
             </li>
+            <li>
+              <i class="fa-solid fa-bell"></i
+              ><a href="http://127.0.0.1:8000/notifications/{{request.user.username}}/">
+                Notifications
+                <span class="icon-badge">{{notifications}}</span>
+              </a>
+            </li>
           </ul>
         </div>
-        <div class="col-9 group-con">
+        <div class="col-6 group-con">
           <div class="profile">
             <h3>Profile</h3>
           </div>
@@ -797,7 +863,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
             {% if user.username != request.user.username %}
             <div class="follow-button">
               {% if user not in request.user.profile.following.all %}
-              <a href="#" class="btn signbtn followbtn me-4">Follow</a>
+              <a href="#" class="btn signbtn followbtn me-4" style="background-color: rgba(65,128,164,255);">Follow</a>
               {% else %}
               <a href="#" class="btn signbtn followbtn me-4">Unfollow</a>
               {% endif %}
@@ -996,6 +1062,43 @@ background: linear-gradient(to bottom, #100007, #4c0827);
             {% endif %}
           </div>
         </div>
+
+        
+        <div class="col-3 content-1a">
+          <div class="popular-user">
+            <h4>Popular Users</h4>
+
+            
+          <div class="search-container">
+            <input
+              type="text"
+              name="search-input"
+              class="search-input"
+              id="search-input"
+              placeholder="Search user ..."
+            />
+            <i class="fas fa-search search-icon" id="search-icon"></i>
+          </div>
+
+            <div class="popular-profiles">
+              {% for p in popular_users %}
+              <div class="popular-username">
+                <div class="pop-pro-img">
+                  <a href="{% url 'dashboard' profileId=p.username %}">
+                    <img src="{{p.profile.profile_img.url}}" />
+                  </a>
+                </div>
+                <div class="pop-pro-users">
+                  <h5>{{p.username}}</h5>
+                  <p>Followers: {{p.profile.follow_count}}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

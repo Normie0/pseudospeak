@@ -146,6 +146,16 @@
           width: var(--progress-width); /* End with 100% width */
         }
       }
+      .notification{
+        display: flex;
+    align-items: center;
+    margin-top: 15px;
+    border-radius: 15px;
+    height: 11vh;
+    background: hsla(0, 0%, 53%, 0.07);
+    justify-content: space-between;
+    padding: 0px 24px;
+      }
     </style>
   </head>
   <body>
@@ -234,8 +244,15 @@
         <!--Msgbox-->
         <div class="col-6 content-1b content-scroll">
           {% for notification in notifications %}
-          <h5>{{notification.user}}-{{notification.content}}</h5>
-          {% endfor %}
+          <div class="notification" data-notification-id="{{notification.pk}}">
+    <a href="{% url 'conversation' conversation_id=notification.conversation.pk %}">
+        <h5 class="notification-ele">
+          {{ notification.content }}
+        </h5>
+    </a>
+  </div>
+{% endfor %}
+
 
           <!-- search box -->
         </div>
@@ -446,17 +463,27 @@
 
       socket2.onmessage=function(e){
         const data=JSON.parse(e.data);
+        console.log(data);
         if (data["touser"]===username){
-          const content=document.querySelector(".content-1b");
-          const newHeading = document.createElement('h5');
+          const content = document.querySelector(".content-1b");
+const template = content.innerHTML;
 
-// Set the inner HTML of the new <h5> element using template literals
-newHeading.innerHTML = `${data.message}`;
+// Create a new div element for the heading
+const newHeading = document.createElement('div');
+newHeading.innerHTML = `<div class="notification" data-notification-id="${data.id}">
+  <a href="http://127.0.0.1:8000/messenger/${data.id}/">
+        <h5 class="notification-ele">
+         ${data.message}
+        </h5>
+    </a>
+  </div>`;
 
-// Insert the new <h5> element before the first child of 'content'
+// Prepend the newHeading element before the existing content in 'content'
 content.insertBefore(newHeading, content.firstChild);
 
-          content.insertBefore(newHeading,content.firstChild);
+// Optionally, you can also append the original template after the newHeading
+content.innerHTML = newHeading.innerHTML + template;
+
         }
 
       }
@@ -470,7 +497,30 @@ content.insertBefore(newHeading, content.firstChild);
             })
           );
         }
+        if (socket2.readyState === WebSocket.OPEN) {
+          socket2.send(
+            JSON.stringify({
+              ping: "ping",
+            })
+          );
+        }
       }, 30000);
+
+      const notifications = document.querySelectorAll('.notification');
+
+    // Attach click event listeners to each notification element
+    notifications.forEach(function(notification) {
+        notification.addEventListener('click', function(event) {
+            // Retrieve the notification ID from the clicked element's data attribute
+            const notificationId = notification.getAttribute('data-notification-id');
+
+            socket2.send(JSON.stringify(
+              {
+                notification_id:notificationId,
+              }
+            ))
+        });
+    });
 
 
       document.querySelector("#profile_img_navbar").onclick = function () {

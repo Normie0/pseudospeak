@@ -24,12 +24,11 @@
       .usernameDropdown {
         display: flex;
         justify-content: space-between;
-        width: 8vw;
       }
       .dropdown {
         position: relative;
         display: inline-block;
-        left: 35vw;
+        left: -1vw;
         background-color: transparent;
       }
 
@@ -512,7 +511,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="background: linear-gradient(to bottom, #100007, #4c0827);">
+        <div class="modal-content" style="background: linear-gradient(to bottom, #000000, #0b161e);">
           <div class="modal-header">
             <h5
               class="modal-title"
@@ -563,7 +562,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="background: linear-gradient(to bottom, #100007, #4c0827);">
+        <div class="modal-content" style="background: linear-gradient(to bottom, #000000, #0b161e);">
           <div class="modal-header">
             <h5
               class="modal-title"
@@ -585,7 +584,6 @@
             <form method="post" class="report-form">
               {% csrf_token %}
               <input type="hidden" name="userToReport" id="userToReport" />
-              <h5>Report User</h5>
               <label for="reason">Reason for Report:</label>
               <div>
                 <input
@@ -604,17 +602,17 @@
                 <label for="reason2">Abusive</label>
   
                 <input type="radio" id="reason2" name="reason" value="spam" />
-                <label for="reason2">Inappropraite content</label>
-  
-                <input type="radio" id="reason2" name="reason" value="spam" />
                 <label for="reason2">Other</label>
-              </div>
+              </div><br>
   
               <label for="additionalInfo">Additional Information:</label><br />
               <textarea
                 id="additionalInfo"
                 name="additionalInfo"
-                rows="4"
+                rows="2"
+                style="resize: none;
+                width: 100%;
+                height: 30px;"
               ></textarea>
           </div>
           <div class="modal-footer">
@@ -890,7 +888,7 @@
             <div class="msg-output-details">
               <div class="usernameDropdown">
                       <h5 style="display: inline">${data.username}</h5>
-                      <div class="dropdown">
+                      <div class="dropdown" style="left:1.5vw">
                         <button
                           id="dropdownButton"
                           onclick="toggleDropdown(event,'{{ m.pk }}')"
@@ -1088,11 +1086,6 @@
       socket.onclose = function (e) {
         console.log("WebSocket connection closed.");
       };
-
-      function scrollToTop() {
-        let objDiv = document.querySelector(".msgbox");
-        objDiv.scrollTop = objDiv.scrollBottom;
-      }
 
       document.body.addEventListener("click", function (e) {
         if (e.target && e.target.id == "comment") {
