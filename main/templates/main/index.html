@@ -4,7 +4,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>PseudoSpeak</title>
+    <link rel="shortcut icon" href="/media/images/Logo" type="image/x-icon">
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -147,8 +148,10 @@
       }
       .icon-badge{
         position: relative;
-        top: -10px;
-        color: white;
+        font-size: 15px;
+        margin-left: -5px;
+        top: -20px;
+        color: red;
       }
     </style>
   </head>
@@ -175,7 +178,7 @@
       <div class="container-fluid">
         <!-- <img src="/img/logo2.png" alt=""> -->
         <a class="navbar-brand ms-5 nav-logo" href="{% url 'index' %}"
-          ><img src="media/images/Logo" alt=""></a
+          ><img src="media/images/Logo" alt="" id="navbar-logo"></a
         >
         <button
           class="navbar-toggler"
@@ -190,6 +193,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <button id="mode-toggle">Toggle Light Mode</button>
+          <a href="{% url 'notification' username=request.user.username %}" style="margin-right: 10px;font-size: 30px;">
+            <i class="fa-solid fa-bell"></i
+              >
+              <span class="icon-badge">{{notifications}}</span>
+            </a>
           {% if user.is_authenticated %}
           <img
             id="profile_img_navbar"
@@ -229,13 +238,7 @@
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
             </li>
-            <li>
-              <i class="fa-solid fa-bell"></i
-              ><a href="{% url 'notification' username=request.user.username %}">
-                Notifications
-                <span class="icon-badge">{{notifications}}</span>
-              </a>
-            </li>
+            
           </ul>
         </div>
         <!--Msgbox-->
@@ -660,6 +663,35 @@
 
       const confirmPoll = document.querySelector("#confirmPoll");
 
+      const modeToggle = document.getElementById('mode-toggle');
+    const body = document.body;
+
+    // Check if there's a mode preference stored
+    const currentMode = localStorage.getItem('mode');
+
+    if (currentMode === 'light') {
+        enableLightMode();
+    }
+
+    // Toggle mode when button is clicked
+    modeToggle.addEventListener('click', function() {
+      const img=document.querySelector("#navbar-logo");
+        if (body.classList.contains('light-mode')) {
+            // Switch to dark mode
+            img.src="/media/images/Logo";
+            body.classList.remove('light-mode');
+            localStorage.setItem('mode', 'dark');
+        } else {
+            // Switch to light mode
+            enableLightMode();
+            img.src="/media/images/lightlogo";
+            localStorage.setItem('mode', 'light');
+        }});
+
+        function enableLightMode() {
+        body.classList.add('light-mode');
+    }
+
       setInterval(() => {
         if (socket.readyState === WebSocket.OPEN) {
           socket.send(
@@ -870,7 +902,7 @@
           } else {
             console.log("Error");
           }
-        } else if (data["choice1"] && data["choice2"]) {
+        } else if (data["choice1"] && data["choice2"] && data.username===username) {
           console.log("Poll event");
           const template1 = `
     <div class="msg-output-main row">
@@ -984,7 +1016,7 @@
         }
 
         // Get the message container and insert the new message at the beginning
-        else if (!data["confirm"] && data["content"]) {
+        else if (!data["confirm"] && data["content"] && data.username===username) {
           console.log("Content event");
           const template = `
         <div class="msg-output-main row">

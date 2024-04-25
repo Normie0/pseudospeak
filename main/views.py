@@ -95,7 +95,6 @@ def login_or_signup_view(request):
 
         if action == "signup":
             error_message = None
-            print("This method is working")
             username = request.POST.get("username")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")

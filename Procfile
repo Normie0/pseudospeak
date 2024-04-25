@@ -1,1 +1,1 @@
-web: gunicorn pseudospeak.asgi:application
+web: gunicorn pseudospeak.asgi --log-file

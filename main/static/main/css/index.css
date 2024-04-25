@@ -29,7 +29,7 @@ background: linear-gradient(to bottom, #000000, #0b161e);
 }
 
 .signbtn {
-  background-color: red;
+  background-color: rgb(248, 68, 100);
   color: rgb(5, 5, 5);
   border-radius: 15px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -69,41 +69,6 @@ background: linear-gradient(to bottom, #000000, #0b161e);
   background: none;
 }
 
-/* .content-1 li:nth-child(1) {
-    width: 10vw;
-    background: hsl(0, 82%, 29%);
-}
-
-.content-1a li:nth-child(2):hover {
-    width: 12vw;
-    background: hsl(0, 92%, 50%);
-}
-
-.content-1a li:nth-child(3):hover {
-    width: 12vw;
-    background: hsla(0, 88%, 49%, 0.932);
-}
-
-.content-1a li:nth-child(4):hover {
-    width: 17vw;
-    background: hsl(0, 90%, 49%);
-}
-
-.content-1a li:nth-child(5):hover {
-    width: 12vw;
-    background: hsl(0, 98%, 48%);
-} */
-
-/* .content-1a ul li:hover{
-    background-color: #bf321d;
-    border-radius: 30px;
-} */
-
-/* .content-1a ul li i {
-    margin-right: 10px;
-} */
-
-/*end of content-1a*/
 .content-1a ul {
   list-style-type: none;
   padding: 0;
@@ -480,4 +445,16 @@ a {
   max-width:41vw;
   word-wrap: break-word; 
   box-sizing: border-box;
+}
+
+.light-mode {
+  background: #fff;
+  color: #333;
+}
+
+.light-mode .content-1a li a{
+  color: #333;
+}
+.light-mode .content-1a li {
+  color: #333;
 }

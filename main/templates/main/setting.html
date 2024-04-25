@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>PseudoSpeak</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,6 +14,7 @@
     <link
     rel="stylesheet"
     href="https://site-assets.fontawesome.com/releases/v6.5.1/css/all.css">
+    <link rel="shortcut icon" href="/media/images/Logo" type="image/x-icon">
 
     <style>
       body {
@@ -454,6 +455,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <a href="{% url 'notification' username=request.user.username %}" style="margin-right: 10px;font-size: 30px;">
+            <i class="fa-solid fa-bell"></i
+              >
+              <span class="icon-badge">{{notifications}}</span>
+            </a>
           {% if user.is_authenticated %}
           <img
             id="profile_img_navbar"
@@ -496,13 +502,6 @@
             <li>
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
-            </li>
-            <li>
-              <i class="fa-solid fa-bell"></i
-              ><a href="{% url 'notification' username=request.user.username %}">
-                Notifications
-                <span class="icon-badge">{{notifications}}</span>
-              </a>
             </li>
           </ul>
         </div>
@@ -565,10 +564,62 @@
               </div>
               
               <div class="changes-btn">
-                <button type="submit" class="delete-btn btn" name="delete-acc" value="delete_acc">Delete Account</button>
+                <button type="button" data-bs-target="#exampleModalCenter" data-bs-toggle="modal" class="delete-btn btn">Delete Account</button>
                 <button type="submit" class="save-btn btn" name="save-changes" value="save_chanages">Save Changes</button>
                 
               </div>
+              <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: linear-gradient(to bottom, #000000, #0b161e);">
+          <div class="modal-header">
+            <h5
+              class="modal-title"
+              id="exampleModalLongTitle"
+            >
+              Delete Account
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Modal content goes here -->
+            Do you really want to delete this account
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              value="no"
+            >
+              No
+            </button>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              value="delete_acc"
+              name="delete-acc"
+            >
+              Delete
+            </button>
+            <!-- Add additional buttons if needed -->
+          </div>
+        </div>
+      </div>
+    </div>
             </form>
 
             </div>

@@ -4,13 +4,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>PseudoSpeak</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <link rel="shortcut icon" href="/media/images/Logo" type="image/x-icon">
     <style>
       body {
         background-color: #1f1f20;
@@ -800,6 +801,11 @@ background: linear-gradient(to bottom, #100007, #4c0827);
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <a href="{% url 'notification' username=request.user.username %}" style="margin-right: 10px;font-size: 30px;">
+            <i class="fa-solid fa-bell"></i
+              >
+              <span class="icon-badge">{{notifications}}</span>
+            </a>
           {% if user.is_authenticated %}
           <img
             id="profile_img_navbar"
@@ -843,13 +849,6 @@ background: linear-gradient(to bottom, #100007, #4c0827);
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
             </li>
-            <li>
-              <i class="fa-solid fa-bell"></i
-              ><a href="http://127.0.0.1:8000/notifications/{{request.user.username}}/">
-                Notifications
-                <span class="icon-badge">{{notifications}}</span>
-              </a>
-            </li>
           </ul>
         </div>
         <div class="col-6 group-con">
@@ -863,7 +862,7 @@ background: linear-gradient(to bottom, #100007, #4c0827);
             {% if user.username != request.user.username %}
             <div class="follow-button">
               {% if user not in request.user.profile.following.all %}
-              <a href="#" class="btn signbtn followbtn me-4" style="background-color: rgba(65,128,164,255);">Follow</a>
+              <a href="#" class="btn signbtn followbtn me-4">Follow</a>
               {% else %}
               <a href="#" class="btn signbtn followbtn me-4">Unfollow</a>
               {% endif %}
