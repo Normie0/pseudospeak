@@ -413,6 +413,28 @@
         background-color:red;
         color:white;
       }
+      #options{
+        position: absolute;
+        right: 2vw;
+        background: none;
+        border: none;
+        color: white;
+      }
+      .dropdown-options{
+        display: none;
+        position: absolute;
+        right: 3vw;
+        top: 3vw;
+        background-color: white;
+        color: black;
+        padding: 0px;
+      }
+      #options:hover~.dropdown-options{
+        display: block;
+      }
+      .dropdown-options:hover{
+        display: block;
+      }
     </style>
     <link rel="stylesheet" href="{% static 'main/css/index.css' %}" />
   </head>
@@ -428,12 +450,21 @@
     </label>
 
     {% if error_message %}
+    {% if status %}
+    <div class="container-fluid" style="padding: 0;">
+      <div id="errorMessage" class="alert alert-{{status}} alert-dismissible fade show" role="alert">
+        {{error_message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+    {% else %}
   <div class="container-fluid" style="padding: 0;">
     <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
       {{error_message}}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   </div>
+  {% endif %}
   {% endif %}
 
     <nav class="navbar navbar-expand bg-body-tertiary">
@@ -509,6 +540,43 @@
         <div class="col-9">
           <div class="card">
             <div class="card-body">
+              <button id="options"><i class="fa-solid fa-ellipsis"></i></button>
+              <div class="dropdown-options">
+                <p
+                data-bs-target="#dropdownModal" data-bs-toggle="modal"
+                >
+                Blocked Users</p>
+              </div>
+              
+              <div class="modal fade" id="dropdownModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered ">
+                  <div class="modal-content" style="background:linear-gradient(to bottom, #000000, #0b161e) ;">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {% for user in request.user.profile.blocked_user.all %}
+                      <div class="user-details" style="display: flex; align-items: center;">
+                        <img src="{{user.profile.profile_img.url}}" alt="" style="width: 3vw; border-radius: 2vw;">
+                        <h5>{{user.username}}</h5>
+
+                        <form action="" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="unblock" value="{{user.username}}">
+                          <button type="submit">Unblock</button>
+                        </form>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
               <div class="Change-avatar">
                 <div class="change-profile-pic">
                   <img src="{{request.user.profile.profile_img.url}}" alt="err" id="profile-avatar">
@@ -527,14 +595,14 @@
                       {% csrf_token %}
                       <input type="hidden" name="image_path" value="{{request.user.profile.profile_img.url}}" id="img-value">
                     <div class="avatar-row-1">
-                      {% for image_path in images %}
+                      {% for image_path in images1 %}
                       <div class="modal-content-img row-1">
                         <img src="{{image_path}}" alt="err" data-img-url="{{image_path}}">
                       </div>
                       {% endfor %}
                     </div>
                     <div class="avatar-row-2">
-                    {% for image_path in images %}
+                    {% for image_path in images2 %}
                       <div class="modal-content-img row-2">
                         <img src="{{image_path}}" alt="err" data-img-url="{{image_path}}">
                       </div>

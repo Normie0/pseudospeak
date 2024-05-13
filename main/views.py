@@ -26,10 +26,14 @@ def generate_unique_username():
 
 def get_random_image():
     images = [
-        "images/girl.jpg",
-        "images/ninja.jpg",
-        "images/fire.jpg",
-        "images/panda.jpg",
+        "images/bear.png",
+        "images/boy.png",
+        "images/cat.png",
+        "images/chicken.png",
+        "images/dog.png",
+        "images/dinosaur.png",
+        "images/hacker.png",
+        "images/panda.png",
     ]
     return random.choice(images)
 
@@ -279,15 +283,29 @@ from django.contrib.auth import update_session_auth_hash
 
 @login_required(login_url="login_or_signup_view")
 def settings(request):
-    images = [
-        "/media/images/girl.jpg",
-        "/media/images/ninja.jpg",
-        "/media/images/fire.jpg",
-        "/media/images/panda.jpg",
+    images1 = [
+        "/media/images/boy.png",
+        "/media/images/dog.png",
+        "/media/images/dinosaur.png",
+        "/media/images/panda.png",
+    ]
+
+    images2= [
+        "/media/images/hacker.png",
+        "/media/images/chicken.png",
+        "/media/images/bear.png",
+        "/media/images/cat.png",
     ]
 
     if request.method=='POST':
-        print("Post request!")
+        unblock_username=request.POST.get("unblock")
+        if unblock_username:
+            unblock_user=User.objects.get(username=unblock_username)
+            request.user.profile.blocked_user.remove(unblock_user)
+            return render(
+                    request,
+                    "main/setting.html",{"error_message":"User unblocked","status":"success","images1":images1,"images2":images2},
+                    )
         delete_acc=request.POST.get("delete-acc")
         image_url=request.POST.get("image_path")
         loggedusername=request.POST.get("username")
@@ -306,19 +324,19 @@ def settings(request):
                     error_message="Invalid username or password"
                     return render(
                     request,
-                    "main/setting.html",{"error_message":error_message,"images":images},
+                    "main/setting.html",{"error_message":error_message,"images1":images1,"images2":images2},
                     )
             except:
                 error_message="Invalid username or password"
                 return render(
                 request,
-                "main/setting.html",{"error_message":error_message,"images":images},
+                "main/setting.html",{"error_message":error_message,"images1":images1,"images2":images2},
                 )
         elif delete_acc and not current_pass:
             error_message="Plzz enter the password"
             return render(
                 request,
-                "main/setting.html",{"error_message":error_message,"images":images},
+                "main/setting.html",{"error_message":error_message,"images1":images1,"images2":images2},
                 )
 
         elif loggedusername==request.user.username and current_pass and new_password and confirm_password:
@@ -345,12 +363,14 @@ def settings(request):
             error_message="Check the data you have entered"
         return render(
         request,
-        "main/setting.html",{"error_message":error_message,"images":images},
+        "main/setting.html",{"error_message":error_message,"images1":images1,"images2":images2},
     )
+
+
 
     return render(
         request,
-        "main/setting.html",{"images":images},
+        "main/setting.html",{"images1":images1,"images2":images2},
     )
 
 

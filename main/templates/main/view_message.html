@@ -650,6 +650,48 @@
                     {% if message.image %}
                     <img src="{{message.image.url}}" alt="">
                     {% endif %}
+                    {% if message.option1 %}
+                    {% if not request.user in message.voted.all %}
+                    <div class="option-wrapper" id="{{ message.pk }}">
+                      <div class="option-container">
+                        <div
+                          class="choices"
+                          onclick="vote('{{message.pk}}','{{message.decrypt_message}}','{{message.option1}}')"
+                        >
+                          {{ message.option1 }}
+                        </div>
+                        <div
+                          class="choices"
+                          onclick="vote('{{message.pk}}','{{message.decrypt_message}}','{{message.option2}}')"
+                        >
+                          {{ message.option2 }}
+                        </div>
+                      </div>
+                    </div>
+                    {% else %}
+                    <div class="wrapper">
+                      <div class="progress-wrapper">
+                        <div
+                          class="progress-bar-container"
+                          style="--progress-width: {{ message.option1_count }}%;"
+                        >
+                          <div class="option">{{ message.option1 }}</div>
+                        </div>
+                        <div class="option-percent">{{ message.option1_count }}%</div>
+                      </div>
+                      <div class="progress-wrapper">
+                        <div
+                          class="progress-bar-container"
+                          style="--progress-width: {{ message.option2_count }}%;"
+                        >
+                          <div class="option">{{ message.option2 }}</div>
+                        </div>
+                        <div class="option-percent">{{ message.option2_count }}%</div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    
                   </div>
                 </div>
                 <div class="msg-output-icons">
@@ -751,7 +793,7 @@
       crossorigin="anonymous"
     ></script>
 
-    {{ room.slug|json_script:"json-roomname" }}
+    {{ roomessage.slug|json_script:"json-roomname" }}
     {{request.user.username|json_script:"json-username" }}
     {{message.id|json_script:"json-messageId"}}
     <script>

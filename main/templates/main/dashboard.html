@@ -1123,6 +1123,19 @@ background: linear-gradient(to bottom, #100007, #4c0827);
       const username = JSON.parse(
         document.getElementById("json-username").textContent
       );
+
+      const searchInput=document.querySelector("#search-input");
+
+      searchInput.addEventListener("change",function(){
+        var startime=Date.now()/1000;
+        const searchInputValue=searchInput.value;
+        socket.send(
+          JSON.stringify({
+            searchUser:searchInputValue
+          })
+        )
+        console.log(Date.now()/1000-startime);
+      })
       
 
       function toggleDropdown(event, messageId) {
@@ -1169,7 +1182,8 @@ background: linear-gradient(to bottom, #100007, #4c0827);
                   username: username,
                 })
               );
-              socket.onmessage = function (e) {
+              if (changedName){
+                socket.onmessage = function (e) {
                 data = JSON.parse(e.data);
                 const error_message = data["error_message"];
                 console.log(error_message);
@@ -1183,10 +1197,41 @@ background: linear-gradient(to bottom, #100007, #4c0827);
                 loggedusername = changedName;
                 var redirectURL = "/dashboard/" + loggedusername + "/";
                 window.location.href = redirectURL;
+
               };
+              }
             }
           });
         };
+      }
+
+      socket.onmessage=(event)=>{
+        const data=JSON.parse(event.data);
+        console.log(typeof(data.users));
+        console.log(data);
+        const popular=document.querySelector(".popular-profiles");
+        popular.innerHTML="";
+        if (data && Array.isArray(data.users)) {
+        data.users.forEach(user => {
+            console.log(user);
+            var template=`
+            <div class="popular-username">
+                <div class="pop-pro-img">
+                  <a href="/dashboard/${user.name}">
+                    <img src="${user.img_url}" />
+                  </a>
+                </div>
+                <div class="pop-pro-users">
+                  <h5>${user.name}</h5>
+                  <p>Followers: ${user.followers}</p>
+                </div>
+              </div>
+              `;
+              popular.innerHTML+=template;
+        });
+    } else {
+        console.error("Invalid data format: 'users' property is missing or not an array.");
+    }
       }
 
       function showonclick1() {

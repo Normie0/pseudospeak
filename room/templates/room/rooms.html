@@ -275,7 +275,7 @@
 
       body {
   /* Define the linear gradient */
-background: linear-gradient(to bottom, #000000, #0b161e);
+background: linear-gradient(to bottom, #000000 -85%, #0b161e 100%);
 
   color: white;
   overflow: hidden;
@@ -291,7 +291,7 @@ background: linear-gradient(to bottom, #000000, #0b161e);
 .nav-logo img{
   width: 50%;
   padding-left: 1vw;
-  mix-blend-mode: hard-light;
+  mix-blend-mode: color-dodge;
 }
 
 .nav-logo:hover {
@@ -505,6 +505,11 @@ background: linear-gradient(to bottom, #000000, #0b161e);
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <a href="{% url 'notification' username=request.user.username %}" style="margin-right: 10px;font-size: 30px;">
+            <i class="fa-solid fa-bell"></i
+              >
+              <span class="icon-badge">{{notifications}}</span>
+            </a>
           {% if user.is_authenticated %}
           <img
             id="profile_img_navbar"
@@ -547,13 +552,6 @@ background: linear-gradient(to bottom, #000000, #0b161e);
             <li>
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
-            </li>
-            <li>
-              <i class="fa-solid fa-bell"></i
-              ><a href="{% url 'notification' username=request.user.username %}">
-                Notifications
-                <span class="icon-badge">{{notifications}}</span>
-              </a>
             </li>
           </ul>
         </div>
@@ -645,7 +643,7 @@ background: linear-gradient(to bottom, #000000, #0b161e);
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="background: linear-gradient(to bottom, #100007, #4c0827);">
+        <div class="modal-content" style="background: #0b161e;">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLongTitle">
               Confirm Join
@@ -653,7 +651,7 @@ background: linear-gradient(to bottom, #000000, #0b161e);
             <button
               type="button"
               class="close"
-              data-dismiss="modal"
+              data-bs-dismiss="modal"
               aria-label="Close"
             >
               <span aria-hidden="true">&times;</span>
@@ -661,7 +659,7 @@ background: linear-gradient(to bottom, #000000, #0b161e);
           </div>
           <div class="modal-body">
             <!-- Modal content goes here -->
-            Teri marzi karna hai toh yes dabba nhi toh no
+            Are you sure you want to join this group?
           </div>
           <div class="modal-footer">
             <button

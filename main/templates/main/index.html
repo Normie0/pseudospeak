@@ -146,13 +146,6 @@
           width: var(--progress-width); /* End with 100% width */
         }
       }
-      .icon-badge{
-        position: relative;
-        font-size: 15px;
-        margin-left: -5px;
-        top: -20px;
-        color: red;
-      }
     </style>
   </head>
   <body>
@@ -193,7 +186,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-          <button id="mode-toggle">Toggle Light Mode</button>
+          <!-- <button id="mode-toggle">Toggle Light Mode</button> -->
           <a href="{% url 'notification' username=request.user.username %}" style="margin-right: 10px;font-size: 30px;">
             <i class="fa-solid fa-bell"></i
               >
@@ -654,7 +647,7 @@
       socket2.onopen=function(){
         console.log("Socket2 connected");
       }
-      socket
+      
 
       const imageUploadDiv = document.querySelector("#imageToUpload");
       const imageUpload = document.querySelector("#imageUpload");
@@ -663,7 +656,7 @@
 
       const confirmPoll = document.querySelector("#confirmPoll");
 
-      const modeToggle = document.getElementById('mode-toggle');
+      // const modeToggle = document.getElementById('mode-toggle');
     const body = document.body;
 
     // Check if there's a mode preference stored
@@ -674,23 +667,7 @@
     }
 
     // Toggle mode when button is clicked
-    modeToggle.addEventListener('click', function() {
-      const img=document.querySelector("#navbar-logo");
-        if (body.classList.contains('light-mode')) {
-            // Switch to dark mode
-            img.src="/media/images/Logo";
-            body.classList.remove('light-mode');
-            localStorage.setItem('mode', 'dark');
-        } else {
-            // Switch to light mode
-            enableLightMode();
-            img.src="/media/images/lightlogo";
-            localStorage.setItem('mode', 'light');
-        }});
-
-        function enableLightMode() {
-        body.classList.add('light-mode');
-    }
+    
 
       setInterval(() => {
         if (socket.readyState === WebSocket.OPEN) {

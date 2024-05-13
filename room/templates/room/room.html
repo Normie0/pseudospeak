@@ -12,6 +12,7 @@
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    
     <style>
       .chat-container {
         background-color: hsla(0, 0%, 53%, 0.07);
@@ -304,6 +305,7 @@
 .user-msg-pr1{
   padding-left: 7px;
 }
+
     </style>
     <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
   </head>
@@ -318,7 +320,6 @@
           <button name="confirmation" type="submit" value="yes">Yes</button>
         </form>
       </div>
-
     </div>
 
     <div class="wrapper">
@@ -341,6 +342,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <a href="{% url 'notification' username=request.user.username %}" style="margin-right: 10px;font-size: 30px;">
+            <i class="fa-solid fa-bell"></i
+              >
+              <span class="icon-badge">{{notifications}}</span>
+            </a>
           {% if user.is_authenticated %}
           <img
             id="profile_img_navbar"
@@ -383,13 +389,6 @@
             <li>
               <i class="fa-solid fa-gear"></i
               ><a href="{% url 'settings' %}">Settings</a>
-            </li>
-            <li>
-              <i class="fa-solid fa-bell"></i
-              ><a href="{% url 'notification' username=request.user.username %}">
-                Notifications
-                <span class="icon-badge">{{notifications}}</span>
-              </a>
             </li>
           </ul>
         </div>
@@ -507,7 +506,13 @@
           const template = document.getElementById("chat-messages");
           template.innerHTML += `
           <div class="chat-message">
-                <b>${data.username}</b>: ${data.message}
+                <img class="user-profile-img1" src="${data.profile_img}" alt="" />
+                <div class="user-msg-pr">
+                  <span>
+                    <a href=""><b>${data.username} </b></a>
+                  </span>
+                  <span class="user-msg-pr1"> ${data.message} </span>
+                </div>
               </div>
               `;
           scrollToBottom();

@@ -372,17 +372,14 @@ class IndexConsumer(AsyncWebsocketConsumer):
             )
         )
 
+import time
 
 class DashboardConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["username"]
-        self.room_group_name = "chat_%s" % self.room_name
-
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
     async def disconnect(self, code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        self.close()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -394,9 +391,26 @@ class DashboardConsumer(AsyncWebsocketConsumer):
             "error_message":error_message,
             "changedame":data['changedName']
             }))
+        
+        elif 'searchUser' in data:
+            start=time.time()
+            usersData = await self.fetchUsers(data)
+            print(usersData)
+            await self.send(text_data=json.dumps({"users":usersData}))
+            print(time.time()-start)
             
         else:
             await self.follow(data)
+
+        
+    @sync_to_async
+    def fetchUsers(self,data):
+        users=User.objects.filter(username__istartswith=data['searchUser'])
+        json_data = [{'name': item.username, 'img_url': item.profile.profile_img.url, 'pk': item.pk,'followers':item.profile.follow_count } for item in users]
+        if json_data:
+            return json_data[:3]
+        else:
+            return json_data
 
     @sync_to_async
     def changename(self,data):

@@ -1,7 +1,6 @@
 body {
   /* Define the linear gradient */
-background: linear-gradient(to bottom, #000000, #0b161e);
-
+background: linear-gradient(to bottom, #000000 -85%, #0b161e 100%);
   color: white;
   overflow: hidden;
 }
@@ -16,7 +15,7 @@ background: linear-gradient(to bottom, #000000, #0b161e);
 .nav-logo img{
   width: 50%;
   padding-left: 1vw;
-  mix-blend-mode: hard-light;
+  mix-blend-mode: color-dodge;
 }
 
 .nav-logo:hover {
@@ -447,6 +446,44 @@ a {
   box-sizing: border-box;
 }
 
+.choices {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  margin: 10px 0;
+  width: 41vw;
+  border-radius: 2vw;
+  padding: 10px;
+}
+
+.choices:hover {
+  cursor: pointer;
+}
+
+.progress-bar-container {
+  background: #6300eb;
+  color: white;
+  border-radius: 2vw;
+  padding: 1vw;
+  margin: 10px 0;
+  animation: fillAnimation 2s ease forwards;
+}
+@keyframes fillAnimation {
+  0% {
+    width: 0%; /* Start with 0% width */
+  }
+  100% {
+    width: var(--progress-width); /* End with 100% width */
+  }
+}
+
+.progress-wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 1vw;
+}
+
 .light-mode {
   background: #fff;
   color: #333;
@@ -457,4 +494,12 @@ a {
 }
 .light-mode .content-1a li {
   color: #333;
+}
+
+.icon-badge{
+  position: relative;
+  font-size: 15px;
+  margin-left: -5px;
+  top: -20px;
+  color: red;
 }
